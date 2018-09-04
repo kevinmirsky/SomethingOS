@@ -79,6 +79,12 @@ module TSOS {
                                   "<string> - Sets the prompt.");
             this.commandList[this.commandList.length] = sc;
 
+                        // whereami
+            sc = new ShellCommand(this.shellWhereAmI,
+                                  "whereami",
+                                  "- Obtains current location of system, if possible.");
+            this.commandList[this.commandList.length] = sc;
+
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
@@ -178,7 +184,7 @@ module TSOS {
         // called from here, so kept here to avoid violating the law of least astonishment.
         //
         public shellInvalidCommand() {
-            _StdOut.putText("Invalid Command. ");
+            _StdOut.putText("[ERROR] Invalid Command. ");
             if (_SarcasticMode) {
                 _StdOut.putText("Unbelievable. You, [subject name here],");
                 _StdOut.advanceLine();
@@ -287,5 +293,9 @@ module TSOS {
             }
         }
 
+        public shellWhereAmI(args) {
+            _StdOut.putText("[ERROR] GPS enabled cyberware not found. Contact a licensed cyberware " +
+                "professional for installation.")
+        }
     }
 }
