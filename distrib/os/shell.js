@@ -258,7 +258,8 @@ var TSOS;
         Shell.prototype.shellDate = function (args) {
             var d = new Date();
             _StdOut.putText(d.getFullYear().toString() + "-"
-                + (d.getMonth() + 1).toString() + "-" + d.getDate().toString());
+                + (d.getMonth() + 1).toString() + "-" + d.getDate().toString() +
+                " " + d.getHours().toString() + ":" + d.getMinutes().toString());
             //getMonth uses 0 for Jan, so 1 must be added for human understanding
         };
         return Shell;
