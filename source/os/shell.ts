@@ -88,7 +88,7 @@ module TSOS {
             //date
             sc = new ShellCommand(this.shellDate,
                                   "date",
-                                  "- Returns the current system date and time using ISO 8601 standard notation");
+                                  "- Returns the current system date and time.");
             this.commandList[this.commandList.length] = sc;
 
             // ps  - list the running processes and their IDs
