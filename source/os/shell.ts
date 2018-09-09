@@ -79,7 +79,7 @@ module TSOS {
                                   "<string> - Sets the prompt.");
             this.commandList[this.commandList.length] = sc;
 
-                        // whereami
+            // whereami
             sc = new ShellCommand(this.shellWhereAmI,
                                   "whereami",
                                   "- Obtains current location of system, if possible.");
@@ -242,6 +242,9 @@ module TSOS {
                 switch (topic) {
                     case "help":
                         _StdOut.putText("Help displays a list of (hopefully) valid commands.");
+                        break;
+                    case "cls":
+                        _StdOut.putText("Clears the screen of any text.");
                         break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
