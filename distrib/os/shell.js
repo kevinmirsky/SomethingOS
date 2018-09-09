@@ -53,7 +53,7 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellWhereAmI, "whereami", "- Obtains current location of system, if possible.");
             this.commandList[this.commandList.length] = sc;
             //date
-            sc = new TSOS.ShellCommand(this.shellDate, "date", "- Returns the current system date and time using ISO 8601 standard notation");
+            sc = new TSOS.ShellCommand(this.shellDate, "date", "- Returns the current system date and time.");
             this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
