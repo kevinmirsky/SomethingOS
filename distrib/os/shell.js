@@ -52,6 +52,9 @@ var TSOS;
             // whereami
             sc = new TSOS.ShellCommand(this.shellWhereAmI, "whereami", "- Obtains current location of system, if possible.");
             this.commandList[this.commandList.length] = sc;
+            //date
+            sc = new TSOS.ShellCommand(this.shellDate, "date", "- Returns the current system date and time using ISO 8601 standard notation");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             //
@@ -251,6 +254,12 @@ var TSOS;
         Shell.prototype.shellWhereAmI = function (args) {
             _StdOut.putText("[ERROR] GPS enabled cyberware not found. Contact a licensed cyberware " +
                 "professional for installation.");
+        };
+        Shell.prototype.shellDate = function (args) {
+            var d = new Date();
+            _StdOut.putText(d.getFullYear().toString() + "-"
+                + (d.getMonth() + 1).toString() + "-" + d.getDate().toString());
+            //getMonth uses 0 for Jan, so 1 must be added for human understanding
         };
         return Shell;
     }());
