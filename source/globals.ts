@@ -12,7 +12,20 @@
 // Global CONSTANTS (TypeScript 1.5 introduced const. Very cool.)
 //
 const APP_NAME: string    = "CyberCore";   // Melding flesh and metal
-const APP_VERSION: string = "0.01";   // Gotta start somewhere.
+const APP_VERSION: string = "0.1.2";   // Gotta start somewhere.
+    /*
+    Versioning Scheme:
+
+    X.Y.Z
+
+    X = Major release version. Until feature complete, this will be 0.
+    Y = iProject version. For example, working on iProject 1 will be 0.1.Z
+    Z = Incremental version. This will just go up by 1 for each version.
+
+    Sample:
+    0.3.12
+    Pre feature complete. Working on iProject 3. 12th update to iProject 3 code.
+     */
 
 const CPU_CLOCK_INTERVAL: number = 100;   // This is in ms (milliseconds) so 1000 = 1 second.
 

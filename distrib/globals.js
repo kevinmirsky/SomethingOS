@@ -11,7 +11,20 @@
 // Global CONSTANTS (TypeScript 1.5 introduced const. Very cool.)
 //
 var APP_NAME = "CyberCore"; // Melding flesh and metal
-var APP_VERSION = "0.01"; // Gotta start somewhere.
+var APP_VERSION = "0.1.2"; // Gotta start somewhere.
+/*
+Versioning Scheme:
+
+X.Y.Z
+
+X = Major release version. Until feature complete, this will be 0.
+Y = iProject version. For example, working on iProject 1 will be 0.1.Z
+Z = Incremental version. This will just go up by 1 for each version.
+
+Sample:
+0.3.12
+Pre feature complete. Working on iProject 3. 12th update to iProject 3 code.
+ */
 var CPU_CLOCK_INTERVAL = 100; // This is in ms (milliseconds) so 1000 = 1 second.
 var TIMER_IRQ = 0; // Pages 23 (timer), 9 (interrupts), and 561 (interrupt priority).
 // NOTE: The timer is different from hardware/host clock pulses. Don't confuse these.
