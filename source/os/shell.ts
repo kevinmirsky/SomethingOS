@@ -97,6 +97,12 @@ module TSOS {
                 "- returns how long the system has been up and running.");
             this.commandList[this.commandList.length] = sc;
 
+            //load
+            sc = new ShellCommand(this.shellLoad,
+                "load",
+                "- Verifies user entered code and loads it.");
+            this.commandList[this.commandList.length] = sc;
+
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
@@ -336,6 +342,30 @@ module TSOS {
 
             _StdOut.putText(days + " days, " + hours + " hours, "
                 + minutes + " minutes, " + seconds + " seconds");
+        }
+
+        public shellLoad(args) {
+            let regex = new RegExp("^[a-fA-F0-9]+$"); //Pattern for valid hex number.
+            let isValid = true;
+
+            let input = (<HTMLInputElement>document.getElementById("taProgramInput")).value;
+            let inputArray = input.split(' ');
+
+            inputArray.forEach(function (element) {
+                if (regex.test(element)) {
+                    //Passes regex
+                    //Nothing to do. For now.
+                } else {
+                    //fails
+                    isValid = false;
+                    return;
+                }
+            });
+            if (isValid) {
+                _StdOut.putText("User input validated. Loading...");
+            } else {
+                _StdOut.putText("[ERROR] User code malformed. Unable to load.");
+            }
         }
     }
 }

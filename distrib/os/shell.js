@@ -58,6 +58,9 @@ var TSOS;
             //uptime
             sc = new TSOS.ShellCommand(this.shellUptime, "uptime", "- returns how long the system has been up and running.");
             this.commandList[this.commandList.length] = sc;
+            //load
+            sc = new TSOS.ShellCommand(this.shellLoad, "load", "- Verifies user entered code and loads it.");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             //
@@ -280,6 +283,29 @@ var TSOS;
             var seconds = Math.floor(time / DECISEC_IN_SECOND);
             _StdOut.putText(days + " days, " + hours + " hours, "
                 + minutes + " minutes, " + seconds + " seconds");
+        };
+        Shell.prototype.shellLoad = function (args) {
+            var regex = new RegExp("^[a-fA-F0-9]+$"); //Pattern for valid hex number.
+            var isValid = true;
+            var input = document.getElementById("taProgramInput").value;
+            var inputArray = input.split(' ');
+            inputArray.forEach(function (element) {
+                if (regex.test(element)) {
+                    //Passes regex
+                    //Nothing to do. For now.
+                }
+                else {
+                    //fails
+                    isValid = false;
+                    return;
+                }
+            });
+            if (isValid) {
+                _StdOut.putText("User input validated. Loading...");
+            }
+            else {
+                _StdOut.putText("[ERROR] User code malformed. Unable to load.");
+            }
         };
         return Shell;
     }());
