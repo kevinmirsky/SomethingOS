@@ -286,7 +286,7 @@ module TSOS {
                         _StdOut.putText("Trace OFF");
                         break;
                     default:
-                        _StdOut.putText("Invalid arguement.  Usage: trace <on | off>.");
+                        _StdOut.putText("Invalid argument.  Usage: trace <on | off>.");
                 }
             } else {
                 _StdOut.putText("Usage: trace <on | off>");
