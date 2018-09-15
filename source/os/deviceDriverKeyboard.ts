@@ -49,12 +49,28 @@ module TSOS {
                 }
                 // TODO: Check for caps-lock and handle as shifted if so.
                 _KernelInputQueue.enqueue(chr);
-            } else if ((keyCode >= 188) && (keyCode <= 191)) { // , . / -
+            } else if ((keyCode >= 188) && (keyCode <= 191)) { // handles: , . / -
                 chr = String.fromCharCode((keyCode - 144));
                 _KernelInputQueue.enqueue(chr);
-            } else if ((keyCode >=219) && (keyCode <= 221)){ // [ ] \
+            } else if ((keyCode >=219) && (keyCode <= 221)) { // handles:  [ ] \
                 chr = String.fromCharCode((keyCode - 128));
                 _KernelInputQueue.enqueue(chr);
+            } else if (keyCode == 186) {                     // handles: ;
+                //For consistency's sake, we're still going to use
+                //subtraction to get the char code
+                chr = String.fromCharCode((keyCode - 127));
+                _KernelInputQueue.enqueue(chr);
+            } else if (keyCode == 192) {                     // handles: `
+                //For consistency's sake, we're still going to use
+                //subtraction to get the char code
+                chr = String.fromCharCode((keyCode - 96));
+                _KernelInputQueue.enqueue(chr);
+            } else if (keyCode == 222) {                     // handles: '
+                //For consistency's sake, we're still going to use
+                //subtraction to get the char code
+                chr = String.fromCharCode((keyCode - 183));
+                _KernelInputQueue.enqueue(chr);
+
             } else if (((keyCode >= 48) && (keyCode <= 57)) ||   // digits
                         (keyCode == 32)                     ||   // space
                         (keyCode == 13)) {                       // enter
