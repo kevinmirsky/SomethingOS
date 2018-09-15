@@ -60,6 +60,10 @@ var TSOS;
                 // TODO: Check for caps-lock and handle as shifted if so.
                 _KernelInputQueue.enqueue(chr);
             }
+            else if ((keyCode >= 188) && (keyCode <= 191)) { // , . /
+                chr = String.fromCharCode((keyCode - 144));
+                _KernelInputQueue.enqueue(chr);
+            }
             else if (((keyCode >= 48) && (keyCode <= 57)) || // digits
                 (keyCode == 32) || // space
                 (keyCode == 13)) { // enter
