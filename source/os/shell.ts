@@ -91,6 +91,18 @@ module TSOS {
                                   "- Returns the current system date and time.");
             this.commandList[this.commandList.length] = sc;
 
+            //uptime
+            sc = new ShellCommand(this.shellUptime,
+                "uptime",
+                "- returns how long the system has been up and running.");
+            this.commandList[this.commandList.length] = sc;
+
+            //load
+            sc = new ShellCommand(this.shellLoad,
+                "load",
+                "- Verifies user entered code and loads it.");
+            this.commandList[this.commandList.length] = sc;
+
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
@@ -274,7 +286,7 @@ module TSOS {
                         _StdOut.putText("Trace OFF");
                         break;
                     default:
-                        _StdOut.putText("Invalid arguement.  Usage: trace <on | off>.");
+                        _StdOut.putText("Invalid argument.  Usage: trace <on | off>.");
                 }
             } else {
                 _StdOut.putText("Usage: trace <on | off>");
@@ -309,6 +321,51 @@ module TSOS {
                 + (d.getMonth() + 1).toString() + "-" + d.getDate().toString() +
                 " " + d.getHours().toString() + ":" + d.getMinutes().toString())
             //getMonth uses 0 for Jan, so 1 must be added for human understanding
+        }
+
+        public shellUptime(args) {
+            const DECISEC_IN_SECOND = 10;
+            const DECISEC_IN_MINUTE = 600;
+            const DECISEC_IN_HOUR = 36000;
+            const DECISEC_IN_DAY = 864000;
+
+            let time = _OSclock; // returns in 10ths of a second. 10 is 1 second. Deciseconds!
+
+            let days = Math.floor(time / DECISEC_IN_DAY);
+            time = time % DECISEC_IN_DAY;
+            let hours = Math.floor(time / DECISEC_IN_HOUR);
+            time = time % DECISEC_IN_HOUR;
+            let minutes = Math.floor(time / DECISEC_IN_MINUTE);
+            time = time % DECISEC_IN_MINUTE;
+            let seconds = Math.floor(time / DECISEC_IN_SECOND);
+
+
+            _StdOut.putText(days + " days, " + hours + " hours, "
+                + minutes + " minutes, " + seconds + " seconds");
+        }
+
+        public shellLoad(args) {
+            let regex = new RegExp("^[a-fA-F0-9]+$"); //Pattern for valid hex number.
+            let isValid = true;
+
+            let input = (<HTMLInputElement>document.getElementById("taProgramInput")).value;
+            let inputArray = input.split(' ');
+
+            inputArray.forEach(function (element) {
+                if (regex.test(element)) {
+                    //Passes regex
+                    //Nothing to do. For now.
+                } else {
+                    //fails
+                    isValid = false;
+                    return;
+                }
+            });
+            if (isValid) {
+                _StdOut.putText("User input validated. Loading...");
+            } else {
+                _StdOut.putText("[ERROR] User code malformed. Unable to load.");
+            }
         }
     }
 }
