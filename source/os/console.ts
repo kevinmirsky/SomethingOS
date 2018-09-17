@@ -39,7 +39,12 @@ module TSOS {
                 // Get the next character from the kernel input queue.
                 var chr = _KernelInputQueue.dequeue();
                 // Check to see if it's "special" (enter or ctrl-c) or "normal" (anything else that the keyboard device driver gave us).
-                if (chr === String.fromCharCode(13)) { //     Enter key
+                if (chr === String.fromCharCode(8)) { //      backspace key
+                    if (this.buffer !== "") {
+                        this.removeText(this.buffer.slice(-1));
+                        this.buffer = this.buffer.slice(0, -1);
+                    }
+                } else if (chr === String.fromCharCode(13)) { //     Enter key
                     // The enter key marks the end of a console command, so ...
                     // ... tell the shell ...
                     _OsShell.handleInput(this.buffer);
@@ -74,6 +79,17 @@ module TSOS {
             }
          }
 
+         public removeText(text): void {
+            let xOffset = this.currentXPosition - _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
+            let yOffset = this.currentYPosition - _DefaultFontSize;
+             _DrawingContext.clearRect(xOffset, yOffset, this.currentXPosition,
+                 this.currentYPosition + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize));
+
+             //move the current X position
+             var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
+             this.currentXPosition = this.currentXPosition - offset;
+         }
+
         public advanceLine(): void {
             this.currentXPosition = 0;
             /*
@@ -87,5 +103,6 @@ module TSOS {
 
             // TODO: Handle scrolling. (iProject 1)
         }
+
     }
  }

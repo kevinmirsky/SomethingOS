@@ -100,7 +100,8 @@ module TSOS {
 
             } else if (((keyCode >= 48) && (keyCode <= 57)) ||   // digits
                         (keyCode == 32)                     ||   // space
-                        (keyCode == 13)) {                       // enter
+                        (keyCode == 13)                     ||   // enter
+                        (keyCode ==  8)) {
                 chr = String.fromCharCode(keyCode);
                 //check for shift key
                 if (isShifted) {
