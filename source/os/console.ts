@@ -101,7 +101,21 @@ module TSOS {
                                      _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
                                      _FontHeightMargin;
 
-            // TODO: Handle scrolling. (iProject 1)
+            //Check if we need to scroll the view
+            if (this.currentYPosition > _Canvas.height) {
+                //Amount we've gone offscreen
+                let offset = this.currentYPosition - _Canvas.height + _FontHeightMargin;
+
+                this.moveCanvas(offset);
+                this.currentYPosition -= offset;
+            }
+        }
+
+        public moveCanvas(amount): void {
+            let imgData = _Canvas.getContext("2d").getImageData(0, 0,
+                _Canvas.width, this.currentYPosition + _FontHeightMargin);
+            this.clearScreen();
+            _Canvas.getContext("2d").putImageData(imgData,0, -amount);
         }
 
     }
