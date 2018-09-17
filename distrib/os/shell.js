@@ -288,7 +288,11 @@ var TSOS;
             var regex = new RegExp("^[a-fA-F0-9]+$"); //Pattern for valid hex number.
             var isValid = true;
             var input = document.getElementById("taProgramInput").value;
-            var inputArray = input.split(' ');
+            input = input.trim();
+            var inputArray = input.split(/\s+/);
+            if (inputArray.length == 0) {
+                isValid = false;
+            }
             inputArray.forEach(function (element) {
                 if (regex.test(element)) {
                     //Passes regex
