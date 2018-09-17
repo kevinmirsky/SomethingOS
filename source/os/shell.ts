@@ -349,7 +349,11 @@ module TSOS {
             let isValid = true;
 
             let input = (<HTMLInputElement>document.getElementById("taProgramInput")).value;
-            let inputArray = input.split(' ');
+            input = input.trim();
+            let inputArray = input.split(/\s+/);
+            if (inputArray.length == 0) {
+                isValid = false;
+            }
 
             inputArray.forEach(function (element) {
                 if (regex.test(element)) {
