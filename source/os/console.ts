@@ -19,7 +19,9 @@ module TSOS {
                     public currentYPosition = _DefaultFontSize,
                     public buffer = "",
                     public tabCount = 0,
-                    public tabBuffer = "" ) {  //This stores the starting term for a tab "adventure"
+                    public tabBuffer = "",  //This stores the starting term for a tab "adventure"
+                    public historyStack = [],
+                    public futureStack = [] ){
         }
 
         public init(): void {
@@ -70,10 +72,27 @@ module TSOS {
                             this.removeText(this.buffer.slice(-1));
                             this.buffer = this.buffer.slice(0, -1);
                         }
+                    } else if(chr === "↑") { //Up arrow key
+                        this.futureStack.push(this.buffer);
+                        this.removeText(this.buffer);
+                        this.buffer = "";
+                        let recalledLine = this.historyStack.pop();
+                        this.putText(recalledLine);
+                        this.buffer = recalledLine;
+                    } else if (chr === "↓") { //Down arrow key
+                        this.historyStack.push(this.buffer);
+                        this.removeText(this.buffer);
+                        this.buffer = "";
+                        let recalledLine = this.futureStack.pop();
+                        this.putText(recalledLine);
+                        this.buffer = recalledLine;
+
                     } else if (chr === String.fromCharCode(13)) { //     Enter key
                         // The enter key marks the end of a console command, so ...
                         // ... tell the shell ...
                         _OsShell.handleInput(this.buffer);
+                        this.historyStack.push(this.buffer);
+                        this.futureStack = [];
                         // ... and reset our buffer.
                         this.buffer = "";
                     } else {
