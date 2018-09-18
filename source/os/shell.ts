@@ -173,6 +173,21 @@ module TSOS {
             this.putPrompt();
         }
 
+        public cmdComplete(input, tabCount): string {
+            var index: number = 0;
+            var timesMatched: number = 0;
+            while (index < this.commandList.length) {
+                if (this.commandList[index].command.match("^"+ input)) {
+                    if (timesMatched >= tabCount) {
+                        return this.commandList[index].command;
+                    }
+                    timesMatched++;
+                }
+                index++;
+            }
+            return input;
+        }
+
         public parseInput(buffer): UserCommand {
             var retVal = new UserCommand();
 

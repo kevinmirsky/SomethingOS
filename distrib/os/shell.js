@@ -127,6 +127,20 @@ var TSOS;
             // ... and finally write the prompt again.
             this.putPrompt();
         };
+        Shell.prototype.cmdComplete = function (input, tabCount) {
+            var index = 0;
+            var timesMatched = 0;
+            while (index < this.commandList.length) {
+                if (this.commandList[index].command.match("^" + input)) {
+                    if (timesMatched >= tabCount) {
+                        return this.commandList[index].command;
+                    }
+                    timesMatched++;
+                }
+                index++;
+            }
+            return input;
+        };
         Shell.prototype.parseInput = function (buffer) {
             var retVal = new TSOS.UserCommand();
             // 1. Remove leading and trailing spaces.
