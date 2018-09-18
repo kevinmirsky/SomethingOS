@@ -18,10 +18,11 @@ module TSOS {
                     public currentXPosition = 0,
                     public currentYPosition = _DefaultFontSize,
                     public buffer = "",
-                    public tabCount = 0,
-                    public tabBuffer = "",  //This stores the starting term for a tab "adventure"
-                    public historyStack = [],
-                    public futureStack = [] ){
+                    public tabCount = 0, // Number of times user hit tab
+                    public tabBuffer = "",  // This stores the starting term a user hit tab on
+                    public historyStack = [], // Command history
+                    public futureStack = [], // Where we put history we've gone past. Our "Forward" button
+                    public openHistoryItem = "" ){ // What we use to store the active history element
         }
 
         public init(): void {
@@ -72,27 +73,33 @@ module TSOS {
                             this.removeText(this.buffer.slice(-1));
                             this.buffer = this.buffer.slice(0, -1);
                         }
-                    } else if(chr === "↑") { //Up arrow key
-                        this.futureStack.push(this.buffer);
-                        this.removeText(this.buffer);
-                        this.buffer = "";
-                        let recalledLine = this.historyStack.pop();
-                        this.putText(recalledLine);
-                        this.buffer = recalledLine;
-                    } else if (chr === "↓") { //Down arrow key
-                        this.historyStack.push(this.buffer);
-                        this.removeText(this.buffer);
-                        this.buffer = "";
-                        let recalledLine = this.futureStack.pop();
-                        this.putText(recalledLine);
-                        this.buffer = recalledLine;
-
+                    } else if(chr === "↑" ) {                    //Up arrow key
+                        if (this.historyStack.length > 0) {
+                            this.futureStack.push(this.openHistoryItem);
+                            this.removeText(this.buffer);
+                            this.buffer = "";
+                            let recalledLine = this.historyStack.pop();
+                            this.putText(recalledLine);
+                            this.buffer = recalledLine;
+                            this.openHistoryItem = recalledLine;
+                        }
+                    } else if (chr === "↓") {                   //Down arrow key
+                        if (this.futureStack.length > 0) {
+                            this.historyStack.push(this.openHistoryItem);
+                            this.removeText(this.buffer);
+                            this.buffer = "";
+                            let recalledLine = this.futureStack.pop();
+                            this.putText(recalledLine);
+                            this.buffer = recalledLine;
+                            this.openHistoryItem = recalledLine;
+                        }
                     } else if (chr === String.fromCharCode(13)) { //     Enter key
                         // The enter key marks the end of a console command, so ...
                         // ... tell the shell ...
                         _OsShell.handleInput(this.buffer);
                         this.historyStack.push(this.buffer);
                         this.futureStack = [];
+                        this.openHistoryItem = "";
                         // ... and reset our buffer.
                         this.buffer = "";
                     } else {
