@@ -10,17 +10,21 @@
 var TSOS;
 (function (TSOS) {
     var Console = /** @class */ (function () {
-        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer) {
+        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer, tabCount, tabBuffer) {
             if (currentFont === void 0) { currentFont = _DefaultFontFamily; }
             if (currentFontSize === void 0) { currentFontSize = _DefaultFontSize; }
             if (currentXPosition === void 0) { currentXPosition = 0; }
             if (currentYPosition === void 0) { currentYPosition = _DefaultFontSize; }
             if (buffer === void 0) { buffer = ""; }
+            if (tabCount === void 0) { tabCount = 0; }
+            if (tabBuffer === void 0) { tabBuffer = ""; }
             this.currentFont = currentFont;
             this.currentFontSize = currentFontSize;
             this.currentXPosition = currentXPosition;
             this.currentYPosition = currentYPosition;
             this.buffer = buffer;
+            this.tabCount = tabCount;
+            this.tabBuffer = tabBuffer;
         }
         Console.prototype.init = function () {
             this.clearScreen();
@@ -38,27 +42,52 @@ var TSOS;
                 // Get the next character from the kernel input queue.
                 var chr = _KernelInputQueue.dequeue();
                 // Check to see if it's "special" (enter or ctrl-c) or "normal" (anything else that the keyboard device driver gave us).
-                if (chr === String.fromCharCode(8)) { //      backspace key
-                    if (this.buffer !== "") {
-                        this.removeText(this.buffer.slice(-1));
-                        this.buffer = this.buffer.slice(0, -1);
+                if (chr === String.fromCharCode(9)) { //     Tab
+                    /*
+                    Tab goes first since it needs to know if it was just pressed before
+                     */
+                    if (this.tabBuffer === "") {
+                        this.tabBuffer = this.buffer;
+                    }
+                    var completedTerm = _OsShell.cmdComplete(this.tabBuffer, this.tabCount);
+                    this.removeText(this.buffer);
+                    this.buffer = "";
+                    this.putText(completedTerm);
+                    this.buffer += completedTerm;
+                    if ((completedTerm === this.tabBuffer) && this.tabCount > 0) {
+                        //We've completed on this, but no more solutions. Reset to loop tab complete results
+                        this.tabCount = 0;
+                    }
+                    else {
+                        this.tabCount++;
                     }
                 }
-                else if (chr === String.fromCharCode(13)) { //     Enter key
-                    // The enter key marks the end of a console command, so ...
-                    // ... tell the shell ...
-                    _OsShell.handleInput(this.buffer);
-                    // ... and reset our buffer.
-                    this.buffer = "";
-                }
                 else {
-                    // This is a "normal" character, so ...
-                    // ... draw it on the screen...
-                    this.putText(chr);
-                    // ... and add it to our buffer.
-                    this.buffer += chr;
+                    //Reset tab tools, user is no longer hammering tab
+                    this.tabCount = 0;
+                    this.tabBuffer = "";
+                    if (chr === String.fromCharCode(8)) { //      backspace key
+                        if (this.buffer !== "") {
+                            this.removeText(this.buffer.slice(-1));
+                            this.buffer = this.buffer.slice(0, -1);
+                        }
+                    }
+                    else if (chr === String.fromCharCode(13)) { //     Enter key
+                        // The enter key marks the end of a console command, so ...
+                        // ... tell the shell ...
+                        _OsShell.handleInput(this.buffer);
+                        // ... and reset our buffer.
+                        this.buffer = "";
+                    }
+                    else {
+                        // This is a "normal" character, so ...
+                        // ... draw it on the screen...
+                        this.putText(chr);
+                        // ... and add it to our buffer.
+                        this.buffer += chr;
+                    }
+                    // TODO: Write a case for Ctrl-C.
                 }
-                // TODO: Write a case for Ctrl-C.
             }
         };
         Console.prototype.putText = function (text) {

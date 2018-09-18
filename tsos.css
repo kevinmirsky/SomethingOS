@@ -30,6 +30,24 @@ h3 {
   font-style: normal;
 }
 
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+    height: 45px;
+  overflow: hidden;
+  background-color: #333;
+}
+
+li {
+  float: left;
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
 #display {
   background-color:#DFDBC3;
   border: 2px solid red;

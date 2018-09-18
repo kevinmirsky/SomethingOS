@@ -61,9 +61,11 @@ var TSOS;
             //load
             sc = new TSOS.ShellCommand(this.shellLoad, "load", "- Verifies user entered code and loads it.");
             this.commandList[this.commandList.length] = sc;
+            //status
+            sc = new TSOS.ShellCommand(this.shellStatus, "status", "<string> - Sets the status message in the taskbar.");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
-            //
             // Display the initial prompt.
             this.putPrompt();
         };
@@ -124,6 +126,20 @@ var TSOS;
             }
             // ... and finally write the prompt again.
             this.putPrompt();
+        };
+        Shell.prototype.cmdComplete = function (input, tabCount) {
+            var index = 0;
+            var timesMatched = 0;
+            while (index < this.commandList.length) {
+                if (this.commandList[index].command.match("^" + input)) {
+                    if (timesMatched >= tabCount) {
+                        return this.commandList[index].command;
+                    }
+                    timesMatched++;
+                }
+                index++;
+            }
+            return input;
         };
         Shell.prototype.parseInput = function (buffer) {
             var retVal = new TSOS.UserCommand();
@@ -310,6 +326,10 @@ var TSOS;
             else {
                 _StdOut.putText("[ERROR] User code malformed. Unable to load.");
             }
+        };
+        Shell.prototype.shellStatus = function (args) {
+            document.getElementById("bannerStatus").innerText = args.join(' ');
+            //console.log(args);
         };
         return Shell;
     }());

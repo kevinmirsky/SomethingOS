@@ -117,7 +117,8 @@ var TSOS;
             else if (((keyCode >= 48) && (keyCode <= 57)) || // digits
                 (keyCode == 32) || // space
                 (keyCode == 13) || // enter
-                (keyCode == 8)) {
+                (keyCode == 8) || // backspace
+                (keyCode == 9)) { // tab
                 chr = String.fromCharCode(keyCode);
                 //check for shift key
                 if (isShifted) {

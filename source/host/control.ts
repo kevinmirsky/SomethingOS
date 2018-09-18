@@ -98,6 +98,8 @@ module TSOS {
             // .. and call the OS Kernel Bootstrap routine.
             _Kernel = new Kernel();
             _Kernel.krnBootstrap();  // _GLaDOS.afterStartup() will get called in there, if configured.
+            //initialize branding display
+            document.getElementById("bannerBranding").innerText = APP_NAME + " " + APP_VERSION;
         }
 
         public static hostBtnHaltOS_click(btn): void {
