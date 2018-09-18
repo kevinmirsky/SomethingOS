@@ -10,7 +10,8 @@
 var TSOS;
 (function (TSOS) {
     var Console = /** @class */ (function () {
-        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer, tabCount, tabBuffer) {
+        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer, tabCount, tabBuffer, //This stores the starting term for a tab "adventure"
+        historyStack, futureStack) {
             if (currentFont === void 0) { currentFont = _DefaultFontFamily; }
             if (currentFontSize === void 0) { currentFontSize = _DefaultFontSize; }
             if (currentXPosition === void 0) { currentXPosition = 0; }
@@ -18,6 +19,8 @@ var TSOS;
             if (buffer === void 0) { buffer = ""; }
             if (tabCount === void 0) { tabCount = 0; }
             if (tabBuffer === void 0) { tabBuffer = ""; }
+            if (historyStack === void 0) { historyStack = []; }
+            if (futureStack === void 0) { futureStack = []; }
             this.currentFont = currentFont;
             this.currentFontSize = currentFontSize;
             this.currentXPosition = currentXPosition;
@@ -25,6 +28,8 @@ var TSOS;
             this.buffer = buffer;
             this.tabCount = tabCount;
             this.tabBuffer = tabBuffer;
+            this.historyStack = historyStack;
+            this.futureStack = futureStack;
         }
         Console.prototype.init = function () {
             this.clearScreen();
@@ -72,10 +77,28 @@ var TSOS;
                             this.buffer = this.buffer.slice(0, -1);
                         }
                     }
+                    else if (chr === "↑") { //Up arrow key
+                        this.futureStack.push(this.buffer);
+                        this.removeText(this.buffer);
+                        this.buffer = "";
+                        var recalledLine = this.historyStack.pop();
+                        this.putText(recalledLine);
+                        this.buffer = recalledLine;
+                    }
+                    else if (chr === "↓") { //Down arrow key
+                        this.historyStack.push(this.buffer);
+                        this.removeText(this.buffer);
+                        this.buffer = "";
+                        var recalledLine = this.futureStack.pop();
+                        this.putText(recalledLine);
+                        this.buffer = recalledLine;
+                    }
                     else if (chr === String.fromCharCode(13)) { //     Enter key
                         // The enter key marks the end of a console command, so ...
                         // ... tell the shell ...
                         _OsShell.handleInput(this.buffer);
+                        this.historyStack.push(this.buffer);
+                        this.futureStack = [];
                         // ... and reset our buffer.
                         this.buffer = "";
                     }

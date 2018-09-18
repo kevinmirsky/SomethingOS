@@ -144,6 +144,22 @@ module TSOS {
                     }
                 }
                 _KernelInputQueue.enqueue(chr);
+            } else if (keyCode >= 37 && keyCode <= 40) { //Arrow keys
+                switch (keyCode) {
+                    case 37:
+                        chr="←";
+                        break;
+                    case 38:
+                        chr="↑";
+                        break;
+                    case 39:
+                        chr="→";
+                        break;
+                    case 40:
+                        chr="↓";
+                        break;
+                }
+                _KernelInputQueue.enqueue(chr);
             }
         }
     }
