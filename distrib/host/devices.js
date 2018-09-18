@@ -31,6 +31,9 @@ var TSOS;
             _OSclock++;
             // Call the kernel clock pulse event handler.
             _Kernel.krnOnCPUClockPulse();
+            var date = new Date();
+            document.getElementById("bannerTime").innerText = date.toLocaleDateString()
+                + "  |  " + date.toLocaleTimeString();
         };
         //
         // Keyboard Interrupt, a HARDWARE Interrupt Request. (See pages 560-561 in our text book.)

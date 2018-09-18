@@ -35,6 +35,9 @@ module TSOS {
             _OSclock++;
             // Call the kernel clock pulse event handler.
             _Kernel.krnOnCPUClockPulse();
+            let date = new Date();
+            document.getElementById("bannerTime").innerText = date.toLocaleDateString()
+                + "  |  " + date.toLocaleTimeString();
         }
 
         //

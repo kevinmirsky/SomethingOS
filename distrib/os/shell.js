@@ -61,9 +61,13 @@ var TSOS;
             //load
             sc = new TSOS.ShellCommand(this.shellLoad, "load", "- Verifies user entered code and loads it.");
             this.commandList[this.commandList.length] = sc;
+            //status
+            sc = new TSOS.ShellCommand(this.shellStatus, "status", "<string> - Sets the status message in the taskbar.");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
-            //
+            //initialize branding display
+            document.getElementById("bannerBranding").innerText = APP_NAME + " " + APP_VERSION;
             // Display the initial prompt.
             this.putPrompt();
         };
@@ -310,6 +314,10 @@ var TSOS;
             else {
                 _StdOut.putText("[ERROR] User code malformed. Unable to load.");
             }
+        };
+        Shell.prototype.shellStatus = function (args) {
+            document.getElementById("bannerStatus").innerText = args.join(' ');
+            //console.log(args);
         };
         return Shell;
     }());
