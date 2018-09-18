@@ -66,8 +66,6 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
-            //initialize branding display
-            document.getElementById("bannerBranding").innerText = APP_NAME + " " + APP_VERSION;
             // Display the initial prompt.
             this.putPrompt();
         };
