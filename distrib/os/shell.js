@@ -64,6 +64,10 @@ var TSOS;
             //status
             sc = new TSOS.ShellCommand(this.shellStatus, "status", "<string> - Sets the status message in the taskbar.");
             this.commandList[this.commandList.length] = sc;
+            //forceCrash
+            sc = new TSOS.ShellCommand(this.shellCrash, "forcecrash", " - This forces the kernel to trap an error and " +
+                "triggers a shutdown");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             // Display the initial prompt.
@@ -330,6 +334,9 @@ var TSOS;
         Shell.prototype.shellStatus = function (args) {
             document.getElementById("bannerStatus").innerText = args.join(' ');
             //console.log(args);
+        };
+        Shell.prototype.shellCrash = function (args) {
+            _Kernel.krnTrapError("User manually invoked failure.");
         };
         return Shell;
     }());

@@ -109,6 +109,13 @@ module TSOS {
                 "<string> - Sets the status message in the taskbar.");
             this.commandList[this.commandList.length] = sc;
 
+            //forceCrash
+            sc = new ShellCommand(this.shellCrash,
+            "forcecrash",
+                " - This forces the kernel to trap an error and " +
+                "triggers a shutdown");
+            this.commandList[this.commandList.length] = sc;
+
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
@@ -396,6 +403,10 @@ module TSOS {
             document.getElementById("bannerStatus").innerText = args.join(' ');
 
             //console.log(args);
+        }
+
+        public shellCrash(args) {
+            _Kernel.krnTrapError("User manually invoked failure.");
         }
     }
 }
