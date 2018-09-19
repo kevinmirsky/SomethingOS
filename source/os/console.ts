@@ -151,6 +151,10 @@ module TSOS {
          }
 
          public removeText(text): void {
+             if (this.currentXPosition <= 0) {
+                 console.log("RETREAT!");
+                 this.retreatLine();
+             }
             let xOffset = this.currentXPosition - _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
             let yOffset = this.currentYPosition - _DefaultFontSize;
              _DrawingContext.clearRect(xOffset, yOffset, this.currentXPosition,
@@ -159,6 +163,7 @@ module TSOS {
              //move the current X position
              var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
              this.currentXPosition = this.currentXPosition - offset;
+
          }
 
         public advanceLine(): void {
@@ -180,6 +185,34 @@ module TSOS {
                 this.moveCanvas(offset);
                 this.currentYPosition -= offset;
             }
+        }
+
+        public retreatLine(): void {
+            this.currentYPosition -= _DefaultFontSize +
+                _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
+                _FontHeightMargin;
+            this.reCalcX();
+            console.log("Yes sir! I'm now at x:" + this.currentXPosition + " y: " + this.currentYPosition);
+            // TODO wipe line we're leaving
+        }
+
+        public reCalcX(): void {
+            let correctX = 0;
+            let lineCount= 0;
+
+            //We must first account for the prompt or face misalignment!
+            correctX += _DrawingContext.measureText(this.currentFont, this.currentFontSize, _OsShell.promptStr);
+
+            for (let i = 0; i < this.buffer.length; i++) {
+                //figure out where we SHOULD be, working from the front
+                correctX += _DrawingContext.measureText(this.currentFont, this.currentFontSize, this.buffer[i]);
+                if ((correctX > _Canvas.width - 10) && i != this.buffer.length - 1) {
+                    //We need to go down a line
+                    correctX = 0;
+                    lineCount++;
+                }
+            }
+            this.currentXPosition = correctX;
         }
 
         public moveCanvas(amount): void {
