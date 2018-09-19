@@ -10,8 +10,11 @@
 var TSOS;
 (function (TSOS) {
     var Console = /** @class */ (function () {
-        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer, tabCount, tabBuffer, //This stores the starting term for a tab "adventure"
-        historyStack, futureStack) {
+        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer, tabCount, // Number of times user hit tab
+        tabBuffer, // This stores the starting term a user hit tab on
+        historyStack, // Command history
+        futureStack, // Where we put history we've gone past. Our "Forward" button
+        openHistoryItem) {
             if (currentFont === void 0) { currentFont = _DefaultFontFamily; }
             if (currentFontSize === void 0) { currentFontSize = _DefaultFontSize; }
             if (currentXPosition === void 0) { currentXPosition = 0; }
@@ -21,6 +24,7 @@ var TSOS;
             if (tabBuffer === void 0) { tabBuffer = ""; }
             if (historyStack === void 0) { historyStack = []; }
             if (futureStack === void 0) { futureStack = []; }
+            if (openHistoryItem === void 0) { openHistoryItem = ""; }
             this.currentFont = currentFont;
             this.currentFontSize = currentFontSize;
             this.currentXPosition = currentXPosition;
@@ -30,6 +34,7 @@ var TSOS;
             this.tabBuffer = tabBuffer;
             this.historyStack = historyStack;
             this.futureStack = futureStack;
+            this.openHistoryItem = openHistoryItem;
         }
         Console.prototype.init = function () {
             this.clearScreen();
@@ -78,20 +83,26 @@ var TSOS;
                         }
                     }
                     else if (chr === "↑") { //Up arrow key
-                        this.futureStack.push(this.buffer);
-                        this.removeText(this.buffer);
-                        this.buffer = "";
-                        var recalledLine = this.historyStack.pop();
-                        this.putText(recalledLine);
-                        this.buffer = recalledLine;
+                        if (this.historyStack.length > 0) {
+                            this.futureStack.push(this.openHistoryItem);
+                            this.removeText(this.buffer);
+                            this.buffer = "";
+                            var recalledLine = this.historyStack.pop();
+                            this.putText(recalledLine);
+                            this.buffer = recalledLine;
+                            this.openHistoryItem = recalledLine;
+                        }
                     }
                     else if (chr === "↓") { //Down arrow key
-                        this.historyStack.push(this.buffer);
-                        this.removeText(this.buffer);
-                        this.buffer = "";
-                        var recalledLine = this.futureStack.pop();
-                        this.putText(recalledLine);
-                        this.buffer = recalledLine;
+                        if (this.futureStack.length > 0) {
+                            this.historyStack.push(this.openHistoryItem);
+                            this.removeText(this.buffer);
+                            this.buffer = "";
+                            var recalledLine = this.futureStack.pop();
+                            this.putText(recalledLine);
+                            this.buffer = recalledLine;
+                            this.openHistoryItem = recalledLine;
+                        }
                     }
                     else if (chr === String.fromCharCode(13)) { //     Enter key
                         // The enter key marks the end of a console command, so ...
@@ -99,6 +110,7 @@ var TSOS;
                         _OsShell.handleInput(this.buffer);
                         this.historyStack.push(this.buffer);
                         this.futureStack = [];
+                        this.openHistoryItem = "";
                         // ... and reset our buffer.
                         this.buffer = "";
                     }
@@ -123,14 +135,32 @@ var TSOS;
             // UPDATE: Even though we are now working in TypeScript, char and string remain undistinguished.
             //         Consider fixing that.
             if (text !== "") {
+                for (var i = 0; i < text.length; i++) {
+                    this.putChar(text[i]);
+                }
+                /*
                 // Draw the text at the current X and Y coordinates.
                 _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text);
                 // Move the current X position.
                 var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
                 this.currentXPosition = this.currentXPosition + offset;
+                */
+            }
+        };
+        Console.prototype.putChar = function (char) {
+            _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, char);
+            // Move the current X position.
+            var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, char);
+            this.currentXPosition = this.currentXPosition + offset;
+            if (this.currentXPosition > _Canvas.width - 10) {
+                this.advanceLine();
             }
         };
         Console.prototype.removeText = function (text) {
+            if (this.currentXPosition <= 0) {
+                console.log("RETREAT!");
+                this.retreatLine();
+            }
             var xOffset = this.currentXPosition - _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
             var yOffset = this.currentYPosition - _DefaultFontSize;
             _DrawingContext.clearRect(xOffset, yOffset, this.currentXPosition, this.currentYPosition + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize));
@@ -155,6 +185,30 @@ var TSOS;
                 this.moveCanvas(offset);
                 this.currentYPosition -= offset;
             }
+        };
+        Console.prototype.retreatLine = function () {
+            this.currentYPosition -= _DefaultFontSize +
+                _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
+                _FontHeightMargin;
+            this.reCalcX();
+            console.log("Yes sir! I'm now at x:" + this.currentXPosition + " y: " + this.currentYPosition);
+            // TODO wipe line we're leaving
+        };
+        Console.prototype.reCalcX = function () {
+            var correctX = 0;
+            var lineCount = 0;
+            //We must first account for the prompt or face misalignment!
+            correctX += _DrawingContext.measureText(this.currentFont, this.currentFontSize, _OsShell.promptStr);
+            for (var i = 0; i < this.buffer.length; i++) {
+                //figure out where we SHOULD be, working from the front
+                correctX += _DrawingContext.measureText(this.currentFont, this.currentFontSize, this.buffer[i]);
+                if ((correctX > _Canvas.width - 10) && i != this.buffer.length - 1) {
+                    //We need to go down a line
+                    correctX = 0;
+                    lineCount++;
+                }
+            }
+            this.currentXPosition = correctX;
         };
         Console.prototype.moveCanvas = function (amount) {
             var imgData = _Canvas.getContext("2d").getImageData(0, 0, _Canvas.width, this.currentYPosition + _FontHeightMargin);

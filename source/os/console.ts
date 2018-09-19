@@ -18,10 +18,11 @@ module TSOS {
                     public currentXPosition = 0,
                     public currentYPosition = _DefaultFontSize,
                     public buffer = "",
-                    public tabCount = 0,
-                    public tabBuffer = "",  //This stores the starting term for a tab "adventure"
-                    public historyStack = [],
-                    public futureStack = [] ){
+                    public tabCount = 0, // Number of times user hit tab
+                    public tabBuffer = "",  // This stores the starting term a user hit tab on
+                    public historyStack = [], // Command history
+                    public futureStack = [], // Where we put history we've gone past. Our "Forward" button
+                    public openHistoryItem = "" ){ // What we use to store the active history element
         }
 
         public init(): void {
@@ -72,27 +73,33 @@ module TSOS {
                             this.removeText(this.buffer.slice(-1));
                             this.buffer = this.buffer.slice(0, -1);
                         }
-                    } else if(chr === "↑") { //Up arrow key
-                        this.futureStack.push(this.buffer);
-                        this.removeText(this.buffer);
-                        this.buffer = "";
-                        let recalledLine = this.historyStack.pop();
-                        this.putText(recalledLine);
-                        this.buffer = recalledLine;
-                    } else if (chr === "↓") { //Down arrow key
-                        this.historyStack.push(this.buffer);
-                        this.removeText(this.buffer);
-                        this.buffer = "";
-                        let recalledLine = this.futureStack.pop();
-                        this.putText(recalledLine);
-                        this.buffer = recalledLine;
-
+                    } else if(chr === "↑" ) {                    //Up arrow key
+                        if (this.historyStack.length > 0) {
+                            this.futureStack.push(this.openHistoryItem);
+                            this.removeText(this.buffer);
+                            this.buffer = "";
+                            let recalledLine = this.historyStack.pop();
+                            this.putText(recalledLine);
+                            this.buffer = recalledLine;
+                            this.openHistoryItem = recalledLine;
+                        }
+                    } else if (chr === "↓") {                   //Down arrow key
+                        if (this.futureStack.length > 0) {
+                            this.historyStack.push(this.openHistoryItem);
+                            this.removeText(this.buffer);
+                            this.buffer = "";
+                            let recalledLine = this.futureStack.pop();
+                            this.putText(recalledLine);
+                            this.buffer = recalledLine;
+                            this.openHistoryItem = recalledLine;
+                        }
                     } else if (chr === String.fromCharCode(13)) { //     Enter key
                         // The enter key marks the end of a console command, so ...
                         // ... tell the shell ...
                         _OsShell.handleInput(this.buffer);
                         this.historyStack.push(this.buffer);
                         this.futureStack = [];
+                        this.openHistoryItem = "";
                         // ... and reset our buffer.
                         this.buffer = "";
                     } else {
@@ -117,15 +124,37 @@ module TSOS {
             // UPDATE: Even though we are now working in TypeScript, char and string remain undistinguished.
             //         Consider fixing that.
             if (text !== "") {
+                for (let i = 0; i < text.length; i++) {
+                    this.putChar(text[i]);
+                }
+                /*
                 // Draw the text at the current X and Y coordinates.
                 _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text);
                 // Move the current X position.
                 var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
                 this.currentXPosition = this.currentXPosition + offset;
+                */
+
             }
          }
 
+         private putChar(char): void {
+             _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, char);
+
+             // Move the current X position.
+             var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, char);
+             this.currentXPosition = this.currentXPosition + offset;
+
+             if (this.currentXPosition > _Canvas.width - 10) {
+                 this.advanceLine();
+             }
+         }
+
          public removeText(text): void {
+             if (this.currentXPosition <= 0) {
+                 console.log("RETREAT!");
+                 this.retreatLine();
+             }
             let xOffset = this.currentXPosition - _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
             let yOffset = this.currentYPosition - _DefaultFontSize;
              _DrawingContext.clearRect(xOffset, yOffset, this.currentXPosition,
@@ -134,6 +163,7 @@ module TSOS {
              //move the current X position
              var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
              this.currentXPosition = this.currentXPosition - offset;
+
          }
 
         public advanceLine(): void {
@@ -155,6 +185,34 @@ module TSOS {
                 this.moveCanvas(offset);
                 this.currentYPosition -= offset;
             }
+        }
+
+        public retreatLine(): void {
+            this.currentYPosition -= _DefaultFontSize +
+                _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
+                _FontHeightMargin;
+            this.reCalcX();
+            console.log("Yes sir! I'm now at x:" + this.currentXPosition + " y: " + this.currentYPosition);
+            // TODO wipe line we're leaving
+        }
+
+        public reCalcX(): void {
+            let correctX = 0;
+            let lineCount= 0;
+
+            //We must first account for the prompt or face misalignment!
+            correctX += _DrawingContext.measureText(this.currentFont, this.currentFontSize, _OsShell.promptStr);
+
+            for (let i = 0; i < this.buffer.length; i++) {
+                //figure out where we SHOULD be, working from the front
+                correctX += _DrawingContext.measureText(this.currentFont, this.currentFontSize, this.buffer[i]);
+                if ((correctX > _Canvas.width - 10) && i != this.buffer.length - 1) {
+                    //We need to go down a line
+                    correctX = 0;
+                    lineCount++;
+                }
+            }
+            this.currentXPosition = correctX;
         }
 
         public moveCanvas(amount): void {
