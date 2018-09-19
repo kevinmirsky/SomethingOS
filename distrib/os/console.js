@@ -158,7 +158,6 @@ var TSOS;
         };
         Console.prototype.removeText = function (text) {
             if (this.currentXPosition <= 0) {
-                console.log("RETREAT!");
                 this.retreatLine();
             }
             var xOffset = this.currentXPosition - _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
@@ -191,7 +190,6 @@ var TSOS;
                 _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
                 _FontHeightMargin;
             this.reCalcX();
-            console.log("Yes sir! I'm now at x:" + this.currentXPosition + " y: " + this.currentYPosition);
             // TODO wipe line we're leaving
         };
         Console.prototype.reCalcX = function () {

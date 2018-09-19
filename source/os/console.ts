@@ -152,7 +152,6 @@ module TSOS {
 
          public removeText(text): void {
              if (this.currentXPosition <= 0) {
-                 console.log("RETREAT!");
                  this.retreatLine();
              }
             let xOffset = this.currentXPosition - _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
@@ -192,7 +191,6 @@ module TSOS {
                 _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
                 _FontHeightMargin;
             this.reCalcX();
-            console.log("Yes sir! I'm now at x:" + this.currentXPosition + " y: " + this.currentYPosition);
             // TODO wipe line we're leaving
         }
 
