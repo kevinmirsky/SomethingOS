@@ -69,6 +69,9 @@ var _OsShell: TSOS.Shell;
 // At least this OS is not trying to kill you. (Yet.)
 var _SarcasticMode: boolean = false;
 
+// Memory
+var MAX_MEMORY = 768;
+
 // Global Device Driver Objects - page 12
 var _krnKeyboardDriver; //  = null;
 

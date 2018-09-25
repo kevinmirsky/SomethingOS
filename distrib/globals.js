@@ -55,6 +55,8 @@ var _Console;
 var _OsShell;
 // At least this OS is not trying to kill you. (Yet.)
 var _SarcasticMode = false;
+// Memory
+var MAX_MEMORY = 768;
 // Global Device Driver Objects - page 12
 var _krnKeyboardDriver; //  = null;
 var _hardwareClockID = null;
