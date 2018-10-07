@@ -68,6 +68,9 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellCrash, "forcecrash", " - This forces the kernel to trap an error and " +
                 "triggers a shutdown");
             this.commandList[this.commandList.length] = sc;
+            //DebugMemTest
+            sc = new TSOS.ShellCommand(this.shellDebugMemtest, "memtest", "- [DEBUG] This tests the basic storage of memory.");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             // Display the initial prompt.
@@ -337,6 +340,10 @@ var TSOS;
         };
         Shell.prototype.shellCrash = function (args) {
             _Kernel.krnTrapError("User manually invoked failure.");
+        };
+        Shell.prototype.shellDebugMemtest = function (args) {
+            _Memory.storeValue(0xF1, 0x01);
+            _StdOut.putText(_Memory.accessAddress(0x01).toString());
         };
         return Shell;
     }());

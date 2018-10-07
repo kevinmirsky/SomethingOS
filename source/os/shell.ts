@@ -116,6 +116,12 @@ module TSOS {
                 "triggers a shutdown");
             this.commandList[this.commandList.length] = sc;
 
+            //DebugMemTest
+            sc = new ShellCommand(this.shellDebugMemtest,
+                "memtest",
+                "- [DEBUG] This tests the basic storage of memory.");
+            this.commandList[this.commandList.length] = sc;
+
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
@@ -407,6 +413,11 @@ module TSOS {
 
         public shellCrash(args) {
             _Kernel.krnTrapError("User manually invoked failure.");
+        }
+
+        public shellDebugMemtest(args) {
+            _Memory.storeValue(0xF1, 0x01);
+            _StdOut.putText(_Memory.accessAddress(0x01).toString());
         }
     }
 }

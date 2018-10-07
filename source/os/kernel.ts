@@ -35,11 +35,13 @@ module TSOS {
             _StdIn  = _Console;
             _StdOut = _Console;
 
+
             // Load the Keyboard Device Driver
             this.krnTrace("Loading the keyboard device driver.");
             _krnKeyboardDriver = new DeviceDriverKeyboard();     // Construct it.
             _krnKeyboardDriver.driverEntry();                    // Call the driverEntry() initialization routine.
             this.krnTrace(_krnKeyboardDriver.status);
+
 
             //
             // ... more?
