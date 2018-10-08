@@ -342,9 +342,7 @@ var TSOS;
             _Kernel.krnTrapError("User manually invoked failure.");
         };
         Shell.prototype.shellDebugMemtest = function (args) {
-            _MemManager.writeMemory(0xF1, 0x01);
-            console.log("Hello!");
-            console.log(_Memory.accessAddress(0x01, 0x02));
+            _MemManager.writeMemory(0xF1, 0xF01);
             _StdOut.putText(_MemManager.readMemory(0x01, 0x02).toString());
         };
         return Shell;

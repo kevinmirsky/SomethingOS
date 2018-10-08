@@ -15,7 +15,11 @@ module TSOS {
         }
 
         public writeMemory(index: number, value: number): any {
-            this.memory.storeValue(index, value);
+            if (value <= 0xFF) {
+                this.memory.storeValue(index, value);
+            } else {
+                throw "Memory storage exception: Attempted to store value larger than 0xFF";
+            }
         }
 
     }
