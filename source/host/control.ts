@@ -104,6 +104,7 @@ module TSOS {
 
             //Activate memory
             _Memory = new Memory(256);
+            _MemManager = new MemManager(_Memory);
         }
 
         public static hostBtnHaltOS_click(btn): void {

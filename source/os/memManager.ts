@@ -1,8 +1,8 @@
 module TSOS {
 
-    export class memManager {
+    export class MemManager {
 
-        constructor(private memory: number[]) {
+        constructor(private memory: Memory) {
 
         }
 
@@ -11,27 +11,11 @@ module TSOS {
         }
 
         public readMemory(startIndex: number, endIndex?: number): any {
-            if (endIndex) {
-                let values = [];
-                for (let i = startIndex;i < startIndex; i++) {
-                    values.push(this.memory[i]);
-                }
-                return values;
-            } else {
-                return this.memory[startIndex];
-            }
+            return this.memory.accessAddress(startIndex, endIndex);
         }
 
-        public writeMemory(startIndex: number, endIndex?: number): any {
-            if (endIndex) {
-                let values = [];
-                for (let i = startIndex;i < startIndex; i++) {
-                    values.push(this.memory[i]);
-                }
-                return values;
-            } else {
-                return this.memory[startIndex];
-            }
+        public writeMemory(index: number, value: number): any {
+            this.memory.storeValue(index, value);
         }
 
     }

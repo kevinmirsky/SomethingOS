@@ -416,8 +416,8 @@ module TSOS {
         }
 
         public shellDebugMemtest(args) {
-            _Memory.storeValue(0xF1, 0x01);
-            _StdOut.putText(_Memory.accessAddress(0x01).toString());
+            _MemManager.writeMemory(0xF1, 0x01);
+            _StdOut.putText(_MemManager.readMemory(0x01).toString());
         }
     }
 }

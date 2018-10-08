@@ -20,8 +20,16 @@ module TSOS {
             this.mainMem[index] = value;
         }
 
-        public accessAddress(index: number): number {
-            return this.mainMem[index];
+        public accessAddress(startIndex: number, endIndex?: number): any {
+            if (endIndex) {
+                let values = [];
+                for (let i = startIndex;i < startIndex; i++) {
+                    values.push(this.mainMem[i]);
+                }
+                return values;
+            } else {
+                return this.mainMem[startIndex];
+            }
         }
     }
 }
