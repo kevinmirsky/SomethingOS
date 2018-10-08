@@ -21,7 +21,6 @@ module TSOS {
         }
 
         public accessAddress(index: number): number {
-            console.log(this.mainMem[index].toString());
             return this.mainMem[index];
         }
     }
