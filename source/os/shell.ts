@@ -417,7 +417,9 @@ module TSOS {
 
         public shellDebugMemtest(args) {
             _MemManager.writeMemory(0xF1, 0x01);
-            _StdOut.putText(_MemManager.readMemory(0x01).toString());
+            console.log("Hello!");
+            console.log(_Memory.accessAddress(0x01, 0x02));
+            _StdOut.putText(_MemManager.readMemory(0x01, 0x02).toString());
         }
     }
 }

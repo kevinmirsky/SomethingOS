@@ -7,6 +7,7 @@ module TSOS {
 
         constructor(memSize: number = 256) {
             this.mainMem = new Array(256);
+            this.init();
         }
 
         public init(): void {
@@ -23,7 +24,7 @@ module TSOS {
         public accessAddress(startIndex: number, endIndex?: number): any {
             if (endIndex) {
                 let values = [];
-                for (let i = startIndex;i < startIndex; i++) {
+                for (let i = startIndex;i <= endIndex; i++) {
                     values.push(this.mainMem[i]);
                 }
                 return values;
