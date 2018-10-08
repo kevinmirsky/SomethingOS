@@ -380,10 +380,16 @@ module TSOS {
         public shellLoad(args) {
             let regex = new RegExp("^[a-fA-F0-9]+$"); //Pattern for valid hex number.
             let isValid = true;
+            let inputArray = [];
 
             let input = (<HTMLInputElement>document.getElementById("taProgramInput")).value;
             input = input.trim();
-            let inputArray = input.split(/\s+/);
+
+            input.replace(/\s/g, '');
+            const CHUNK_SIZE = 2;
+            for (let i = 0; i < input.length; i += CHUNK_SIZE) {
+                inputArray.push(input.substring(i, i + CHUNK_SIZE));
+            }
             if (inputArray.length == 0) {
                 isValid = false;
             }
@@ -391,7 +397,8 @@ module TSOS {
             inputArray.forEach(function (element) {
                 if (regex.test(element)) {
                     //Passes regex
-                    //Nothing to do. For now.
+                    //Convert to hex for later storage
+                    element = parseInt(element, 16);
                 } else {
                     //fails
                     isValid = false;
@@ -400,6 +407,7 @@ module TSOS {
             });
             if (isValid) {
                 _StdOut.putText("User input validated. Loading...");
+                _MemManager.writeMemory(0x01, inputArray);
             } else {
                 _StdOut.putText("[ERROR] User code malformed. Unable to load.");
             }
@@ -416,7 +424,7 @@ module TSOS {
         }
 
         public shellDebugMemtest(args) {
-            _MemManager.writeMemory(0xF1, 0xF01);
+            _MemManager.writeMemory(0xF1, 0x01);
             _StdOut.putText(_MemManager.readMemory(0x01, 0x02).toString());
         }
     }

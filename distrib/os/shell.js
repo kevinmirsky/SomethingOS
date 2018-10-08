@@ -310,16 +310,22 @@ var TSOS;
         Shell.prototype.shellLoad = function (args) {
             var regex = new RegExp("^[a-fA-F0-9]+$"); //Pattern for valid hex number.
             var isValid = true;
+            var inputArray = [];
             var input = document.getElementById("taProgramInput").value;
             input = input.trim();
-            var inputArray = input.split(/\s+/);
+            input.replace(/\s/g, '');
+            var CHUNK_SIZE = 2;
+            for (var i = 0; i < input.length; i += CHUNK_SIZE) {
+                inputArray.push(input.substring(i, i + CHUNK_SIZE));
+            }
             if (inputArray.length == 0) {
                 isValid = false;
             }
             inputArray.forEach(function (element) {
                 if (regex.test(element)) {
                     //Passes regex
-                    //Nothing to do. For now.
+                    //Convert to hex for later storage
+                    element = parseInt(element, 16);
                 }
                 else {
                     //fails
@@ -329,6 +335,7 @@ var TSOS;
             });
             if (isValid) {
                 _StdOut.putText("User input validated. Loading...");
+                _MemManager.writeMemory(0x01, inputArray);
             }
             else {
                 _StdOut.putText("[ERROR] User code malformed. Unable to load.");
@@ -342,7 +349,7 @@ var TSOS;
             _Kernel.krnTrapError("User manually invoked failure.");
         };
         Shell.prototype.shellDebugMemtest = function (args) {
-            _MemManager.writeMemory(0xF1, 0xF01);
+            _MemManager.writeMemory(0xF1, 0x01);
             _StdOut.putText(_MemManager.readMemory(0x01, 0x02).toString());
         };
         return Shell;
