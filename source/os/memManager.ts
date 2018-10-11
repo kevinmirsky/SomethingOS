@@ -33,5 +33,12 @@ module TSOS {
                 }
             }
         }
+
+        public refreshMemoryViewer() {
+            //Should we move this to some display controller at some point? Maybe.
+
+            var inputElement = <HTMLInputElement>document.getElementById("taMemory");
+            inputElement.value = this.memory.mainMem.join(" ");
+        }
     }
 }
