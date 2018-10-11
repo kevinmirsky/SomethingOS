@@ -17,7 +17,7 @@ module TSOS {
             }
         }
 
-        public storeValue(value: number, index: number): void {
+        public storeValue(index: number, value: number): void {
             if (value > 0xFF) {
                 /*
                  Should the OS really crash when this happens? Maybe not, but this should make memory controller

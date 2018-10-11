@@ -13,7 +13,7 @@ var TSOS;
                 this.mainMem[i] = 0x00;
             }
         };
-        Memory.prototype.storeValue = function (value, index) {
+        Memory.prototype.storeValue = function (index, value) {
             if (value > 0xFF) {
                 /*
                  Should the OS really crash when this happens? Maybe not, but this should make memory controller
