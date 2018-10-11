@@ -313,7 +313,8 @@ var TSOS;
             var inputArray = [];
             var input = document.getElementById("taProgramInput").value;
             input = input.trim();
-            input.replace(/\s/g, '');
+            input = input.replace(/\s/g, '');
+            console.log(input.toString());
             var CHUNK_SIZE = 2;
             for (var i = 0; i < input.length; i += CHUNK_SIZE) {
                 inputArray.push(input.substring(i, i + CHUNK_SIZE));
@@ -321,6 +322,7 @@ var TSOS;
             if (inputArray.length == 0) {
                 isValid = false;
             }
+            console.log(inputArray.toString());
             inputArray.forEach(function (element) {
                 if (regex.test(element)) {
                     //Passes regex
