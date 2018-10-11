@@ -337,7 +337,7 @@ var TSOS;
             });
             if (isValid) {
                 _StdOut.putText("User input validated. Loading...");
-                _MemManager.writeMemory(0x01, inputArray);
+                _MemManager.writeMemory(0x00, inputArray);
             }
             else {
                 _StdOut.putText("[ERROR] User code malformed. Unable to load.");

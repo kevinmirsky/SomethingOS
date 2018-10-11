@@ -20,12 +20,20 @@ module TSOS {
         public writeMemory(index, input): void {
             if (input instanceof Array) {
                 console.log("Writing from array");
+                for (let i = 0; i < input.length; i++) {
+                    let parsedInput = parseInt(input[i], 16);
+                    if (parsedInput <= 0xFF) {
+                        this.memory.storeValue(i + index, parsedInput);
+                    } else {
+                        //Be kind and tell them what was the problem?
+                        console.log(input[i]);
+                        throw "Memory storage exception: Attempted to store value larger than 0xFF";
+                    }
+                }
             } else {
                 //Single Value
+                this.memory.storeValue(index, input);
                 console.log("Writing single value");
-                for (let i = 0; i < input.length + 1; i++) {
-                    this.memory.storeValue(i + index, input[i]);
-                }
                 if (input <= 0xFF) {
                     this.memory.storeValue(index, input);
                 } else {
@@ -37,8 +45,18 @@ module TSOS {
         public refreshMemoryViewer() {
             //Should we move this to some display controller at some point? Maybe.
 
+            //Fun fact, concat is faster than array join!
+            let memDisplay = "";
+            for (let i = 0; i < this.memory.mainMem.length; i++) {
+                if (this.memory.mainMem[i] < 10) {
+                    //Add leading zero for consistency
+                    memDisplay += "0";
+                }
+                memDisplay += this.memory.mainMem[i].toString(16).toUpperCase() + " ";
+            }
             var inputElement = <HTMLInputElement>document.getElementById("taMemory");
-            inputElement.value = this.memory.mainMem.join(" ");
+            inputElement.value = memDisplay;
+            //inputElement.value = this.memory.mainMem.join(" ");
         }
     }
 }
