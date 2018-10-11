@@ -43,6 +43,10 @@ var TSOS;
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
         };
+        Cpu.prototype.loadAccumulator = function (input) {
+            this.Acc = input;
+            this.PC++;
+        };
         return Cpu;
     }());
     TSOS.Cpu = Cpu;

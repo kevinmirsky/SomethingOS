@@ -12,7 +12,7 @@
 // Global CONSTANTS (TypeScript 1.5 introduced const. Very cool.)
 //
 const APP_NAME: string    = "CyberCore";   // Melding flesh and metal
-const APP_VERSION: string = "0.1.13";   // Gotta start somewhere.
+const APP_VERSION: string = "0.2.1";   // Gotta start somewhere.
     /*
     Versioning Scheme:
 
@@ -39,6 +39,8 @@ const KEYBOARD_IRQ: number = 1;
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.
 //
 var _CPU: TSOS.Cpu;  // Utilize TypeScript's type annotation system to ensure that _CPU is an instance of the Cpu class.
+var _Memory: TSOS.Memory;
+var _MemManager: TSOS.MemManager;
 
 var _OSclock: number = 0;  // Page 23.
 
@@ -68,6 +70,9 @@ var _OsShell: TSOS.Shell;
 
 // At least this OS is not trying to kill you. (Yet.)
 var _SarcasticMode: boolean = false;
+
+// Memory
+var MAX_MEMORY = 768;
 
 // Global Device Driver Objects - page 12
 var _krnKeyboardDriver; //  = null;

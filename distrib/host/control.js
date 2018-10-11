@@ -1,4 +1,5 @@
 ///<reference path="../globals.ts" />
+///<reference path="memory.ts" />
 ///<reference path="../os/canvastext.ts" />
 /* ------------
      Control.ts
@@ -83,6 +84,8 @@ var TSOS;
             _Kernel.krnBootstrap(); // _GLaDOS.afterStartup() will get called in there, if configured.
             //initialize branding display
             document.getElementById("bannerBranding").innerText = APP_NAME + " " + APP_VERSION;
+            //Activate memory
+            _MemManager = new TSOS.MemManager(256);
         };
         Control.hostBtnHaltOS_click = function (btn) {
             Control.hostLog("Emergency halt", "host");

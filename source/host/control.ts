@@ -1,4 +1,5 @@
 ///<reference path="../globals.ts" />
+///<reference path="memory.ts" />
 ///<reference path="../os/canvastext.ts" />
 
 /* ------------
@@ -100,6 +101,9 @@ module TSOS {
             _Kernel.krnBootstrap();  // _GLaDOS.afterStartup() will get called in there, if configured.
             //initialize branding display
             document.getElementById("bannerBranding").innerText = APP_NAME + " " + APP_VERSION;
+
+            //Activate memory
+            _MemManager = new MemManager(256);
         }
 
         public static hostBtnHaltOS_click(btn): void {

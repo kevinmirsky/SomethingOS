@@ -68,6 +68,9 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellCrash, "forcecrash", " - This forces the kernel to trap an error and " +
                 "triggers a shutdown");
             this.commandList[this.commandList.length] = sc;
+            //DebugMemTest
+            sc = new TSOS.ShellCommand(this.shellDebugMemtest, "memtest", "- [DEBUG] This tests the basic storage of memory.");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             // Display the initial prompt.
@@ -307,16 +310,24 @@ var TSOS;
         Shell.prototype.shellLoad = function (args) {
             var regex = new RegExp("^[a-fA-F0-9]+$"); //Pattern for valid hex number.
             var isValid = true;
+            var inputArray = [];
             var input = document.getElementById("taProgramInput").value;
             input = input.trim();
-            var inputArray = input.split(/\s+/);
+            input = input.replace(/\s/g, '');
+            console.log(input.toString());
+            var CHUNK_SIZE = 2;
+            for (var i = 0; i < input.length; i += CHUNK_SIZE) {
+                inputArray.push(input.substring(i, i + CHUNK_SIZE));
+            }
             if (inputArray.length == 0) {
                 isValid = false;
             }
+            console.log(inputArray.toString());
             inputArray.forEach(function (element) {
                 if (regex.test(element)) {
                     //Passes regex
-                    //Nothing to do. For now.
+                    //Convert to hex for later storage
+                    element = parseInt(element, 16);
                 }
                 else {
                     //fails
@@ -326,6 +337,7 @@ var TSOS;
             });
             if (isValid) {
                 _StdOut.putText("User input validated. Loading...");
+                _MemManager.writeMemory(0x00, inputArray);
             }
             else {
                 _StdOut.putText("[ERROR] User code malformed. Unable to load.");
@@ -337,6 +349,10 @@ var TSOS;
         };
         Shell.prototype.shellCrash = function (args) {
             _Kernel.krnTrapError("User manually invoked failure.");
+        };
+        Shell.prototype.shellDebugMemtest = function (args) {
+            _MemManager.writeMemory(0xF1, 0x01);
+            _StdOut.putText(_MemManager.readMemory(0x01, 0x02).toString());
         };
         return Shell;
     }());
