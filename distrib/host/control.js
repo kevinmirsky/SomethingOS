@@ -85,8 +85,7 @@ var TSOS;
             //initialize branding display
             document.getElementById("bannerBranding").innerText = APP_NAME + " " + APP_VERSION;
             //Activate memory
-            _Memory = new TSOS.Memory(256);
-            _MemManager = new TSOS.MemManager(_Memory);
+            _MemManager = new TSOS.MemManager(256);
         };
         Control.hostBtnHaltOS_click = function (btn) {
             Control.hostLog("Emergency halt", "host");

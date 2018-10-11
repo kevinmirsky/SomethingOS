@@ -1,17 +1,13 @@
 module TSOS {
 
-    export class MemManager {
+    export class MemManager extends Memory {
 
-        constructor(private memory: Memory) {
-
-        }
-
-        public init(): void {
-
+        constructor(size: number) {
+            {super(size)}
         }
 
         public readMemory(startIndex: number, endIndex?: number): any {
-            return this.memory.accessAddress(startIndex, endIndex);
+            return super.accessAddress(startIndex, endIndex);
         }
 
         //Whoo, go multiple definitions!
@@ -23,7 +19,7 @@ module TSOS {
                 for (let i = 0; i < input.length; i++) {
                     let parsedInput = parseInt(input[i], 16);
                     if (parsedInput <= 0xFF) {
-                        this.memory.storeValue(i + index, parsedInput);
+                        super.storeValue(i + index, parsedInput);
                     } else {
                         //Be kind and tell them what was the problem?
                         console.log(input[i]);
@@ -32,10 +28,10 @@ module TSOS {
                 }
             } else {
                 //Single Value
-                this.memory.storeValue(index, input);
+                super.storeValue(index, input);
                 console.log("Writing single value");
                 if (input <= 0xFF) {
-                    this.memory.storeValue(index, input);
+                    super.storeValue(index, input);
                 } else {
                     throw "Memory storage exception: Attempted to store value larger than 0xFF";
                 }
@@ -46,17 +42,9 @@ module TSOS {
             //Should we move this to some display controller at some point? Maybe.
 
             //Fun fact, concat is faster than array join!
-            let memDisplay = "";
-            for (let i = 0; i < this.memory.mainMem.length; i++) {
-                if (this.memory.mainMem[i] < 10) {
-                    //Add leading zero for consistency
-                    memDisplay += "0";
-                }
-                memDisplay += this.memory.mainMem[i].toString(16).toUpperCase() + " ";
-            }
             var inputElement = <HTMLInputElement>document.getElementById("taMemory");
-            inputElement.value = memDisplay;
-            //inputElement.value = this.memory.mainMem.join(" ");
+            inputElement.value = super.dumpMemory();
+            //inputElement.value = super.mainMem.join(" ");
         }
     }
 }

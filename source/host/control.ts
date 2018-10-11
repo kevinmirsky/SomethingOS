@@ -103,8 +103,7 @@ module TSOS {
             document.getElementById("bannerBranding").innerText = APP_NAME + " " + APP_VERSION;
 
             //Activate memory
-            _Memory = new Memory(256);
-            _MemManager = new MemManager(_Memory);
+            _MemManager = new MemManager(256);
         }
 
         public static hostBtnHaltOS_click(btn): void {

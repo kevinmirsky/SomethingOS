@@ -1,13 +1,29 @@
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    }
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var TSOS;
 (function (TSOS) {
-    var MemManager = /** @class */ (function () {
-        function MemManager(memory) {
-            this.memory = memory;
+    var MemManager = /** @class */ (function (_super) {
+        __extends(MemManager, _super);
+        function MemManager(size) {
+            var _this = this;
+            {
+                _this = _super.call(this, size) || this;
+            }
+            return _this;
         }
-        MemManager.prototype.init = function () {
-        };
         MemManager.prototype.readMemory = function (startIndex, endIndex) {
-            return this.memory.accessAddress(startIndex, endIndex);
+            return _super.prototype.accessAddress.call(this, startIndex, endIndex);
         };
         MemManager.prototype.writeMemory = function (index, input) {
             if (input instanceof Array) {
@@ -15,7 +31,7 @@ var TSOS;
                 for (var i = 0; i < input.length; i++) {
                     var parsedInput = parseInt(input[i], 16);
                     if (parsedInput <= 0xFF) {
-                        this.memory.storeValue(i + index, parsedInput);
+                        _super.prototype.storeValue.call(this, i + index, parsedInput);
                     }
                     else {
                         //Be kind and tell them what was the problem?
@@ -26,10 +42,10 @@ var TSOS;
             }
             else {
                 //Single Value
-                this.memory.storeValue(index, input);
+                _super.prototype.storeValue.call(this, index, input);
                 console.log("Writing single value");
                 if (input <= 0xFF) {
-                    this.memory.storeValue(index, input);
+                    _super.prototype.storeValue.call(this, index, input);
                 }
                 else {
                     throw "Memory storage exception: Attempted to store value larger than 0xFF";
@@ -39,19 +55,11 @@ var TSOS;
         MemManager.prototype.refreshMemoryViewer = function () {
             //Should we move this to some display controller at some point? Maybe.
             //Fun fact, concat is faster than array join!
-            var memDisplay = "";
-            for (var i = 0; i < this.memory.mainMem.length; i++) {
-                if (this.memory.mainMem[i] < 10) {
-                    //Add leading zero for consistency
-                    memDisplay += "0";
-                }
-                memDisplay += this.memory.mainMem[i].toString(16).toUpperCase() + " ";
-            }
             var inputElement = document.getElementById("taMemory");
-            inputElement.value = memDisplay;
-            //inputElement.value = this.memory.mainMem.join(" ");
+            inputElement.value = _super.prototype.dumpMemory.call(this);
+            //inputElement.value = super.mainMem.join(" ");
         };
         return MemManager;
-    }());
+    }(TSOS.Memory));
     TSOS.MemManager = MemManager;
 })(TSOS || (TSOS = {}));

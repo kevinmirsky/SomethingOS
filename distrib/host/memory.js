@@ -9,7 +9,7 @@ var TSOS;
         }
         Memory.prototype.init = function () {
             //Load up memory with empty values
-            for (var i = 0; i < MAX_MEMORY; i++) {
+            for (var i = 0; i < this.mainMem.length; i++) {
                 this.mainMem[i] = 0x00;
             }
         };
@@ -35,6 +35,17 @@ var TSOS;
             else {
                 return this.mainMem[startIndex];
             }
+        };
+        Memory.prototype.dumpMemory = function () {
+            var memDisplay = "";
+            for (var i = 0; i < this.mainMem.length; i++) {
+                if (this.mainMem[i] < 10) {
+                    //Add leading zero for consistency
+                    memDisplay += "0";
+                }
+                memDisplay += this.mainMem[i].toString(16).toUpperCase() + " ";
+            }
+            return memDisplay;
         };
         return Memory;
     }());

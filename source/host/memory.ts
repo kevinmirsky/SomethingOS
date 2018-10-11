@@ -3,21 +3,22 @@
 module TSOS {
 
     export class Memory {
-        public mainMem: number[];
+        protected mainMem: number[];
 
-        constructor(memSize: number = 256) {
+
+        protected constructor(memSize: number = 256) {
             this.mainMem = new Array(256);
             this.init();
         }
 
-        public init(): void {
+        private init(): void {
             //Load up memory with empty values
-            for (let i = 0; i < MAX_MEMORY; i++) {
+            for (let i = 0; i < this.mainMem.length; i++) {
                 this.mainMem[i] = 0x00;
             }
         }
 
-        public storeValue(index: number, value: number): void {
+        protected storeValue(index: number, value: number): void {
             if (value > 0xFF) {
                 /*
                  Should the OS really crash when this happens? Maybe not, but this should make memory controller
@@ -30,7 +31,7 @@ module TSOS {
             this.mainMem[index] = value;
         }
 
-        public accessAddress(startIndex: number, endIndex?: number): any {
+        protected accessAddress(startIndex: number, endIndex?: number): any {
             if (endIndex) {
                 let values = [];
                 for (let i = startIndex;i <= endIndex; i++) {
@@ -40,6 +41,17 @@ module TSOS {
             } else {
                 return this.mainMem[startIndex];
             }
+        }
+        protected dumpMemory(): string {
+            let memDisplay = "";
+            for (let i = 0; i < this.mainMem.length; i++) {
+                if (this.mainMem[i] < 10) {
+                    //Add leading zero for consistency
+                    memDisplay += "0";
+                }
+                memDisplay += this.mainMem[i].toString(16).toUpperCase() + " ";
+            }
+            return memDisplay;
         }
     }
 }
