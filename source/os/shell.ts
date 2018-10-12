@@ -409,6 +409,8 @@ module TSOS {
             if (isValid) {
                 _StdOut.putText("User input validated. Loading...");
                 _MemManager.writeMemory(0x00, inputArray);
+                let process = new Pcb(0x00, inputArray.length);
+                _StdOut.putText(" Done. PID: " + process.pid.toString());
             } else {
                 _StdOut.putText("[ERROR] User code malformed. Unable to load.");
             }
