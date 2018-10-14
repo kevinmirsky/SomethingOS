@@ -14,14 +14,14 @@ module TSOS {
         private Xreg: number = 0;
         private Yreg: number = 0;
         private Zflag: number = 0;
-        private memoryStart: number;
+        private memoryOffset: number;
         private memoryRange: number;
 
         //internal flags
         private inInstances = false;
 
         constructor(memStart: number, memRange: number) {
-            this.memoryStart = memStart;
+            this.memoryOffset = memStart;
             this.memoryRange = memRange;
 
             //Assign pid, and increment counter for later
