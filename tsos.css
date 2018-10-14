@@ -8,6 +8,7 @@ body {
   font-style: normal;
     color: #ff3d5b;
     background: black;
+    text-shadow: 1px 1px 5px #ff4362;
 }
 
 h1 {
@@ -57,6 +58,7 @@ table, th, td {
     border: 2px solid #ff3d5b;
     color: #ff3d5b;
     background: black;
+    text-shadow: 1px 1px 10px #ff4362;
 }
 
 th, td {
