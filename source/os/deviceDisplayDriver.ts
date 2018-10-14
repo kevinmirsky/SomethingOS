@@ -12,6 +12,12 @@ module TSOS {
 
                 //Check if the row exists. If so, just update
                 if (pcbRow) {
+                    //TODO Update content
+                    let pcbData = value.dump();
+                    for (let i = 0; i < pcbData.length; i++) {
+                        let cell = document.getElementById(pcbData[i][0]);
+                        cell.innerHTML = pcbData[i][1];
+                    }
 
                 } else {
                     //We have to make one
@@ -21,7 +27,6 @@ module TSOS {
                     let pcbData = value.dump();
                     for (let i = 0; i < pcbData.length; i++) {
                         let cell = pcbRow.insertCell(i);
-                        console.log(pcbData.toString());
                         cell.id = pcbData[i][0];
                         cell.innerHTML = pcbData[i][1];
                     }
@@ -30,6 +35,8 @@ module TSOS {
 
                     //cell.innerHTML = value.pid.toString();
                 }
+
+                //TODO Remove finished processes?
             })
 
             /*

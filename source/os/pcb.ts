@@ -44,6 +44,16 @@ module TSOS {
             return output;
     }
 
+    public delete(): boolean {
+            for (let i = 1; i < Pcb.instances.length; i++) {
+                if (Pcb.instances[i].pid == this.pid) {
+                    Pcb.instances.splice(i, 1);
+                    return true;
+                }
+            }
+            return false;
+    }
+
 
         //TODO Add getters and setters for values. I don't want these freely accessible
 

@@ -27,6 +27,12 @@ var TSOS;
                 var pcbRow = document.getElementById("pcbRow" + value.pid);
                 //Check if the row exists. If so, just update
                 if (pcbRow) {
+                    //TODO Update content
+                    var pcbData = value.dump();
+                    for (var i = 0; i < pcbData.length; i++) {
+                        var cell = document.getElementById(pcbData[i][0]);
+                        cell.innerHTML = pcbData[i][1];
+                    }
                 }
                 else {
                     //We have to make one
@@ -35,13 +41,13 @@ var TSOS;
                     var pcbData = value.dump();
                     for (var i = 0; i < pcbData.length; i++) {
                         var cell = pcbRow.insertCell(i);
-                        console.log(pcbData.toString());
                         cell.id = pcbData[i][0];
                         cell.innerHTML = pcbData[i][1];
                     }
                     //let cell = pcbRow.insertCell(0);
                     //cell.innerHTML = value.pid.toString();
                 }
+                //TODO Remove finished processes?
             });
             /*
             Pcb.instances.forEach(function (value) {

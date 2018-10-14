@@ -122,6 +122,12 @@ module TSOS {
                 "- [DEBUG] This tests the basic storage of memory.");
             this.commandList[this.commandList.length] = sc;
 
+            //DebugMemTest
+            sc = new ShellCommand(this.shellDebugChangePcb,
+                "changepcbtest",
+                "- [DEBUG] This deletes a pcb for a process. Testing purposes only.");
+            this.commandList[this.commandList.length] = sc;
+
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
@@ -429,6 +435,11 @@ module TSOS {
         public shellDebugMemtest(args) {
             _MemManager.writeMemory(0xF1, 0x01);
             _StdOut.putText(_MemManager.readMemory(0x01, 0x02).toString());
+        }
+
+        public shellDebugChangePcb(args) {
+            //Hardcoded change for testing purposes
+            Pcb.instances[0].priority = 1;
         }
     }
 }

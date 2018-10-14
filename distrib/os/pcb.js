@@ -31,6 +31,15 @@ var TSOS;
             output.push(["cellmemoryRange" + this.pid, this.memoryRange.toString()]);
             return output;
         };
+        Pcb.prototype["delete"] = function () {
+            for (var i = 1; i < Pcb.instances.length; i++) {
+                if (Pcb.instances[i].pid == this.pid) {
+                    Pcb.instances.splice(i, 1);
+                    return true;
+                }
+            }
+            return false;
+        };
         //TODO Add getters and setters for values. I don't want these freely accessible
         Pcb.prototype.init = function () {
         };
