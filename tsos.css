@@ -1,17 +1,15 @@
 /* TSOS.css */
 
 body {
-  /*background: #909193 url(distrib/images/linen.png) repeat;*/
-  font-family: "Lucida Console", Monaco, monospace;
+  background: #909193 url(distrib/images/linen.png) repeat;
+  font-family: Helvetica, Verdana, Arial, sans-serif;
   font-size: 12pt;
-  font-weight: bold;
+  font-weight: normal;
   font-style: normal;
-    color: #ff3d5b;
-    background: black;
 }
 
 h1 {
-  color: #ff3d5b;
+  color: black;
   font-size: 24pt;
   font-weight: normal;
   font-style: normal;
@@ -19,7 +17,7 @@ h1 {
 }
 
 h2 {
-  color: #ff3d5b;
+  color: black;
   font-size: 20pt;
   font-weight: normal;
   font-style: normal;
@@ -30,7 +28,6 @@ h3 {
   font-size: 16pt;
   font-weight: normal;
   font-style: normal;
-    color: #ff3d5b;
 }
 
 ul {
@@ -40,7 +37,6 @@ ul {
     height: 45px;
   overflow: hidden;
   background-color: #333;
-    color: #ff3d5b;
 }
 
 li {
@@ -50,17 +46,6 @@ li {
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
-}
-
-table, th, td {
-    border-collapse:collapse;
-    border: 2px solid #ff3d5b;
-    color: #ff3d5b;
-    background: black;
-}
-
-th, td {
-    padding: 4px;
 }
 
 #display {
@@ -74,7 +59,7 @@ th, td {
 }
 
 .footerText {
-  color: #ff3d5b;
+  color: black;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 8pt;
   text-align: center;
