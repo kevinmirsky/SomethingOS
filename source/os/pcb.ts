@@ -29,6 +29,21 @@ module TSOS {
             Pcb.instances.push(this);
         }
 
+        public dump(): [string,string][] {
+            let output:[string,string][] = [];
+            output.push(["cellPid" + this.pid, this.pid.toString()]);
+            output.push(["cellPriority" + this.pid, this.priority.toString()]);
+            output.push(["cellPriority" + this.state, this.state.toString()]);
+            output.push(["cellPC" + this.pid, this.PC.toString()]);
+            output.push(["cellAcc" + this.pid, this.Acc.toString()]);
+            output.push(["cellXreg" + this.pid, this.Xreg.toString()]);
+            output.push(["cellYreg" + this.pid, this.Yreg.toString()]);
+            output.push(["cellZflag" + this.pid, this.Zflag.toString()]);
+            output.push(["cellmemoryOffset" + this.pid, this.memoryOffset.toString()]);
+            output.push(["cellmemoryRange" + this.pid, this.memoryRange.toString()]);
+            return output;
+    }
+
 
         //TODO Add getters and setters for values. I don't want these freely accessible
 

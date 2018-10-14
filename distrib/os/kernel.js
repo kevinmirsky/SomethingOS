@@ -70,6 +70,7 @@ var TSOS;
                that it has to look for interrupts and process them if it finds any.                           */
             //This is going here so it's updated frequently. However I want to see if there's a better space for it.
             _MemManager.refreshMemoryViewer();
+            TSOS.deviceDisplayDriver.displayPcb();
             // Check for an interrupt, are any. Page 560
             if (_KernelInterruptQueue.getSize() > 0) {
                 // Process the first interrupt on the interrupt queue.
