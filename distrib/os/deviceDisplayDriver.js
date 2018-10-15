@@ -60,6 +60,20 @@ var TSOS;
             })
             */
         };
+        deviceDisplayDriver.displayCpu = function () {
+            var cellIsExec = document.getElementById("cellIsExec");
+            var cellPC = document.getElementById("cellPC");
+            var cellAcc = document.getElementById("cellAcc");
+            var cellXreg = document.getElementById("cellXreg");
+            var cellYreg = document.getElementById("cellYreg");
+            var cellZflag = document.getElementById("cellZflag");
+            cellIsExec.innerHTML = _CPU.isExecuting.toString();
+            cellPC.innerHTML = _CPU.PC.toString();
+            cellAcc.innerHTML = _CPU.Acc.toString();
+            cellXreg.innerHTML = _CPU.Xreg.toString();
+            cellYreg.innerHTML = _CPU.Yreg.toString();
+            cellZflag.innerHTML = _CPU.Zflag.toString();
+        };
         deviceDisplayDriver.prototype.displayMemory = function () {
             //We'll migrate the code here later
         };

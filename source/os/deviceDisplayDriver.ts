@@ -52,6 +52,22 @@ module TSOS {
 
         }
 
+        public static displayCpu(): void {
+            let cellIsExec = document.getElementById("cellIsExec");
+            let cellPC = document.getElementById("cellPC");
+            let cellAcc = document.getElementById("cellAcc");
+            let cellXreg = document.getElementById("cellXreg");
+            let cellYreg = document.getElementById("cellYreg");
+            let cellZflag = document.getElementById("cellZflag");
+
+            cellIsExec.innerHTML = _CPU.isExecuting.toString();
+            cellPC.innerHTML = _CPU.PC.toString();
+            cellAcc.innerHTML = _CPU.Acc.toString();
+            cellXreg.innerHTML = _CPU.Xreg.toString();
+            cellYreg.innerHTML = _CPU.Yreg.toString();
+            cellZflag.innerHTML = _CPU.Zflag.toString();
+        }
+
         public displayMemory(): void {
             //We'll migrate the code here later
         }

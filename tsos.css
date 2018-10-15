@@ -1,60 +1,61 @@
 /* TSOS.css */
 
 body {
-  /*background: #909193 url(distrib/images/linen.png) repeat;*/
-  font-family: "Lucida Console", Monaco, monospace;
-  font-size: 12pt;
-  font-weight: bold;
-  font-style: normal;
+    /*background: #909193 url(distrib/images/linen.png) repeat;*/
+    font-family: "Lucida Console", Monaco, monospace;
+    font-size: 12pt;
+    font-weight: bold;
+    font-style: normal;
     color: #ff3d5b;
     background: black;
     text-shadow: 1px 1px 5px #ff4362;
 }
 
 h1 {
-  color: #ff3d5b;
-  font-size: 24pt;
-  font-weight: normal;
-  font-style: normal;
-  border-bottom: 1px solid black;
+    color: #ff3d5b;
+    font-size: 24pt;
+    font-weight: normal;
+    font-style: normal;
+    border-bottom: 1px solid black;
 }
 
 h2 {
-  color: #ff3d5b;
-  font-size: 20pt;
-  font-weight: normal;
-  font-style: normal;
+    color: #ff3d5b;
+    font-size: 20pt;
+    font-weight: normal;
+    font-style: normal;
 }
 
 h3 {
-  font-family: Helvetica, Verdana, Arial, sans-serif;
-  font-size: 16pt;
-  font-weight: normal;
-  font-style: normal;
+    font-family: Helvetica, Verdana, Arial, sans-serif;
+    font-size: 16pt;
+    font-weight: normal;
+    font-style: normal;
     color: #ff3d5b;
 }
 
 ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
     height: 45px;
-  overflow: hidden;
-  background-color: #333;
+    overflow: hidden;
+    background-color: #000000;
     color: #ff3d5b;
+    border: 2px solid #a2e0d5;
 }
 
 li {
-  float: left;
-  display: block;
-  color: white;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
+    float: left;
+    display: block;
+    color: #ff3d5b;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
 }
 
 table, th, td {
-    border-collapse:collapse;
+    border-collapse: collapse;
     border: 2px solid #ff3d5b;
     color: #ff3d5b;
     background: #000000;
@@ -66,18 +67,18 @@ th, td {
 }
 
 #display {
-  background-color: #292929;
-  border: 2px solid #a2e0d5;
-  cursor: default;
+    background-color: #292929;
+    border: 2px solid #a2e0d5;
+    cursor: default;
 }
 
 .normal_button {
-  width: 100px;
+    width: 100px;
 }
 
 .footerText {
-  color: #ff3d5b;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 8pt;
-  text-align: center;
+    color: #ff3d5b;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 8pt;
+    text-align: center;
 }

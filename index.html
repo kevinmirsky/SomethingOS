@@ -77,14 +77,39 @@
              tabindex="2"
              onclick="TSOS.Control.hostBtnReset_click(this);">
    </div>
+    <div id="divLeftbar" style="float:left;">
+        <div id="divConsole" style="margin:4px; width:500px; height:500px;">
+            <canvas id="display"
+                    width="500px"
+                    height="500px"
+                    tabindex="3">
+            </canvas>
+        </div>
+        <div id="divCpu" style="margin-left: 4px; margin-top: 20px; clear:none">
+            <label>
+                CPU
+            </label>
+            <table id="tableCpu">
+                <tr>
+                    <th>isExecuting</th>
+                    <th>PC</th>
+                    <th>Acc</th>
+                    <th>Xreg</th>
+                    <th>Yreg</th>
+                    <th>Zreg</th>
+                </tr>
+                <tr>
+                    <td id="cellIsExec">----------</td>
+                    <td id="cellPC">---</td>
+                    <td id="cellAcc">---</td>
+                    <td id="cellXreg">---</td>
+                    <td id="cellYreg">---</td>
+                    <td id="cellZflag">---</td>
+                </tr>
+            </table>
+        </div>
+    </div>
 
-   <div id="divConsole" style="margin:4px; width:500px; height:500px; float:left;">
-      <canvas id="display"
-              width="500px"
-              height="500px"
-              tabindex="3">
-      </canvas>
-   </div>
 
    <div id="divLog" style="margin-left:520px;">
       <label>
