@@ -67,12 +67,12 @@ var TSOS;
             var cellXreg = document.getElementById("cellXreg");
             var cellYreg = document.getElementById("cellYreg");
             var cellZflag = document.getElementById("cellZflag");
-            cellIsExec.innerHTML = _CPU.isExecuting.toString();
-            cellPC.innerHTML = _CPU.PC.toString();
-            cellAcc.innerHTML = _CPU.Acc.toString();
-            cellXreg.innerHTML = _CPU.Xreg.toString();
-            cellYreg.innerHTML = _CPU.Yreg.toString();
-            cellZflag.innerHTML = _CPU.Zflag.toString();
+            cellIsExec.innerHTML = _CPU.isExecuting.toString().toUpperCase();
+            cellPC.innerHTML = _CPU.PC.toString(16).toUpperCase();
+            cellAcc.innerHTML = _CPU.Acc.toString(16).toUpperCase();
+            cellXreg.innerHTML = _CPU.Xreg.toString(16).toUpperCase();
+            cellYreg.innerHTML = _CPU.Yreg.toString(16).toUpperCase();
+            cellZflag.innerHTML = _CPU.Zflag.toString(16).toUpperCase();
         };
         deviceDisplayDriver.prototype.displayMemory = function () {
             //We'll migrate the code here later
