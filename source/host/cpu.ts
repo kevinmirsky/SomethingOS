@@ -65,6 +65,10 @@ module TSOS {
                     this.storeAcc(_MemManager.readMemory(this.PC));
                     break;
                 }
+                case 0x6D: {
+                    this.addWithCarry(_MemManager.readMemory(this.PC));
+                    break;
+                }
                 default: {
                     //DEBUG, remove this
                     this.isExecuting = false;
@@ -89,6 +93,13 @@ module TSOS {
         // 8D - Store accumulator in memory
         public storeAcc(input): void {
             _MemManager.writeMemory(input, this.Acc);
+        }
+
+        // 6D - Add with carry
+        public addWithCarry(input): void {
+            this.Acc += _MemManager.readMemory(input);
+            //So, what exactly do we do when it goes over 2 digits?
+            //Memory is constrained to two hex digits. Tien's accepts it, then terminates when it sees it
         }
     }
 }
