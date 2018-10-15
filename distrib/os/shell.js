@@ -71,6 +71,9 @@ var TSOS;
             //DebugMemTest
             sc = new TSOS.ShellCommand(this.shellDebugMemtest, "memtest", "- [DEBUG] This tests the basic storage of memory.");
             this.commandList[this.commandList.length] = sc;
+            //DebugMemTest
+            sc = new TSOS.ShellCommand(this.shellDebugChangePcb, "changepcbtest", "- [DEBUG] This deletes a pcb for a process. Testing purposes only.");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             // Display the initial prompt.
@@ -355,6 +358,10 @@ var TSOS;
         Shell.prototype.shellDebugMemtest = function (args) {
             _MemManager.writeMemory(0xF1, 0x01);
             _StdOut.putText(_MemManager.readMemory(0x01, 0x02).toString());
+        };
+        Shell.prototype.shellDebugChangePcb = function (args) {
+            //Hardcoded change for testing purposes
+            TSOS.Pcb.instances[0].priority = 1;
         };
         return Shell;
     }());

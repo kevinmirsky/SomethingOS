@@ -11,12 +11,35 @@ var TSOS;
             this.Zflag = 0;
             //internal flags
             this.inInstances = false;
-            this.memoryStart = memStart;
+            this.memoryOffset = memStart;
             this.memoryRange = memRange;
             //Assign pid, and increment counter for later
             this.pid = Pcb.pidCounter++;
             Pcb.instances.push(this);
         }
+        Pcb.prototype.dump = function () {
+            var output = [];
+            output.push(["cellPid" + this.pid, this.pid.toString()]);
+            output.push(["cellPriority" + this.pid, this.priority.toString()]);
+            output.push(["cellPriority" + this.state, this.state.toString()]);
+            output.push(["cellPC" + this.pid, this.PC.toString()]);
+            output.push(["cellAcc" + this.pid, this.Acc.toString()]);
+            output.push(["cellXreg" + this.pid, this.Xreg.toString()]);
+            output.push(["cellYreg" + this.pid, this.Yreg.toString()]);
+            output.push(["cellZflag" + this.pid, this.Zflag.toString()]);
+            output.push(["cellmemoryOffset" + this.pid, this.memoryOffset.toString()]);
+            output.push(["cellmemoryRange" + this.pid, this.memoryRange.toString()]);
+            return output;
+        };
+        Pcb.prototype["delete"] = function () {
+            for (var i = 1; i < Pcb.instances.length; i++) {
+                if (Pcb.instances[i].pid == this.pid) {
+                    Pcb.instances.splice(i, 1);
+                    return true;
+                }
+            }
+            return false;
+        };
         //TODO Add getters and setters for values. I don't want these freely accessible
         Pcb.prototype.init = function () {
         };

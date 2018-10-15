@@ -23,6 +23,7 @@
    <script type="text/javascript" src="distrib/os/canvastext.js"></script>
    <script type="text/javascript" src="distrib/os/console.js"></script>
    <script type="text/javascript" src="distrib/os/deviceDriver.js"></script>
+    <script type="text/javascript" src="distrib/os/deviceDisplayDriver.js"></script>
    <script type="text/javascript" src="distrib/os/memManager.js"></script>
    <script type="text/javascript" src="distrib/os/pcb.js"></script>
    <script type="text/javascript" src="distrib/os/deviceDriverKeyboard.js"></script>
@@ -76,14 +77,39 @@
              tabindex="2"
              onclick="TSOS.Control.hostBtnReset_click(this);">
    </div>
+    <div id="divLeftbar" style="float:left;">
+        <div id="divConsole" style="margin:4px; width:500px; height:500px;">
+            <canvas id="display"
+                    width="500px"
+                    height="500px"
+                    tabindex="3">
+            </canvas>
+        </div>
+        <div id="divCpu" style="margin-left: 4px; margin-top: 20px; clear:none">
+            <label>
+                CPU
+            </label>
+            <table id="tableCpu">
+                <tr>
+                    <th>isExecuting</th>
+                    <th>PC</th>
+                    <th>Acc</th>
+                    <th>Xreg</th>
+                    <th>Yreg</th>
+                    <th>Zreg</th>
+                </tr>
+                <tr>
+                    <td id="cellIsExec">----------</td>
+                    <td id="cellPC">---</td>
+                    <td id="cellAcc">---</td>
+                    <td id="cellXreg">---</td>
+                    <td id="cellYreg">---</td>
+                    <td id="cellZflag">---</td>
+                </tr>
+            </table>
+        </div>
+    </div>
 
-   <div id="divConsole" style="margin:4px; width:500px; height:500px; float:left;">
-      <canvas id="display"
-              width="500px"
-              height="500px"
-              tabindex="3">
-      </canvas>
-   </div>
 
    <div id="divLog" style="margin-left:520px;">
       <label>
@@ -119,6 +145,25 @@
                    cols="48"
          ></textarea>
       </label>
+   </div>
+   <div id="divPcb" style="margin-left: 520px;">
+       <label>
+           PROCESS CONTROL BLOCK DISPLAY
+       </label>
+           <table id="tablePcb">
+               <tr>
+                   <th>PID</th>
+                   <th>Priority</th>
+                   <th>State</th>
+                   <th>PC</th>
+                   <th>Acc</th>
+                   <th>Xreg</th>
+                   <th>Yreg</th>
+                   <th>Zreg</th>
+                   <th>Memory offset</th>
+                   <th>Memory Range</th>
+               </tr>
+           </table>
    </div>
 </div>
 
