@@ -29,8 +29,8 @@ module TSOS {
             } else {
                 //Single Value
                 super.storeValue(index, input);
-                console.log("Writing single value");
                 if (input <= 0xFF) {
+                    console.log(input.toString(16));
                     super.storeValue(index, input);
                 } else {
                     throw "Memory storage exception: Attempted to store value larger than 0xFF";

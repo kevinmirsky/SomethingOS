@@ -46,11 +46,10 @@ module TSOS {
         }
 
         public fetch(): void {
-            let instruction = _MemManager.readMemory(this.PC);
+            let instruction: number = _MemManager.readMemory(this.PC);
             this.PC++;
 
             //Decode
-            console.log("Instruction = " + instruction.toString());
             //While we could store next value ahead of time, if we go out of bounds, we'll error out
             switch(instruction) {
                 case 0xA9: {
@@ -93,11 +92,13 @@ module TSOS {
         // 8D - Store accumulator in memory
         public storeAcc(input): void {
             _MemManager.writeMemory(input, this.Acc);
+            this.PC++;
         }
 
         // 6D - Add with carry
         public addWithCarry(input): void {
             this.Acc += _MemManager.readMemory(input);
+            this.PC++;
             //So, what exactly do we do when it goes over 2 digits?
             //Memory is constrained to two hex digits. Tien's accepts it, then terminates when it sees it
         }

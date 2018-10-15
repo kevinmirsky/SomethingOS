@@ -43,8 +43,8 @@ var TSOS;
             else {
                 //Single Value
                 _super.prototype.storeValue.call(this, index, input);
-                console.log("Writing single value");
                 if (input <= 0xFF) {
+                    console.log(input.toString(16));
                     _super.prototype.storeValue.call(this, index, input);
                 }
                 else {
