@@ -42,7 +42,6 @@ var TSOS;
             }
             else {
                 //Single Value
-                _super.prototype.storeValue.call(this, index, input);
                 if (input <= 0xFF) {
                     console.log(input.toString(16));
                     _super.prototype.storeValue.call(this, index, input);

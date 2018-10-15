@@ -28,7 +28,6 @@ module TSOS {
                 }
             } else {
                 //Single Value
-                super.storeValue(index, input);
                 if (input <= 0xFF) {
                     console.log(input.toString(16));
                     super.storeValue(index, input);
