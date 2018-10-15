@@ -66,6 +66,10 @@ var TSOS;
                     this.addWithCarry(_MemManager.readMemory(this.PC));
                     break;
                 }
+                case 0xA2: {
+                    this.loadXReg(_MemManager.readMemory(this.PC));
+                    break;
+                }
                 default: {
                     //DEBUG, remove this
                     this.isExecuting = false;
@@ -93,6 +97,11 @@ var TSOS;
             this.PC++;
             //So, what exactly do we do when it goes over 2 digits?
             //Memory is constrained to two hex digits. Tien's accepts it, then terminates when it sees it
+        };
+        // A2 - Load X register with constant
+        Cpu.prototype.loadXReg = function (input) {
+            this.Xreg = input;
+            this.PC++;
         };
         return Cpu;
     }());
