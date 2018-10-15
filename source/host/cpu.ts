@@ -51,9 +51,14 @@ module TSOS {
 
             //Decode
             console.log("Instruction = " + instruction.toString());
+            //While we could store next value ahead of time, if we go out of bounds, we'll error out
             switch(instruction) {
                 case 0xA9: {
-                    this.loadAccumulator(_MemManager.readMemory(this.PC));
+                    this.loadAcc(_MemManager.readMemory(this.PC));
+                    break;
+                }
+                case 0xAD: {
+                    this.loadAccFromMem(_MemManager.readMemory(this.PC));
                     break;
                 }
                 default: {
@@ -65,9 +70,15 @@ module TSOS {
         }
 
 
-        // A9
-        public loadAccumulator(input): void {
+        // A9 - Load the accumulator with a constant
+        public loadAcc(input): void {
             this.Acc = input;
+            this.PC++;
+        }
+
+        // AD - Load the accumulator from memory
+        public loadAccFromMem(input): void {
+            this.Acc = _MemManager.readMemory(input);
             this.PC++;
         }
     }

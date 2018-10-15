@@ -49,9 +49,14 @@ var TSOS;
             this.PC++;
             //Decode
             console.log("Instruction = " + instruction.toString());
+            //While we could store next value ahead of time, if we go out of bounds, we'll error out
             switch (instruction) {
                 case 0xA9: {
-                    this.loadAccumulator(_MemManager.readMemory(this.PC));
+                    this.loadAcc(_MemManager.readMemory(this.PC));
+                    break;
+                }
+                case 0xAD: {
+                    this.loadAccFromMem(_MemManager.readMemory(this.PC));
                     break;
                 }
                 default: {
@@ -60,9 +65,14 @@ var TSOS;
                 }
             }
         };
-        // A9
-        Cpu.prototype.loadAccumulator = function (input) {
+        // A9 - Load the accumulator with a constant
+        Cpu.prototype.loadAcc = function (input) {
             this.Acc = input;
+            this.PC++;
+        };
+        // AD - Load the accumulator from memory
+        Cpu.prototype.loadAccFromMem = function (input) {
+            this.Acc = _MemManager.readMemory(input);
             this.PC++;
         };
         return Cpu;
