@@ -42,7 +42,25 @@ var TSOS;
             _Kernel.krnTrace('CPU cycle');
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
+            this.fetch();
         };
+        Cpu.prototype.fetch = function () {
+            var instruction = _MemManager.readMemory(this.PC);
+            this.PC++;
+            //Decode
+            console.log("Instruction = " + instruction.toString());
+            switch (instruction) {
+                case 0xA9: {
+                    this.loadAccumulator(_MemManager.readMemory(this.PC));
+                    break;
+                }
+                default: {
+                    //DEBUG, remove this
+                    this.isExecuting = false;
+                }
+            }
+        };
+        // A9
         Cpu.prototype.loadAccumulator = function (input) {
             this.Acc = input;
             this.PC++;

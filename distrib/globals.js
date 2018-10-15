@@ -11,7 +11,7 @@
 // Global CONSTANTS (TypeScript 1.5 introduced const. Very cool.)
 //
 var APP_NAME = "CYBERCORE"; // Melding flesh and metal
-var APP_VERSION = "0.2.10"; // Gotta start somewhere.
+var APP_VERSION = "0.2.11"; // Gotta start somewhere.
 /*
 Versioning Scheme:
 
