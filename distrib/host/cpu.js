@@ -70,6 +70,10 @@ var TSOS;
                     this.loadXReg(_MemManager.readMemory(this.PC));
                     break;
                 }
+                case 0xAE: {
+                    this.loadXRegFromMem(_MemManager.readMemory(this.PC));
+                    break;
+                }
                 default: {
                     //DEBUG, remove this
                     this.isExecuting = false;
@@ -101,6 +105,11 @@ var TSOS;
         // A2 - Load X register with constant
         Cpu.prototype.loadXReg = function (input) {
             this.Xreg = input;
+            this.PC++;
+        };
+        // AE - Load X register from memory
+        Cpu.prototype.loadXRegFromMem = function (input) {
+            this.Xreg = _MemManager.readMemory(input);
             this.PC++;
         };
         return Cpu;

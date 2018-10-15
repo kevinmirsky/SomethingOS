@@ -72,6 +72,10 @@ module TSOS {
                     this.loadXReg(_MemManager.readMemory(this.PC));
                     break;
                 }
+                case 0xAE: {
+                    this.loadXRegFromMem(_MemManager.readMemory(this.PC));
+                    break;
+                }
                 default: {
                     //DEBUG, remove this
                     this.isExecuting = false;
@@ -112,5 +116,12 @@ module TSOS {
             this.Xreg = input;
             this.PC++;
         }
+
+        // AE - Load X register from memory
+        public loadXRegFromMem(input): void {
+            this.Xreg = _MemManager.readMemory(input);
+            this.PC++;
+        }
+
     }
 }
