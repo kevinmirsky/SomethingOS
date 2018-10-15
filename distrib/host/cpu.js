@@ -82,6 +82,10 @@ var TSOS;
                     this.loadYRegFromMem(_MemManager.readMemory(this.PC));
                     break;
                 }
+                case 0xEA: {
+                    //NO OP. Do nothing!
+                    break;
+                }
                 default: {
                     //DEBUG, remove this
                     this.isExecuting = false;
