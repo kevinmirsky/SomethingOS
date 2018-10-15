@@ -76,6 +76,14 @@ module TSOS {
                     this.loadXRegFromMem(_MemManager.readMemory(this.PC));
                     break;
                 }
+                case 0xA0: {
+                    this.loadYReg(_MemManager.readMemory(this.PC));
+                    break;
+                }
+                case 0xAC: {
+                    this.loadYRegFromMem(_MemManager.readMemory(this.PC));
+                    break;
+                }
                 default: {
                     //DEBUG, remove this
                     this.isExecuting = false;
@@ -120,6 +128,18 @@ module TSOS {
         // AE - Load X register from memory
         public loadXRegFromMem(input): void {
             this.Xreg = _MemManager.readMemory(input);
+            this.PC++;
+        }
+
+        // A0 - Load Y register with constant
+        public loadYReg(input): void {
+            this.Yreg = input;
+            this.PC++;
+        }
+
+        // AC - Load Y register from memory
+        public loadYRegFromMem(input): void {
+            this.Yreg = _MemManager.readMemory(input);
             this.PC++;
         }
 

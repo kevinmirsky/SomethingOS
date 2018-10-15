@@ -74,6 +74,14 @@ var TSOS;
                     this.loadXRegFromMem(_MemManager.readMemory(this.PC));
                     break;
                 }
+                case 0xA0: {
+                    this.loadYReg(_MemManager.readMemory(this.PC));
+                    break;
+                }
+                case 0xAC: {
+                    this.loadYRegFromMem(_MemManager.readMemory(this.PC));
+                    break;
+                }
                 default: {
                     //DEBUG, remove this
                     this.isExecuting = false;
@@ -110,6 +118,16 @@ var TSOS;
         // AE - Load X register from memory
         Cpu.prototype.loadXRegFromMem = function (input) {
             this.Xreg = _MemManager.readMemory(input);
+            this.PC++;
+        };
+        // A0 - Load Y register with constant
+        Cpu.prototype.loadYReg = function (input) {
+            this.Yreg = input;
+            this.PC++;
+        };
+        // AC - Load Y register from memory
+        Cpu.prototype.loadYRegFromMem = function (input) {
+            this.Yreg = _MemManager.readMemory(input);
             this.PC++;
         };
         return Cpu;
