@@ -59,6 +59,10 @@ var TSOS;
                     this.loadAccFromMem(_MemManager.readMemory(this.PC));
                     break;
                 }
+                case 0x8D: {
+                    this.storeAcc(_MemManager.readMemory(this.PC));
+                    break;
+                }
                 default: {
                     //DEBUG, remove this
                     this.isExecuting = false;
@@ -74,6 +78,10 @@ var TSOS;
         Cpu.prototype.loadAccFromMem = function (input) {
             this.Acc = _MemManager.readMemory(input);
             this.PC++;
+        };
+        // 8D - Store accumulator in memory
+        Cpu.prototype.storeAcc = function (input) {
+            _MemManager.writeMemory(input, this.Acc);
         };
         return Cpu;
     }());

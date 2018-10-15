@@ -61,6 +61,10 @@ module TSOS {
                     this.loadAccFromMem(_MemManager.readMemory(this.PC));
                     break;
                 }
+                case 0x8D: {
+                    this.storeAcc(_MemManager.readMemory(this.PC));
+                    break;
+                }
                 default: {
                     //DEBUG, remove this
                     this.isExecuting = false;
@@ -80,6 +84,11 @@ module TSOS {
         public loadAccFromMem(input): void {
             this.Acc = _MemManager.readMemory(input);
             this.PC++;
+        }
+
+        // 8D - Store accumulator in memory
+        public storeAcc(input): void {
+            _MemManager.writeMemory(input, this.Acc);
         }
     }
 }
