@@ -102,7 +102,8 @@ module TSOS {
                     break;
                 }
                 case 0xEE: {
-
+                    this.incrementByte(_MemManager.readMemory(this.PC));
+                    break;
                 }
                 default: {
                     //DEBUG, remove this

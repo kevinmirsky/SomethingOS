@@ -99,6 +99,10 @@ var TSOS;
                     this.branchOnNotEqual(_MemManager.readMemory(this.PC));
                     break;
                 }
+                case 0xEE: {
+                    this.incrementByte(_MemManager.readMemory(this.PC));
+                    break;
+                }
                 default: {
                     //DEBUG, remove this
                     this.isExecuting = false;
@@ -160,6 +164,11 @@ var TSOS;
                 this.PC += input;
             }
             this.PC++;
+        };
+        //Increment value of byte
+        Cpu.prototype.incrementByte = function (input) {
+            var value = _MemManager.readMemory(input) + 1;
+            _MemManager.writeMemory(input, value);
         };
         return Cpu;
     }());
