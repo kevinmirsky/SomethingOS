@@ -175,6 +175,7 @@ module TSOS {
         private branchOnNotEqual(input): void {
             if (this.Zflag == 0) {
                 this.PC += input;
+                this.PC = Utils.byteWrap(this.PC);
             }
             this.PC++;
         }
@@ -187,9 +188,18 @@ module TSOS {
 
         // FF - System Call
         private  sysCall(): void {
-            // #$01 in x reg -- Print integer in Y register
+            /*
+            switch (this.Xreg) {
+                case 0x01: { // #$01 in x reg -- Print integer in Y register
+                    _StdOut.putText(this.Yreg.toString(16));
+                    break;
+                }
+                case 0x02: {
+                    //# $02 in x reg -- Print 00 terminated string stored at address in Y reg
+                }
+            }
+            */
 
-            //# $02 in x reg -- Print 00 terminated string stored at address in Y reg
         }
     }
 }

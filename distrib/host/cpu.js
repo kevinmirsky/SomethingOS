@@ -129,6 +129,7 @@ var TSOS;
         Cpu.prototype.branchOnNotEqual = function (input) {
             if (this.Zflag == 0) {
                 this.PC += input;
+                this.PC = TSOS.Utils.byteWrap(this.PC);
             }
             this.PC++;
         };
