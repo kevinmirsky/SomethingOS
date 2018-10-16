@@ -102,25 +102,25 @@ module TSOS {
 
 
         // A9 - Load the accumulator with a constant
-        public loadAcc(input): void {
+        private loadAcc(input): void {
             this.Acc = input;
             this.PC++;
         }
 
         // AD - Load the accumulator from memory
-        public loadAccFromMem(input): void {
+        private loadAccFromMem(input): void {
             this.Acc = _MemManager.readMemory(input);
             this.PC++;
         }
 
         // 8D - Store accumulator in memory
-        public storeAcc(input): void {
+        private storeAcc(input): void {
             _MemManager.writeMemory(input, this.Acc);
             this.PC++;
         }
 
         // 6D - Add with carry
-        public addWithCarry(input): void {
+        private addWithCarry(input): void {
             this.Acc += _MemManager.readMemory(input);
             this.PC++;
             //So, what exactly do we do when it goes over 2 digits?
@@ -128,25 +128,25 @@ module TSOS {
         }
 
         // A2 - Load X register with constant
-        public loadXReg(input): void {
+        private loadXReg(input): void {
             this.Xreg = input;
             this.PC++;
         }
 
         // AE - Load X register from memory
-        public loadXRegFromMem(input): void {
+        private loadXRegFromMem(input): void {
             this.Xreg = _MemManager.readMemory(input);
             this.PC++;
         }
 
         // A0 - Load Y register with constant
-        public loadYReg(input): void {
+        private loadYReg(input): void {
             this.Yreg = input;
             this.PC++;
         }
 
         // AC - Load Y register from memory
-        public loadYRegFromMem(input): void {
+        private loadYRegFromMem(input): void {
             this.Yreg = _MemManager.readMemory(input);
             this.PC++;
         }
