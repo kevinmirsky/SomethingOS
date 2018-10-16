@@ -1,9 +1,6 @@
-/* ------------
-   Interrupt.ts
-   ------------ */
 var TSOS;
 (function (TSOS) {
-    var Interrupt = /** @class */ (function () {
+    var Interrupt = (function () {
         function Interrupt(irq, params) {
             this.irq = irq;
             this.params = params;
@@ -12,3 +9,4 @@ var TSOS;
     }());
     TSOS.Interrupt = Interrupt;
 })(TSOS || (TSOS = {}));
+//# sourceMappingURL=interrupt.js.map

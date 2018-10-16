@@ -1,15 +1,6 @@
-/* ------------
-   Queue.ts
-
-   A simple Queue, which is really just a dressed-up JavaScript Array.
-   See the Javascript Array documentation at
-   https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
-   Look at the push and shift methods, as they are the least obvious here.
-
-   ------------ */
 var TSOS;
 (function (TSOS) {
-    var Queue = /** @class */ (function () {
+    var Queue = (function () {
         function Queue(q) {
             if (q === void 0) { q = new Array(); }
             this.q = q;
@@ -41,3 +32,4 @@ var TSOS;
     }());
     TSOS.Queue = Queue;
 })(TSOS || (TSOS = {}));
+//# sourceMappingURL=queue.js.map

@@ -13,7 +13,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 var TSOS;
 (function (TSOS) {
-    var MemManager = /** @class */ (function (_super) {
+    var MemManager = (function (_super) {
         __extends(MemManager, _super);
         function MemManager(size) {
             var _this = this;
@@ -34,14 +34,12 @@ var TSOS;
                         _super.prototype.storeValue.call(this, i + index, parsedInput);
                     }
                     else {
-                        //Be kind and tell them what was the problem?
                         console.log(input[i]);
                         throw "Memory storage exception: Attempted to store value larger than 0xFF";
                     }
                 }
             }
             else {
-                //Single Value
                 if (input <= 0xFF) {
                     console.log(input.toString(16));
                     _super.prototype.storeValue.call(this, index, input);
@@ -52,13 +50,11 @@ var TSOS;
             }
         };
         MemManager.prototype.refreshMemoryViewer = function () {
-            //Should we move this to some display controller at some point? Maybe.
-            //Fun fact, concat is faster than array join!
             var inputElement = document.getElementById("taMemory");
             inputElement.value = _super.prototype.dumpMemory.call(this);
-            //inputElement.value = super.mainMem.join(" ");
         };
         return MemManager;
     }(TSOS.Memory));
     TSOS.MemManager = MemManager;
 })(TSOS || (TSOS = {}));
+//# sourceMappingURL=memManager.js.map

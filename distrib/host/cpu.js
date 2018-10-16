@@ -1,21 +1,6 @@
-///<reference path="../globals.ts" />
-/* ------------
-     CPU.ts
-
-     Requires global.ts.
-
-     Routines for the host CPU simulation, NOT for the OS itself.
-     In this manner, it's A LITTLE BIT like a hypervisor,
-     in that the Document environment inside a browser is the "bare metal" (so to speak) for which we write code
-     that hosts our client OS. But that analogy only goes so far, and the lines are blurred, because we are using
-     TypeScript/JavaScript in both the host and client environments.
-
-     This code references page numbers in the text book:
-     Operating System Concepts 8th edition by Silberschatz, Galvin, and Gagne.  ISBN 978-0-470-12872-5
-     ------------ */
 var TSOS;
 (function (TSOS) {
-    var Cpu = /** @class */ (function () {
+    var Cpu = (function () {
         function Cpu(PC, Acc, Xreg, Yreg, Zflag, isExecuting) {
             if (PC === void 0) { PC = 0; }
             if (Acc === void 0) { Acc = 0; }
@@ -40,15 +25,11 @@ var TSOS;
         };
         Cpu.prototype.cycle = function () {
             _Kernel.krnTrace('CPU cycle');
-            // TODO: Accumulate CPU usage and profiling statistics here.
-            // Do the real work here. Be sure to set this.isExecuting appropriately.
             this.fetch();
         };
         Cpu.prototype.fetch = function () {
             var instruction = _MemManager.readMemory(this.PC);
             this.PC++;
-            //Decode
-            //While we could store next value ahead of time, if we go out of bounds, we'll error out
             switch (instruction) {
                 case 0xA9: {
                     this.loadAcc(_MemManager.readMemory(this.PC));
@@ -83,11 +64,9 @@ var TSOS;
                     break;
                 }
                 case 0xEA: {
-                    //NO OP. Do nothing!
                     break;
                 }
                 case 0x00: {
-                    //Break. End execution
                     this.isExecuting = false;
                     break;
                 }
@@ -104,73 +83,62 @@ var TSOS;
                     break;
                 }
                 default: {
-                    //DEBUG, remove this
                     this.isExecuting = false;
                 }
             }
         };
-        // A9 - Load the accumulator with a constant
         Cpu.prototype.loadAcc = function (input) {
             this.Acc = input;
             this.PC++;
         };
-        // AD - Load the accumulator from memory
         Cpu.prototype.loadAccFromMem = function (input) {
             this.Acc = _MemManager.readMemory(input);
             this.PC++;
         };
-        // 8D - Store accumulator in memory
         Cpu.prototype.storeAcc = function (input) {
             _MemManager.writeMemory(input, this.Acc);
             this.PC++;
         };
-        // 6D - Add with carry
         Cpu.prototype.addWithCarry = function (input) {
             this.Acc += _MemManager.readMemory(input);
             this.PC++;
-            //So, what exactly do we do when it goes over 2 digits?
-            //Memory is constrained to two hex digits. Tien's accepts it, then terminates when it sees it
         };
-        // A2 - Load X register with constant
         Cpu.prototype.loadXReg = function (input) {
             this.Xreg = input;
             this.PC++;
         };
-        // AE - Load X register from memory
         Cpu.prototype.loadXRegFromMem = function (input) {
             this.Xreg = _MemManager.readMemory(input);
             this.PC++;
         };
-        // A0 - Load Y register with constant
         Cpu.prototype.loadYReg = function (input) {
             this.Yreg = input;
             this.PC++;
         };
-        // AC - Load Y register from memory
         Cpu.prototype.loadYRegFromMem = function (input) {
             this.Yreg = _MemManager.readMemory(input);
             this.PC++;
         };
-        // EC - Compare a byte in memory to X reg
         Cpu.prototype.compareToXReg = function (input) {
             if (this.Xreg == _MemManager.readMemory(input)) {
                 this.Zflag = 1;
             }
             this.PC++;
         };
-        //D0 - Branch n bytes if z flag is 0 (branch on not equal)
         Cpu.prototype.branchOnNotEqual = function (input) {
             if (this.Zflag == 0) {
                 this.PC += input;
             }
             this.PC++;
         };
-        //Increment value of byte
         Cpu.prototype.incrementByte = function (input) {
             var value = _MemManager.readMemory(input) + 1;
             _MemManager.writeMemory(input, value);
+        };
+        Cpu.prototype.sysCall = function () {
         };
         return Cpu;
     }());
     TSOS.Cpu = Cpu;
 })(TSOS || (TSOS = {}));
+//# sourceMappingURL=cpu.js.map

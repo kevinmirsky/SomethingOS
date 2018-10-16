@@ -5,6 +5,7 @@
         "removeComments": true,
         "preserveConstEnums": true,
         "sourceMap": true,
+        "outDir": "./distrib",
         "target": "es5"
     },
     "include": [
