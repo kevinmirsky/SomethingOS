@@ -1,5 +1,9 @@
 /* TSOS.css */
 
+* {
+    box-sizing: border-box;
+}
+
 body {
     /*background: #909193 url(distrib/images/linen.png) repeat;*/
     font-family: "Lucida Console", Monaco, monospace;
@@ -35,9 +39,24 @@ h3 {
     color: #ff3d5b;
 }
 
-.column {
+.col-left {
+    float: left;
+    margin: 0 2.5%;
+    width: 23.33%;
+    min-width: 500px;
+}
+
+.col-center {
+    float: left;
+    width: 23.33%;
+    margin: 0 2.5%;
+    /*padding:0 40px;*/
+}
+
+.col-right {
     float: left;
     width: 33.33%;
+    padding-right: 40px;
 }
 
 ul {
