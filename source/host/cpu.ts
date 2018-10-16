@@ -180,10 +180,17 @@ module TSOS {
             this.PC++;
         }
 
-        //Increment value of byte
+        // EE - Increment value of byte
         private incrementByte(input): void {
             let value = _MemManager.readMemory(input) + 1;
             _MemManager.writeMemory(input, value);
+        }
+
+        // FF - System Call
+        private  sysCall(): void {
+            // #$01 in x reg -- Print integer in Y register
+
+            //# $02 in x reg -- Print 00 terminated string stored at address in Y reg
         }
     }
 }
