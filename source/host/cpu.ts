@@ -57,7 +57,7 @@ module TSOS {
                     break;
                 }
                 case 0xAD: {
-                    this.loadAccFromMem(_MemManager.readMemory(this.PC));
+                    this.loadAccFromMem(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
                     break;
                 }
                 case 0x8D: {
@@ -125,8 +125,9 @@ module TSOS {
         }
 
         // AD - Load the accumulator from memory
-        private loadAccFromMem(input): void {
-            this.Acc = _MemManager.readMemory(input);
+        private loadAccFromMem(smallNum: number, bigNum: number): void {
+            console.log("Byte stitch is " + Utils.byteStitch(smallNum, bigNum).toString(16));
+            this.Acc = _MemManager.readMemory(Utils.byteStitch(smallNum, bigNum));
             this.PC++;
         }
 

@@ -36,7 +36,7 @@ var TSOS;
                     break;
                 }
                 case 0xAD: {
-                    this.loadAccFromMem(_MemManager.readMemory(this.PC));
+                    this.loadAccFromMem(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
                     break;
                 }
                 case 0x8D: {
@@ -95,8 +95,9 @@ var TSOS;
             this.Acc = input;
             this.PC++;
         };
-        Cpu.prototype.loadAccFromMem = function (input) {
-            this.Acc = _MemManager.readMemory(input);
+        Cpu.prototype.loadAccFromMem = function (smallNum, bigNum) {
+            console.log("Byte stitch is " + TSOS.Utils.byteStitch(smallNum, bigNum).toString(16));
+            this.Acc = _MemManager.readMemory(TSOS.Utils.byteStitch(smallNum, bigNum));
             this.PC++;
         };
         Cpu.prototype.storeAcc = function (input) {
