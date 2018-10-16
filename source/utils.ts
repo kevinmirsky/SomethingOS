@@ -43,5 +43,13 @@ module TSOS {
             }
             return retVal;
         }
+
+        public static byteWrap(num: number): number {
+            /*
+            This function simply keeps a value within the bounds of 1 byte
+            This prevents any nasty weirdness from values greater than 0xFF
+             */
+            return num % 0x100;
+        }
     }
 }
