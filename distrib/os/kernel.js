@@ -39,6 +39,11 @@ var TSOS;
                 var interrupt = _KernelInterruptQueue.dequeue();
                 this.krnInterruptHandler(interrupt.irq, interrupt.params);
             }
+            else if (singleStep) {
+                if (canStep && _CPU.isExecuting) {
+                    _CPU.cycle();
+                }
+            }
             else if (_CPU.isExecuting) {
                 _CPU.cycle();
             }

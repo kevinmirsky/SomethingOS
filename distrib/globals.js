@@ -6,6 +6,8 @@ var KEYBOARD_IRQ = 1;
 var _CPU;
 var _Memory;
 var _MemManager;
+var singleStep = false;
+var canStep = true;
 var _OSclock = 0;
 var _Mode = 0;
 var _Canvas;

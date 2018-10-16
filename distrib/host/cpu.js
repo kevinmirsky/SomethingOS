@@ -26,6 +26,9 @@ var TSOS;
         Cpu.prototype.cycle = function () {
             _Kernel.krnTrace('CPU cycle');
             this.fetch();
+            if (singleStep) {
+                canStep = false;
+            }
         };
         Cpu.prototype.fetch = function () {
             var instruction = _MemManager.readMemory(this.PC);

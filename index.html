@@ -55,7 +55,7 @@
              id = "btnStartOS"
              name="brnStartOS"
              class="normal_button"
-             value="Start"
+             value="START"
              tabindex="0"
              onclick="TSOS.Control.hostBtnStartOS_click(this);">
 
@@ -64,7 +64,7 @@
              name="brnHaltOS"
              class="normal_button"
              disabled="disabled"
-             value="Halt"
+             value="HALT"
              tabindex="1"
              onclick="TSOS.Control.hostBtnHaltOS_click(this);">
 
@@ -73,9 +73,28 @@
              name="brnReset"
              class="normal_button"
              disabled="disabled"
-             value="Reset"
+             value="RESET"
              tabindex="2"
              onclick="TSOS.Control.hostBtnReset_click(this);">
+
+       <input type="button"
+              id = "btnSingleStep"
+              name="brnSingleStep"
+              class="normal_button"
+              disabled="disabled"
+              value="SINGLE STEP"
+              tabindex="3"
+              onclick="TSOS.Control.hostBtnSingleStep_click(this);">
+
+       <input type="button"
+              id = "btnTakeStep"
+              name="brnTakeStep"
+              class="normal_button"
+              disabled="disabled"
+              value=">"
+              tabindex="4"
+              onclick="TSOS.Control.hostBtnTakeStep_click(this);">
+
    </div>
     <div id="divLeftbar" class="col-left">
         <div id="divConsole" style="margin:4px; width:500px; height:500px;">

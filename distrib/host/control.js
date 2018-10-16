@@ -26,6 +26,7 @@ var TSOS;
             btn.disabled = true;
             document.getElementById("btnHaltOS").disabled = false;
             document.getElementById("btnReset").disabled = false;
+            document.getElementById("btnSingleStep").disabled = false;
             document.getElementById("display").focus();
             _CPU = new TSOS.Cpu();
             _CPU.init();
@@ -43,6 +44,20 @@ var TSOS;
         };
         Control.hostBtnReset_click = function (btn) {
             location.reload(true);
+        };
+        Control.hostBtnSingleStep_click = function (btn) {
+            if (singleStep) {
+                singleStep = false;
+                document.getElementById("btnTakeStep").disabled = true;
+            }
+            else {
+                singleStep = true;
+                document.getElementById("btnTakeStep").disabled = false;
+            }
+            canStep = false;
+        };
+        Control.hostBtnTakeStep_click = function (btn) {
+            canStep = true;
         };
         return Control;
     }());
