@@ -92,6 +92,11 @@ var TSOS;
                 }
                 case 0xEC: {
                     this.compareToXReg(_MemManager.readMemory(this.PC));
+                    break;
+                }
+                case 0xD0: {
+                    this.branchOnNotEqual(_MemManager.readMemory(this.PC));
+                    break;
                 }
                 default: {
                     //DEBUG, remove this
@@ -145,6 +150,13 @@ var TSOS;
         Cpu.prototype.compareToXReg = function (input) {
             if (this.Xreg == _MemManager.readMemory(input)) {
                 this.Zflag = 1;
+            }
+            this.PC++;
+        };
+        //D0 - Branch n bytes if z flag is 0 (branch on not equal)
+        Cpu.prototype.branchOnNotEqual = function (input) {
+            if (this.Zflag == 0) {
+                this.PC += input;
             }
             this.PC++;
         };
