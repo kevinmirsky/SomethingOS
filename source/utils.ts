@@ -51,5 +51,13 @@ module TSOS {
              */
             return num % 0x100;
         }
+
+        public static byteStitch(smallNum: number, bigNum: number): number {
+            /*
+            This function takes two hex values and stitches them together in little endian format
+             */
+            bigNum = bigNum * 0x100;
+            return (smallNum + bigNum);
+        }
     }
 }

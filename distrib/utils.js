@@ -28,6 +28,10 @@ var TSOS;
         Utils.byteWrap = function (num) {
             return num % 0x100;
         };
+        Utils.byteStitch = function (smallNum, bigNum) {
+            bigNum = bigNum * 0x100;
+            return (smallNum + bigNum);
+        };
         return Utils;
     }());
     TSOS.Utils = Utils;
