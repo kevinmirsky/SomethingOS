@@ -35,6 +35,11 @@ h3 {
     color: #ff3d5b;
 }
 
+.column {
+    float: left;
+    width: 33.33%;
+}
+
 ul {
     list-style-type: none;
     margin: 0;
