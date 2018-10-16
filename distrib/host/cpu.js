@@ -148,6 +148,21 @@ var TSOS;
                     break;
                 }
                 case 0x02: {
+                    var outBuffer = "";
+                    var i = this.Yreg;
+                    var nextValue = void 0;
+                    var terminated = false;
+                    while (!terminated) {
+                        nextValue = _MemManager.readMemory(TSOS.Utils.byteWrap(i));
+                        if (!(nextValue == 0x00)) {
+                            outBuffer += String.fromCharCode(nextValue);
+                        }
+                        else {
+                            _StdOut.putText(outBuffer);
+                            terminated = true;
+                        }
+                        i++;
+                    }
                 }
             }
         };

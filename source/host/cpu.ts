@@ -197,8 +197,23 @@ module TSOS {
                     _StdOut.putText(this.Yreg.toString(16));
                     break;
                 }
-                case 0x02: {
-                    //# $02 in x reg -- Print 00 terminated string stored at address in Y reg
+                case 0x02: { //# $02 in x reg -- Print 00 terminated string stored at address in Y reg
+                    let outBuffer = "";
+                    let i = this.Yreg;
+                    let nextValue;
+                    let terminated = false;
+
+                    while(!terminated) {
+                        nextValue = _MemManager.readMemory(Utils.byteWrap(i));
+                        if (!(nextValue == 0x00)) {
+                            //Add to buffer
+                            outBuffer += String.fromCharCode(nextValue);
+                        } else {
+                            _StdOut.putText(outBuffer);
+                            terminated = true;
+                        }
+                        i++;
+                    }
                 }
             }
 
