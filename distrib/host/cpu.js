@@ -90,6 +90,9 @@ var TSOS;
                     //Break. End execution
                     this.isExecuting = false;
                 }
+                case 0xEC: {
+                    this.compareToXReg(_MemManager.readMemory(this.PC));
+                }
                 default: {
                     //DEBUG, remove this
                     this.isExecuting = false;
@@ -136,6 +139,13 @@ var TSOS;
         // AC - Load Y register from memory
         Cpu.prototype.loadYRegFromMem = function (input) {
             this.Yreg = _MemManager.readMemory(input);
+            this.PC++;
+        };
+        // EC - Compare a byte in memory to X reg
+        Cpu.prototype.compareToXReg = function (input) {
+            if (this.Xreg == _MemManager.readMemory(input)) {
+                this.Zflag = 1;
+            }
             this.PC++;
         };
         return Cpu;

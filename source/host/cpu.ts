@@ -92,6 +92,9 @@ module TSOS {
                     //Break. End execution
                     this.isExecuting = false;
                 }
+                case 0xEC: {
+                    this.compareToXReg(_MemManager.readMemory(this.PC));
+                }
                 default: {
                     //DEBUG, remove this
                     this.isExecuting = false;
@@ -151,5 +154,12 @@ module TSOS {
             this.PC++;
         }
 
+        // EC - Compare a byte in memory to X reg
+        private compareToXReg(input): void {
+            if (this.Xreg == _MemManager.readMemory(input)) {
+                this.Zflag = 1;
+            }
+            this.PC++;
+        }
     }
 }
