@@ -89,6 +89,7 @@ var TSOS;
                 case 0x00: {
                     //Break. End execution
                     this.isExecuting = false;
+                    break;
                 }
                 case 0xEC: {
                     this.compareToXReg(_MemManager.readMemory(this.PC));

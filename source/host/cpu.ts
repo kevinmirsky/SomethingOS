@@ -91,6 +91,7 @@ module TSOS {
                 case 0x00: {
                     //Break. End execution
                     this.isExecuting = false;
+                    break;
                 }
                 case 0xEC: {
                     this.compareToXReg(_MemManager.readMemory(this.PC));
@@ -99,6 +100,9 @@ module TSOS {
                 case 0xD0: {
                     this.branchOnNotEqual(_MemManager.readMemory(this.PC));
                     break;
+                }
+                case 0xEE: {
+
                 }
                 default: {
                     //DEBUG, remove this
@@ -173,6 +177,12 @@ module TSOS {
                 this.PC += input;
             }
             this.PC++;
+        }
+
+        //Increment value of byte
+        private incrementByte(input): void {
+            let value = _MemManager.readMemory(input) + 1;
+            _MemManager.writeMemory(input, value);
         }
     }
 }
