@@ -86,6 +86,10 @@ var TSOS;
                     //NO OP. Do nothing!
                     break;
                 }
+                case 0x00: {
+                    //Break. End execution
+                    this.isExecuting = false;
+                }
                 default: {
                     //DEBUG, remove this
                     this.isExecuting = false;
