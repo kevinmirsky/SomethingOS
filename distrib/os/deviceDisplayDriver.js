@@ -13,10 +13,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 var TSOS;
 (function (TSOS) {
-    /*
-    This class is meant to control the display of various system
-     */
-    var deviceDisplayDriver = /** @class */ (function (_super) {
+    var deviceDisplayDriver = (function (_super) {
         __extends(deviceDisplayDriver, _super);
         function deviceDisplayDriver() {
             return _super !== null && _super.apply(this, arguments) || this;
@@ -25,9 +22,7 @@ var TSOS;
             var pcbTable = document.getElementById("tablePcb");
             TSOS.Pcb.instances.forEach(function (value) {
                 var pcbRow = document.getElementById("pcbRow" + value.pid);
-                //Check if the row exists. If so, just update
                 if (pcbRow) {
-                    //TODO Update content
                     var pcbData = value.dump();
                     for (var i = 0; i < pcbData.length; i++) {
                         var cell = document.getElementById(pcbData[i][0]);
@@ -35,7 +30,6 @@ var TSOS;
                     }
                 }
                 else {
-                    //We have to make one
                     pcbRow = pcbTable.insertRow(1);
                     pcbRow.id = "pcbRow" + value.pid;
                     var pcbData = value.dump();
@@ -44,21 +38,8 @@ var TSOS;
                         cell.id = pcbData[i][0];
                         cell.innerHTML = pcbData[i][1];
                     }
-                    //let cell = pcbRow.insertCell(0);
-                    //cell.innerHTML = value.pid.toString();
                 }
-                //TODO Remove finished processes?
             });
-            /*
-            Pcb.instances.forEach(function (value) {
-                let pcbTable = <HTMLTableElement>document.getElementById("tablePcb");
-                let row = pcbTable.insertRow(1);
-                let cell = row.insertCell(0);
-                cell.innerText = value.pid.toString();
-
-
-            })
-            */
         };
         deviceDisplayDriver.displayCpu = function () {
             var cellIsExec = document.getElementById("cellIsExec");
@@ -67,17 +48,17 @@ var TSOS;
             var cellXreg = document.getElementById("cellXreg");
             var cellYreg = document.getElementById("cellYreg");
             var cellZflag = document.getElementById("cellZflag");
-            cellIsExec.innerHTML = _CPU.isExecuting.toString();
-            cellPC.innerHTML = _CPU.PC.toString();
-            cellAcc.innerHTML = _CPU.Acc.toString();
-            cellXreg.innerHTML = _CPU.Xreg.toString();
-            cellYreg.innerHTML = _CPU.Yreg.toString();
-            cellZflag.innerHTML = _CPU.Zflag.toString();
+            cellIsExec.innerHTML = _CPU.isExecuting.toString().toUpperCase();
+            cellPC.innerHTML = _CPU.PC.toString(16).toUpperCase();
+            cellAcc.innerHTML = _CPU.Acc.toString(16).toUpperCase();
+            cellXreg.innerHTML = _CPU.Xreg.toString(16).toUpperCase();
+            cellYreg.innerHTML = _CPU.Yreg.toString(16).toUpperCase();
+            cellZflag.innerHTML = _CPU.Zflag.toString(16).toUpperCase();
         };
         deviceDisplayDriver.prototype.displayMemory = function () {
-            //We'll migrate the code here later
         };
         return deviceDisplayDriver;
     }(TSOS.DeviceDriver));
     TSOS.deviceDisplayDriver = deviceDisplayDriver;
 })(TSOS || (TSOS = {}));
+//# sourceMappingURL=deviceDisplayDriver.js.map

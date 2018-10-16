@@ -1,19 +1,17 @@
 var TSOS;
 (function (TSOS) {
-    var Pcb = /** @class */ (function () {
+    var Pcb = (function () {
         function Pcb(memStart, memRange) {
-            this.priority = 99; //No give priority? No get priority!
+            this.priority = 99;
             this.state = "NEW";
             this.PC = 0;
             this.Acc = 0;
             this.Xreg = 0;
             this.Yreg = 0;
             this.Zflag = 0;
-            //internal flags
             this.inInstances = false;
             this.memoryOffset = memStart;
             this.memoryRange = memRange;
-            //Assign pid, and increment counter for later
             this.pid = Pcb.pidCounter++;
             Pcb.instances.push(this);
         }
@@ -31,7 +29,7 @@ var TSOS;
             output.push(["cellmemoryRange" + this.pid, this.memoryRange.toString()]);
             return output;
         };
-        Pcb.prototype["delete"] = function () {
+        Pcb.prototype.delete = function () {
             for (var i = 1; i < Pcb.instances.length; i++) {
                 if (Pcb.instances[i].pid == this.pid) {
                     Pcb.instances.splice(i, 1);
@@ -40,12 +38,12 @@ var TSOS;
             }
             return false;
         };
-        //TODO Add getters and setters for values. I don't want these freely accessible
         Pcb.prototype.init = function () {
         };
         Pcb.instances = [];
-        Pcb.pidCounter = 0; // Use to know what PID is next to go. May want to make more robust
+        Pcb.pidCounter = 0;
         return Pcb;
     }());
     TSOS.Pcb = Pcb;
 })(TSOS || (TSOS = {}));
+//# sourceMappingURL=pcb.js.map

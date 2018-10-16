@@ -43,5 +43,21 @@ module TSOS {
             }
             return retVal;
         }
+
+        public static byteWrap(num: number): number {
+            /*
+            This function simply keeps a value within the bounds of 1 byte
+            This prevents any nasty weirdness from values greater than 0xFF
+             */
+            return num % 0x100;
+        }
+
+        public static byteStitch(smallNum: number, bigNum: number): number {
+            /*
+            This function takes two hex values and stitches them together in little endian format
+             */
+            bigNum = bigNum * 0x100;
+            return (smallNum + bigNum);
+        }
     }
 }

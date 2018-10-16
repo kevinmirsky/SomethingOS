@@ -1,5 +1,3 @@
-///<reference path="../globals.ts" />
-///<reference path="deviceDriver.ts" />
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -13,119 +11,84 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-/* ----------------------------------
-   DeviceDriverKeyboard.ts
-
-   Requires deviceDriver.ts
-
-   The Kernel Keyboard Device Driver.
-   ---------------------------------- */
 var TSOS;
 (function (TSOS) {
-    // Extends DeviceDriver
-    var DeviceDriverKeyboard = /** @class */ (function (_super) {
+    var DeviceDriverKeyboard = (function (_super) {
         __extends(DeviceDriverKeyboard, _super);
         function DeviceDriverKeyboard() {
-            // Override the base method pointers.
-            var _this = 
-            // The code below cannot run because "this" can only be
-            // accessed after calling super.
-            //super(this.krnKbdDriverEntry, this.krnKbdDispatchKeyPress);
-            _super.call(this) || this;
+            var _this = _super.call(this) || this;
             _this.driverEntry = _this.krnKbdDriverEntry;
             _this.isr = _this.krnKbdDispatchKeyPress;
             return _this;
         }
         DeviceDriverKeyboard.prototype.krnKbdDriverEntry = function () {
-            // Initialization routine for this, the kernel-mode Keyboard Device Driver.
             this.status = "loaded";
-            // More?
         };
         DeviceDriverKeyboard.prototype.krnKbdDispatchKeyPress = function (params) {
-            // Parse the params.    TODO: Check that the params are valid and osTrapError if not.
             var keyCode = params[0];
             var isShifted = params[1];
             _Kernel.krnTrace("Key code:" + keyCode + " shifted:" + isShifted);
             var chr = "";
-            // Check to see if we even want to deal with the key that was pressed.
-            if (((keyCode >= 65) && (keyCode <= 90)) || // A..Z
-                ((keyCode >= 97) && (keyCode <= 123))) { // a..z {
-                // Determine the character we want to display.
-                // Assume it's lowercase...
+            if (((keyCode >= 65) && (keyCode <= 90)) ||
+                ((keyCode >= 97) && (keyCode <= 123))) {
                 chr = String.fromCharCode(keyCode + 32);
-                // ... then check the shift key and re-adjust if necessary.
                 if (isShifted) {
                     chr = String.fromCharCode(keyCode);
                 }
-                // TODO: Check for caps-lock and handle as shifted if so.
                 _KernelInputQueue.enqueue(chr);
             }
-            else if ((keyCode >= 188) && (keyCode <= 191)) { // handles: , . / -
+            else if ((keyCode >= 188) && (keyCode <= 191)) {
                 chr = String.fromCharCode((keyCode - 144));
                 if (isShifted) {
                     chr = String.fromCharCode(keyCode - 128);
                     if (keyCode == 189) {
-                        //Why do you have to be THAT guy, key 189?
                         chr = "_";
                     }
                 }
                 _KernelInputQueue.enqueue(chr);
             }
-            else if ((keyCode >= 219) && (keyCode <= 221)) { // handles:  [ ] \
+            else if ((keyCode >= 219) && (keyCode <= 221)) {
                 chr = String.fromCharCode((keyCode - 128));
                 if (isShifted) {
                     chr = String.fromCharCode(keyCode - 96);
                 }
                 _KernelInputQueue.enqueue(chr);
             }
-            else if (keyCode == 186) { // handles: ;
-                //For consistency's sake, we're still going to use
-                //subtraction to get the char code
+            else if (keyCode == 186) {
                 chr = String.fromCharCode((keyCode - 127));
                 if (isShifted) {
                     chr = ":";
                 }
                 _KernelInputQueue.enqueue(chr);
             }
-            else if (keyCode == 187) { // handles: ;
-                //For consistency's sake, we're still going to use
-                //subtraction to get the char code
+            else if (keyCode == 187) {
                 chr = String.fromCharCode((keyCode - 126));
                 if (isShifted) {
                     chr = "+";
                 }
                 _KernelInputQueue.enqueue(chr);
             }
-            else if (keyCode == 192) { // handles: `
-                //For consistency's sake, we're still going to use
-                //subtraction to get the char code
+            else if (keyCode == 192) {
                 chr = String.fromCharCode((keyCode - 96));
                 if (isShifted) {
                     chr = "~";
                 }
                 _KernelInputQueue.enqueue(chr);
             }
-            else if (keyCode == 222) { // handles: '
-                //For consistency's sake, we're still going to use
-                //subtraction to get the char code
+            else if (keyCode == 222) {
                 chr = String.fromCharCode((keyCode - 183));
                 if (isShifted) {
                     chr = "\"";
                 }
                 _KernelInputQueue.enqueue(chr);
             }
-            else if (((keyCode >= 48) && (keyCode <= 57)) || // digits
-                (keyCode == 32) || // space
-                (keyCode == 13) || // enter
-                (keyCode == 8) || // backspace
-                (keyCode == 9)) { // tab
+            else if (((keyCode >= 48) && (keyCode <= 57)) ||
+                (keyCode == 32) ||
+                (keyCode == 13) ||
+                (keyCode == 8) ||
+                (keyCode == 9)) {
                 chr = String.fromCharCode(keyCode);
-                //check for shift key
                 if (isShifted) {
-                    /* There's no real pattern for these... 1 or two may be sequential,
-                       but it's not worth being clever for those since it'll just be
-                       harder to read.
-                     */
                     switch (keyCode) {
                         case 48:
                             chr = ")";
@@ -161,7 +124,7 @@ var TSOS;
                 }
                 _KernelInputQueue.enqueue(chr);
             }
-            else if (keyCode >= 37 && keyCode <= 40) { //Arrow keys
+            else if (keyCode >= 37 && keyCode <= 40) {
                 switch (keyCode) {
                     case 37:
                         chr = "←";
@@ -183,3 +146,4 @@ var TSOS;
     }(TSOS.DeviceDriver));
     TSOS.DeviceDriverKeyboard = DeviceDriverKeyboard;
 })(TSOS || (TSOS = {}));
+//# sourceMappingURL=deviceDriverKeyboard.js.map

@@ -26,7 +26,8 @@ module TSOS {
                  never reach the memory. So in my mind, this strictness is preferred.
                  */
 
-                _Kernel.krnTrapError("Memory instructed to store oversized value in memory");
+                _Kernel.krnTrapError("Memory instructed to store oversized value in memory: "
+                    + value.toString(16));
             }
             this.mainMem[index] = value;
         }

@@ -1,21 +1,6 @@
-///<reference path="../globals.ts" />
-/* ------------
-     CPU.ts
-
-     Requires global.ts.
-
-     Routines for the host CPU simulation, NOT for the OS itself.
-     In this manner, it's A LITTLE BIT like a hypervisor,
-     in that the Document environment inside a browser is the "bare metal" (so to speak) for which we write code
-     that hosts our client OS. But that analogy only goes so far, and the lines are blurred, because we are using
-     TypeScript/JavaScript in both the host and client environments.
-
-     This code references page numbers in the text book:
-     Operating System Concepts 8th edition by Silberschatz, Galvin, and Gagne.  ISBN 978-0-470-12872-5
-     ------------ */
 var TSOS;
 (function (TSOS) {
-    var Cpu = /** @class */ (function () {
+    var Cpu = (function () {
         function Cpu(PC, Acc, Xreg, Yreg, Zflag, isExecuting) {
             if (PC === void 0) { PC = 0; }
             if (Acc === void 0) { Acc = 0; }
@@ -40,14 +25,153 @@ var TSOS;
         };
         Cpu.prototype.cycle = function () {
             _Kernel.krnTrace('CPU cycle');
-            // TODO: Accumulate CPU usage and profiling statistics here.
-            // Do the real work here. Be sure to set this.isExecuting appropriately.
+            this.fetch();
+            if (singleStep) {
+                canStep = false;
+            }
         };
-        Cpu.prototype.loadAccumulator = function (input) {
+        Cpu.prototype.fetch = function () {
+            var instruction = _MemManager.readMemory(this.PC);
+            this.PC++;
+            switch (instruction) {
+                case 0xA9: {
+                    this.loadAcc(_MemManager.readMemory(this.PC));
+                    break;
+                }
+                case 0xAD: {
+                    this.loadAccFromMem(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
+                    break;
+                }
+                case 0x8D: {
+                    this.storeAcc(_MemManager.readMemory(this.PC));
+                    break;
+                }
+                case 0x6D: {
+                    this.addWithCarry(_MemManager.readMemory(this.PC));
+                    break;
+                }
+                case 0xA2: {
+                    this.loadXReg(_MemManager.readMemory(this.PC));
+                    break;
+                }
+                case 0xAE: {
+                    this.loadXRegFromMem(_MemManager.readMemory(this.PC));
+                    break;
+                }
+                case 0xA0: {
+                    this.loadYReg(_MemManager.readMemory(this.PC));
+                    break;
+                }
+                case 0xAC: {
+                    this.loadYRegFromMem(_MemManager.readMemory(this.PC));
+                    break;
+                }
+                case 0xEA: {
+                    break;
+                }
+                case 0x00: {
+                    this.isExecuting = false;
+                    break;
+                }
+                case 0xEC: {
+                    this.compareToXReg(_MemManager.readMemory(this.PC));
+                    break;
+                }
+                case 0xD0: {
+                    this.branchOnNotEqual(_MemManager.readMemory(this.PC));
+                    break;
+                }
+                case 0xEE: {
+                    this.incrementByte(_MemManager.readMemory(this.PC));
+                    break;
+                }
+                case 0xFF: {
+                    this.sysCall();
+                    break;
+                }
+                default: {
+                    this.isExecuting = false;
+                }
+            }
+        };
+        Cpu.prototype.loadAcc = function (input) {
             this.Acc = input;
             this.PC++;
+        };
+        Cpu.prototype.loadAccFromMem = function (smallNum, bigNum) {
+            console.log("Byte stitch is " + TSOS.Utils.byteStitch(smallNum, bigNum).toString(16));
+            this.Acc = _MemManager.readMemory(TSOS.Utils.byteStitch(smallNum, bigNum));
+            this.PC++;
+        };
+        Cpu.prototype.storeAcc = function (input) {
+            _MemManager.writeMemory(input, TSOS.Utils.byteWrap(this.Acc));
+            this.PC++;
+        };
+        Cpu.prototype.addWithCarry = function (input) {
+            this.Acc += _MemManager.readMemory(input);
+            this.Acc = TSOS.Utils.byteWrap(this.Acc);
+            this.PC++;
+        };
+        Cpu.prototype.loadXReg = function (input) {
+            this.Xreg = input;
+            this.PC++;
+        };
+        Cpu.prototype.loadXRegFromMem = function (input) {
+            this.Xreg = _MemManager.readMemory(input);
+            this.PC++;
+        };
+        Cpu.prototype.loadYReg = function (input) {
+            this.Yreg = input;
+            this.PC++;
+        };
+        Cpu.prototype.loadYRegFromMem = function (input) {
+            this.Yreg = _MemManager.readMemory(input);
+            this.PC++;
+        };
+        Cpu.prototype.compareToXReg = function (input) {
+            if (this.Xreg == _MemManager.readMemory(input)) {
+                this.Zflag = 1;
+            }
+            this.PC++;
+        };
+        Cpu.prototype.branchOnNotEqual = function (input) {
+            if (this.Zflag == 0) {
+                this.PC += input;
+                this.PC = TSOS.Utils.byteWrap(this.PC);
+            }
+            this.PC++;
+        };
+        Cpu.prototype.incrementByte = function (input) {
+            var value = _MemManager.readMemory(input) + 1;
+            _MemManager.writeMemory(input, TSOS.Utils.byteWrap(value));
+        };
+        Cpu.prototype.sysCall = function () {
+            switch (this.Xreg) {
+                case 0x01: {
+                    _StdOut.putText(this.Yreg.toString(16));
+                    break;
+                }
+                case 0x02: {
+                    var outBuffer = "";
+                    var i = this.Yreg;
+                    var nextValue = void 0;
+                    var terminated = false;
+                    while (!terminated) {
+                        nextValue = _MemManager.readMemory(TSOS.Utils.byteWrap(i));
+                        if (!(nextValue == 0x00)) {
+                            outBuffer += String.fromCharCode(nextValue);
+                        }
+                        else {
+                            _StdOut.putText(outBuffer);
+                            terminated = true;
+                        }
+                        i++;
+                    }
+                }
+            }
         };
         return Cpu;
     }());
     TSOS.Cpu = Cpu;
 })(TSOS || (TSOS = {}));
+//# sourceMappingURL=cpu.js.map

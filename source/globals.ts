@@ -12,7 +12,7 @@
 // Global CONSTANTS (TypeScript 1.5 introduced const. Very cool.)
 //
 const APP_NAME: string    = "CYBERCORE";   // Melding flesh and metal
-const APP_VERSION: string = "0.2.10";   // Gotta start somewhere.
+const APP_VERSION: string = "0.2.16";   // Gotta start somewhere.
     /*
     Versioning Scheme:
 
@@ -41,6 +41,10 @@ const KEYBOARD_IRQ: number = 1;
 var _CPU: TSOS.Cpu;  // Utilize TypeScript's type annotation system to ensure that _CPU is an instance of the Cpu class.
 var _Memory: TSOS.Memory;
 var _MemManager: TSOS.MemManager;
+
+// CPU Debug/Single Step
+let singleStep = false;
+let canStep = true;
 
 var _OSclock: number = 0;  // Page 23.
 

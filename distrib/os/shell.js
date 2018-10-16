@@ -1,21 +1,7 @@
-///<reference path="../globals.ts" />
-///<reference path="../utils.ts" />
-///<reference path="shellCommand.ts" />
-///<reference path="userCommand.ts" />
-/* ------------
-   Shell.ts
-
-   The OS Shell - The "command line interface" (CLI) for the console.
-
-    Note: While fun and learning are the primary goals of all enrichment center activities,
-          serious injuries may occur when trying to write your own Operating System.
-   ------------ */
-// TODO: Write a base class / prototype for system services and let Shell inherit from it.
 var TSOS;
 (function (TSOS) {
-    var Shell = /** @class */ (function () {
+    var Shell = (function () {
         function Shell() {
-            // Properties
             this.promptStr = ">";
             this.commandList = [];
             this.curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
@@ -23,60 +9,39 @@ var TSOS;
         }
         Shell.prototype.init = function () {
             var sc;
-            //
-            // Load the command list.
-            // ver
             sc = new TSOS.ShellCommand(this.shellVer, "ver", "- Displays the current version data.");
             this.commandList[this.commandList.length] = sc;
-            // help
             sc = new TSOS.ShellCommand(this.shellHelp, "help", "- This is the help command. Seek help.");
             this.commandList[this.commandList.length] = sc;
-            // shutdown
             sc = new TSOS.ShellCommand(this.shellShutdown, "shutdown", "- Shuts down the virtual OS but leaves the underlying host / hardware simulation running.");
             this.commandList[this.commandList.length] = sc;
-            // cls
             sc = new TSOS.ShellCommand(this.shellCls, "cls", "- Clears the screen and resets the cursor position.");
             this.commandList[this.commandList.length] = sc;
-            // man <topic>
             sc = new TSOS.ShellCommand(this.shellMan, "man", "<topic> - Displays the MANual page for <topic>.");
             this.commandList[this.commandList.length] = sc;
-            // trace <on | off>
             sc = new TSOS.ShellCommand(this.shellTrace, "trace", "<on | off> - Turns the OS trace on or off.");
             this.commandList[this.commandList.length] = sc;
-            // rot13 <string>
             sc = new TSOS.ShellCommand(this.shellRot13, "rot13", "<string> - Does rot13 obfuscation on <string>.");
             this.commandList[this.commandList.length] = sc;
-            // prompt <string>
             sc = new TSOS.ShellCommand(this.shellPrompt, "prompt", "<string> - Sets the prompt.");
             this.commandList[this.commandList.length] = sc;
-            // whereami
             sc = new TSOS.ShellCommand(this.shellWhereAmI, "whereami", "- Obtains current location of system, if possible.");
             this.commandList[this.commandList.length] = sc;
-            //date
             sc = new TSOS.ShellCommand(this.shellDate, "date", "- Returns the current system date and time.");
             this.commandList[this.commandList.length] = sc;
-            //uptime
             sc = new TSOS.ShellCommand(this.shellUptime, "uptime", "- returns how long the system has been up and running.");
             this.commandList[this.commandList.length] = sc;
-            //load
             sc = new TSOS.ShellCommand(this.shellLoad, "load", "- Verifies user entered code and loads it.");
             this.commandList[this.commandList.length] = sc;
-            //status
             sc = new TSOS.ShellCommand(this.shellStatus, "status", "<string> - Sets the status message in the taskbar.");
             this.commandList[this.commandList.length] = sc;
-            //forceCrash
             sc = new TSOS.ShellCommand(this.shellCrash, "forcecrash", " - This forces the kernel to trap an error and " +
                 "triggers a shutdown");
             this.commandList[this.commandList.length] = sc;
-            //DebugMemTest
             sc = new TSOS.ShellCommand(this.shellDebugMemtest, "memtest", "- [DEBUG] This tests the basic storage of memory.");
             this.commandList[this.commandList.length] = sc;
-            //DebugMemTest
             sc = new TSOS.ShellCommand(this.shellDebugChangePcb, "changepcbtest", "- [DEBUG] This deletes a pcb for a process. Testing purposes only.");
             this.commandList[this.commandList.length] = sc;
-            // ps  - list the running processes and their IDs
-            // kill <id> - kills the specified process id.
-            // Display the initial prompt.
             this.putPrompt();
         };
         Shell.prototype.putPrompt = function () {
@@ -84,18 +49,9 @@ var TSOS;
         };
         Shell.prototype.handleInput = function (buffer) {
             _Kernel.krnTrace("Shell Command~" + buffer);
-            //
-            // Parse the input...
-            //
             var userCommand = this.parseInput(buffer);
-            // ... and assign the command and args to local variables.
             var cmd = userCommand.command;
             var args = userCommand.args;
-            //
-            // Determine the command and execute it.
-            //
-            // TypeScript/JavaScript may not support associative arrays in all browsers so we have to iterate over the
-            // command list in attempt to find a match.  TODO: Is there a better way? Probably. Someone work it out and tell me in class.
             var index = 0;
             var found = false;
             var fn = undefined;
@@ -112,29 +68,23 @@ var TSOS;
                 this.execute(fn, args);
             }
             else {
-                // It's not found, so check for curses and apologies before declaring the command invalid.
-                if (this.curses.indexOf("[" + TSOS.Utils.rot13(cmd) + "]") >= 0) { // Check for curses.
+                if (this.curses.indexOf("[" + TSOS.Utils.rot13(cmd) + "]") >= 0) {
                     this.execute(this.shellCurse);
                 }
-                else if (this.apologies.indexOf("[" + cmd + "]") >= 0) { // Check for apologies.
+                else if (this.apologies.indexOf("[" + cmd + "]") >= 0) {
                     this.execute(this.shellApology);
                 }
-                else { // It's just a bad command. {
+                else {
                     this.execute(this.shellInvalidCommand);
                 }
             }
         };
-        // Note: args is an option parameter, ergo the ? which allows TypeScript to understand that.
         Shell.prototype.execute = function (fn, args) {
-            // We just got a command, so advance the line...
             _StdOut.advanceLine();
-            // ... call the command function passing in the args with some über-cool functional programming ...
             fn(args);
-            // Check to see if we need to advance the line again
             if (_StdOut.currentXPosition > 0) {
                 _StdOut.advanceLine();
             }
-            // ... and finally write the prompt again.
             this.putPrompt();
         };
         Shell.prototype.cmdComplete = function (input, tabCount) {
@@ -153,19 +103,12 @@ var TSOS;
         };
         Shell.prototype.parseInput = function (buffer) {
             var retVal = new TSOS.UserCommand();
-            // 1. Remove leading and trailing spaces.
             buffer = TSOS.Utils.trim(buffer);
-            // 2. Lower-case it.
             buffer = buffer.toLowerCase();
-            // 3. Separate on spaces so we can determine the command and command-line args, if any.
             var tempList = buffer.split(" ");
-            // 4. Take the first (zeroth) element and use that as the command.
-            var cmd = tempList.shift(); // Yes, you can do that to an array in JavaScript.  See the Queue class.
-            // 4.1 Remove any left-over spaces.
+            var cmd = tempList.shift();
             cmd = TSOS.Utils.trim(cmd);
-            // 4.2 Record it in the return value.
             retVal.command = cmd;
-            // 5. Now create the args array from what's left.
             for (var i in tempList) {
                 var arg = TSOS.Utils.trim(tempList[i]);
                 if (arg != "") {
@@ -174,10 +117,6 @@ var TSOS;
             }
             return retVal;
         };
-        //
-        // Shell Command Functions.  Kinda not part of Shell() class exactly, but
-        // called from here, so kept here to avoid violating the law of least astonishment.
-        //
         Shell.prototype.shellInvalidCommand = function () {
             _StdOut.putText("[ERROR] Invalid Command. ");
             if (_SarcasticMode) {
@@ -218,9 +157,7 @@ var TSOS;
         };
         Shell.prototype.shellShutdown = function (args) {
             _StdOut.putText("Shutting down...");
-            // Call Kernel shutdown routine.
             _Kernel.krnShutdown();
-            // TODO: Stop the final prompt from being displayed.  If possible.  Not a high priority.  (Damn OCD!)
         };
         Shell.prototype.shellCls = function (args) {
             _StdOut.clearScreen();
@@ -268,7 +205,6 @@ var TSOS;
         };
         Shell.prototype.shellRot13 = function (args) {
             if (args.length > 0) {
-                // Requires Utils.ts for rot13() function.
                 _StdOut.putText(args.join(' ') + " = '" + TSOS.Utils.rot13(args.join(' ')) + "'");
             }
             else {
@@ -292,14 +228,13 @@ var TSOS;
             _StdOut.putText(d.getFullYear().toString() + "-"
                 + (d.getMonth() + 1).toString() + "-" + d.getDate().toString() +
                 " " + d.getHours().toString() + ":" + d.getMinutes().toString());
-            //getMonth uses 0 for Jan, so 1 must be added for human understanding
         };
         Shell.prototype.shellUptime = function (args) {
             var DECISEC_IN_SECOND = 10;
             var DECISEC_IN_MINUTE = 600;
             var DECISEC_IN_HOUR = 36000;
             var DECISEC_IN_DAY = 864000;
-            var time = _OSclock; // returns in 10ths of a second. 10 is 1 second. Deciseconds!
+            var time = _OSclock;
             var days = Math.floor(time / DECISEC_IN_DAY);
             time = time % DECISEC_IN_DAY;
             var hours = Math.floor(time / DECISEC_IN_HOUR);
@@ -311,7 +246,7 @@ var TSOS;
                 + minutes + " minutes, " + seconds + " seconds");
         };
         Shell.prototype.shellLoad = function (args) {
-            var regex = new RegExp("^[a-fA-F0-9]+$"); //Pattern for valid hex number.
+            var regex = new RegExp("^[a-fA-F0-9]+$");
             var isValid = true;
             var inputArray = [];
             var input = document.getElementById("taProgramInput").value;
@@ -328,12 +263,9 @@ var TSOS;
             console.log(inputArray.toString());
             inputArray.forEach(function (element) {
                 if (regex.test(element)) {
-                    //Passes regex
-                    //Convert to hex for later storage
                     element = parseInt(element, 16);
                 }
                 else {
-                    //fails
                     isValid = false;
                     return;
                 }
@@ -343,6 +275,7 @@ var TSOS;
                 _MemManager.writeMemory(0x00, inputArray);
                 var process = new TSOS.Pcb(0x00, inputArray.length);
                 _StdOut.putText(" Done. PID: " + process.pid.toString());
+                _CPU.isExecuting = true;
             }
             else {
                 _StdOut.putText("[ERROR] User code malformed. Unable to load.");
@@ -350,7 +283,6 @@ var TSOS;
         };
         Shell.prototype.shellStatus = function (args) {
             document.getElementById("bannerStatus").innerText = args.join(' ');
-            //console.log(args);
         };
         Shell.prototype.shellCrash = function (args) {
             _Kernel.krnTrapError("User manually invoked failure.");
@@ -360,10 +292,10 @@ var TSOS;
             _StdOut.putText(_MemManager.readMemory(0x01, 0x02).toString());
         };
         Shell.prototype.shellDebugChangePcb = function (args) {
-            //Hardcoded change for testing purposes
             TSOS.Pcb.instances[0].priority = 1;
         };
         return Shell;
     }());
     TSOS.Shell = Shell;
 })(TSOS || (TSOS = {}));
+//# sourceMappingURL=shell.js.map
