@@ -128,16 +128,15 @@ module TSOS {
 
         // 8D - Store accumulator in memory
         private storeAcc(input): void {
-            _MemManager.writeMemory(input, this.Acc);
+            _MemManager.writeMemory(input, Utils.byteWrap(this.Acc));
             this.PC++;
         }
 
         // 6D - Add with carry
         private addWithCarry(input): void {
             this.Acc += _MemManager.readMemory(input);
+            this.Acc = Utils.byteWrap(this.Acc);
             this.PC++;
-            //So, what exactly do we do when it goes over 2 digits?
-            //Memory is constrained to two hex digits. Tien's accepts it, then terminates when it sees it
         }
 
         // A2 - Load X register with constant
@@ -183,7 +182,7 @@ module TSOS {
         // EE - Increment value of byte
         private incrementByte(input): void {
             let value = _MemManager.readMemory(input) + 1;
-            _MemManager.writeMemory(input, value);
+            _MemManager.writeMemory(input, Utils.byteWrap(value));
         }
 
         // FF - System Call

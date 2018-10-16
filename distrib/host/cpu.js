@@ -96,11 +96,12 @@ var TSOS;
             this.PC++;
         };
         Cpu.prototype.storeAcc = function (input) {
-            _MemManager.writeMemory(input, this.Acc);
+            _MemManager.writeMemory(input, TSOS.Utils.byteWrap(this.Acc));
             this.PC++;
         };
         Cpu.prototype.addWithCarry = function (input) {
             this.Acc += _MemManager.readMemory(input);
+            this.Acc = TSOS.Utils.byteWrap(this.Acc);
             this.PC++;
         };
         Cpu.prototype.loadXReg = function (input) {
@@ -133,7 +134,7 @@ var TSOS;
         };
         Cpu.prototype.incrementByte = function (input) {
             var value = _MemManager.readMemory(input) + 1;
-            _MemManager.writeMemory(input, value);
+            _MemManager.writeMemory(input, TSOS.Utils.byteWrap(value));
         };
         Cpu.prototype.sysCall = function () {
         };
