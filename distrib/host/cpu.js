@@ -82,6 +82,10 @@ var TSOS;
                     this.incrementByte(_MemManager.readMemory(this.PC));
                     break;
                 }
+                case 0xFF: {
+                    this.sysCall();
+                    break;
+                }
                 default: {
                     this.isExecuting = false;
                 }
@@ -138,6 +142,14 @@ var TSOS;
             _MemManager.writeMemory(input, TSOS.Utils.byteWrap(value));
         };
         Cpu.prototype.sysCall = function () {
+            switch (this.Xreg) {
+                case 0x01: {
+                    _StdOut.putText(this.Yreg.toString(16));
+                    break;
+                }
+                case 0x02: {
+                }
+            }
         };
         return Cpu;
     }());

@@ -105,6 +105,10 @@ module TSOS {
                     this.incrementByte(_MemManager.readMemory(this.PC));
                     break;
                 }
+                case 0xFF: {
+                    this.sysCall();
+                    break;
+                }
                 default: {
                     //DEBUG, remove this
                     this.isExecuting = false;
@@ -188,7 +192,6 @@ module TSOS {
 
         // FF - System Call
         private  sysCall(): void {
-            /*
             switch (this.Xreg) {
                 case 0x01: { // #$01 in x reg -- Print integer in Y register
                     _StdOut.putText(this.Yreg.toString(16));
@@ -198,7 +201,6 @@ module TSOS {
                     //# $02 in x reg -- Print 00 terminated string stored at address in Y reg
                 }
             }
-            */
 
         }
     }
