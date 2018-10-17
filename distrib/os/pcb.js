@@ -19,7 +19,7 @@ var TSOS;
             var output = [];
             output.push(["cellPid" + this.pid, this.pid.toString()]);
             output.push(["cellPriority" + this.pid, this.priority.toString()]);
-            output.push(["cellPriority" + this.state, this.state.toString()]);
+            output.push(["cellState" + this.pid, this.state.toString()]);
             output.push(["cellPC" + this.pid, this.PC.toString()]);
             output.push(["cellAcc" + this.pid, this.Acc.toString()]);
             output.push(["cellXreg" + this.pid, this.Xreg.toString()]);
@@ -34,6 +34,14 @@ var TSOS;
                 if (Pcb.instances[i].pid == this.pid) {
                     Pcb.instances.splice(i, 1);
                     return true;
+                }
+            }
+            return false;
+        };
+        Pcb.getFromPid = function (pid) {
+            for (var i = 0; i < Pcb.instances.length; i++) {
+                if (Pcb.instances[i].pid == pid) {
+                    return Pcb.instances[i];
                 }
             }
             return false;

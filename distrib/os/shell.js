@@ -38,6 +38,8 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellCrash, "forcecrash", " - This forces the kernel to trap an error and " +
                 "triggers a shutdown");
             this.commandList[this.commandList.length] = sc;
+            sc = new TSOS.ShellCommand(this.shellRun, "run", "<pid> - Run a specified program");
+            this.commandList[this.commandList.length] = sc;
             sc = new TSOS.ShellCommand(this.shellDebugMemtest, "memtest", "- [DEBUG] This tests the basic storage of memory.");
             this.commandList[this.commandList.length] = sc;
             sc = new TSOS.ShellCommand(this.shellDebugChangePcb, "changepcbtest", "- [DEBUG] This deletes a pcb for a process. Testing purposes only.");
@@ -275,7 +277,6 @@ var TSOS;
                 _MemManager.writeMemory(0x00, inputArray);
                 var process = new TSOS.Pcb(0x00, inputArray.length);
                 _StdOut.putText(" Done. PID: " + process.pid.toString());
-                _CPU.isExecuting = true;
             }
             else {
                 _StdOut.putText("[ERROR] User code malformed. Unable to load.");
@@ -290,6 +291,17 @@ var TSOS;
         Shell.prototype.shellDebugMemtest = function (args) {
             _MemManager.writeMemory(0xF1, 0x01);
             _StdOut.putText(_MemManager.readMemory(0x01, 0x02).toString());
+        };
+        Shell.prototype.shellRun = function (args) {
+            var program = TSOS.Pcb.getFromPid(args);
+            if (program) {
+                program.state = "RUNNING";
+                _CPU.PC = program.PC;
+                _CPU.isExecuting = true;
+            }
+            else {
+                _StdOut.putText("[ERROR] Could not find PID " + args);
+            }
         };
         Shell.prototype.shellDebugChangePcb = function (args) {
             TSOS.Pcb.instances[0].priority = 1;
