@@ -117,6 +117,12 @@ module TSOS {
             this.commandList[this.commandList.length] = sc;
 
             //DebugMemTest
+            sc = new ShellCommand(this.shellRun,
+                "run",
+                "<pid> - Run a specified program");
+            this.commandList[this.commandList.length] = sc;
+
+            //DebugMemTest
             sc = new ShellCommand(this.shellDebugMemtest,
                 "memtest",
                 "- [DEBUG] This tests the basic storage of memory.");
@@ -417,8 +423,6 @@ module TSOS {
                 _MemManager.writeMemory(0x00, inputArray);
                 let process = new Pcb(0x00, inputArray.length);
                 _StdOut.putText(" Done. PID: " + process.pid.toString());
-                //DEBUG
-                _CPU.isExecuting = true;
             } else {
                 _StdOut.putText("[ERROR] User code malformed. Unable to load.");
             }
@@ -437,6 +441,22 @@ module TSOS {
         public shellDebugMemtest(args) {
             _MemManager.writeMemory(0xF1, 0x01);
             _StdOut.putText(_MemManager.readMemory(0x01, 0x02).toString());
+        }
+
+        public shellRun(args) {
+            if (args.length == 0) {
+                _StdOut.putText("[ERROR] Could not find PID " + args);
+                return false;
+            }
+            let program = Pcb.getFromPid(<number>args);
+            if (program) {
+                program.state = "RUNNING";
+                _CPU.init(); //Reset any lingering values
+                _CPU.PC = program.PC;
+                _CPU.isExecuting = true;
+            } else {
+                _StdOut.putText("[ERROR] Could not find PID " + args);
+            }
         }
 
         public shellDebugChangePcb(args) {

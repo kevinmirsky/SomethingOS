@@ -35,7 +35,6 @@ module TSOS {
             _StdIn  = _Console;
             _StdOut = _Console;
 
-
             // Load the Keyboard Device Driver
             this.krnTrace("Loading the keyboard device driver.");
             _krnKeyboardDriver = new DeviceDriverKeyboard();     // Construct it.
@@ -55,6 +54,10 @@ module TSOS {
             this.krnTrace("Creating and Launching the shell.");
             _OsShell = new Shell();
             _OsShell.init();
+
+            _MemManager.refreshMemoryViewer();
+            deviceDisplayDriver.displayPcb();
+            deviceDisplayDriver.displayCpu();
 
             // Finally, initiate student testing protocol.
             if (_GLaDOS) {

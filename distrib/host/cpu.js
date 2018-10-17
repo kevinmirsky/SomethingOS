@@ -43,11 +43,11 @@ var TSOS;
                     break;
                 }
                 case 0x8D: {
-                    this.storeAcc(_MemManager.readMemory(this.PC));
+                    this.storeAcc(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
                     break;
                 }
                 case 0x6D: {
-                    this.addWithCarry(_MemManager.readMemory(this.PC));
+                    this.addWithCarry(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
                     break;
                 }
                 case 0xA2: {
@@ -55,7 +55,7 @@ var TSOS;
                     break;
                 }
                 case 0xAE: {
-                    this.loadXRegFromMem(_MemManager.readMemory(this.PC));
+                    this.loadXRegFromMem(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
                     break;
                 }
                 case 0xA0: {
@@ -63,7 +63,7 @@ var TSOS;
                     break;
                 }
                 case 0xAC: {
-                    this.loadYRegFromMem(_MemManager.readMemory(this.PC));
+                    this.loadYRegFromMem(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
                     break;
                 }
                 case 0xEA: {
@@ -74,7 +74,7 @@ var TSOS;
                     break;
                 }
                 case 0xEC: {
-                    this.compareToXReg(_MemManager.readMemory(this.PC));
+                    this.compareToXReg(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
                     break;
                 }
                 case 0xD0: {
@@ -82,7 +82,7 @@ var TSOS;
                     break;
                 }
                 case 0xEE: {
-                    this.incrementByte(_MemManager.readMemory(this.PC));
+                    this.incrementByte(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
                     break;
                 }
                 case 0xFF: {
@@ -90,7 +90,20 @@ var TSOS;
                     break;
                 }
                 default: {
+                    _StdOut.putText("[ERROR] Invalid Opcode " + instruction.toString(16)
+                        + ". Terminating.");
                     this.isExecuting = false;
+                }
+            }
+            if (this.isExecuting == false) {
+                var program = TSOS.Pcb.getRunning();
+                if (program) {
+                    program.state = "COMPLETE";
+                    program.PC = this.PC;
+                    program.Acc = this.Acc;
+                    program.Xreg = this.Xreg;
+                    program.Yreg = this.Yreg;
+                    program.Zflag = this.Zflag;
                 }
             }
         };
@@ -103,12 +116,13 @@ var TSOS;
             this.Acc = _MemManager.readMemory(TSOS.Utils.byteStitch(smallNum, bigNum));
             this.PC++;
         };
-        Cpu.prototype.storeAcc = function (input) {
-            _MemManager.writeMemory(input, TSOS.Utils.byteWrap(this.Acc));
+        Cpu.prototype.storeAcc = function (smallNum, bigNum) {
+            var memLoc = TSOS.Utils.byteStitch(smallNum, bigNum);
+            _MemManager.writeMemory(memLoc, TSOS.Utils.byteWrap(this.Acc));
             this.PC++;
         };
-        Cpu.prototype.addWithCarry = function (input) {
-            this.Acc += _MemManager.readMemory(input);
+        Cpu.prototype.addWithCarry = function (smallNum, bigNum) {
+            this.Acc += this.Acc = _MemManager.readMemory(TSOS.Utils.byteStitch(smallNum, bigNum));
             this.Acc = TSOS.Utils.byteWrap(this.Acc);
             this.PC++;
         };
@@ -116,21 +130,24 @@ var TSOS;
             this.Xreg = input;
             this.PC++;
         };
-        Cpu.prototype.loadXRegFromMem = function (input) {
-            this.Xreg = _MemManager.readMemory(input);
+        Cpu.prototype.loadXRegFromMem = function (smallNum, bigNum) {
+            this.Xreg = _MemManager.readMemory(TSOS.Utils.byteStitch(smallNum, bigNum));
             this.PC++;
         };
         Cpu.prototype.loadYReg = function (input) {
             this.Yreg = input;
             this.PC++;
         };
-        Cpu.prototype.loadYRegFromMem = function (input) {
-            this.Yreg = _MemManager.readMemory(input);
+        Cpu.prototype.loadYRegFromMem = function (smallNum, bigNum) {
+            this.Yreg = _MemManager.readMemory(TSOS.Utils.byteStitch(smallNum, bigNum));
             this.PC++;
         };
-        Cpu.prototype.compareToXReg = function (input) {
-            if (this.Xreg == _MemManager.readMemory(input)) {
+        Cpu.prototype.compareToXReg = function (smallNum, bigNum) {
+            if (this.Xreg == _MemManager.readMemory(TSOS.Utils.byteStitch(smallNum, bigNum))) {
                 this.Zflag = 1;
+            }
+            else {
+                this.Zflag = 0;
             }
             this.PC++;
         };
@@ -141,9 +158,10 @@ var TSOS;
             }
             this.PC++;
         };
-        Cpu.prototype.incrementByte = function (input) {
-            var value = _MemManager.readMemory(input) + 1;
-            _MemManager.writeMemory(input, TSOS.Utils.byteWrap(value));
+        Cpu.prototype.incrementByte = function (smallNum, bigNum) {
+            var value = _MemManager.readMemory(TSOS.Utils.byteStitch(smallNum, bigNum)) + 1;
+            _MemManager.writeMemory(TSOS.Utils.byteStitch(smallNum, bigNum), TSOS.Utils.byteWrap(value));
+            this.PC++;
         };
         Cpu.prototype.sysCall = function () {
             switch (this.Xreg) {

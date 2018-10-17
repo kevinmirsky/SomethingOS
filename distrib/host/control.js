@@ -30,11 +30,11 @@ var TSOS;
             document.getElementById("display").focus();
             _CPU = new TSOS.Cpu();
             _CPU.init();
+            _MemManager = new TSOS.MemManager(256);
+            document.getElementById("bannerBranding").innerText = APP_NAME + " " + APP_VERSION;
             _hardwareClockID = setInterval(TSOS.Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
             _Kernel = new TSOS.Kernel();
             _Kernel.krnBootstrap();
-            document.getElementById("bannerBranding").innerText = APP_NAME + " " + APP_VERSION;
-            _MemManager = new TSOS.MemManager(256);
         };
         Control.hostBtnHaltOS_click = function (btn) {
             Control.hostLog("Emergency halt", "host");
@@ -49,9 +49,11 @@ var TSOS;
             if (singleStep) {
                 singleStep = false;
                 document.getElementById("btnTakeStep").disabled = true;
+                document.getElementById("btnSingleStep").value = "SINGLE STEP";
             }
             else {
                 singleStep = true;
+                document.getElementById("btnSingleStep").value = "\<SINGLE STEP\>";
                 document.getElementById("btnTakeStep").disabled = false;
             }
             canStep = false;

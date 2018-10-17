@@ -65,11 +65,11 @@ module TSOS {
                     break;
                 }
                 case 0x8D: {
-                    this.storeAcc(_MemManager.readMemory(this.PC));
+                    this.storeAcc(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
                     break;
                 }
                 case 0x6D: {
-                    this.addWithCarry(_MemManager.readMemory(this.PC));
+                    this.addWithCarry(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
                     break;
                 }
                 case 0xA2: {
@@ -77,7 +77,7 @@ module TSOS {
                     break;
                 }
                 case 0xAE: {
-                    this.loadXRegFromMem(_MemManager.readMemory(this.PC));
+                    this.loadXRegFromMem(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
                     break;
                 }
                 case 0xA0: {
@@ -85,7 +85,7 @@ module TSOS {
                     break;
                 }
                 case 0xAC: {
-                    this.loadYRegFromMem(_MemManager.readMemory(this.PC));
+                    this.loadYRegFromMem(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
                     break;
                 }
                 case 0xEA: {
@@ -98,7 +98,7 @@ module TSOS {
                     break;
                 }
                 case 0xEC: {
-                    this.compareToXReg(_MemManager.readMemory(this.PC));
+                    this.compareToXReg(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
                     break;
                 }
                 case 0xD0: {
@@ -106,7 +106,7 @@ module TSOS {
                     break;
                 }
                 case 0xEE: {
-                    this.incrementByte(_MemManager.readMemory(this.PC));
+                    this.incrementByte(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
                     break;
                 }
                 case 0xFF: {
@@ -114,8 +114,22 @@ module TSOS {
                     break;
                 }
                 default: {
-                    //DEBUG, remove this
+                    //Invalid OP code! Wanna freak out? Course you do...
+                    _StdOut.putText("[ERROR] Invalid Opcode " + instruction.toString(16)
+                    + ". Terminating.");
                     this.isExecuting = false;
+                }
+            }
+            if (this.isExecuting == false) {
+                //Let's wrap things up here. Pack it into the PCB and set it to done
+                let program = Pcb.getRunning();
+                if (program) {
+                    program.state = "COMPLETE";
+                    program.PC = this.PC;
+                    program.Acc = this.Acc;
+                    program.Xreg = this.Xreg;
+                    program.Yreg = this.Yreg;
+                    program.Zflag = this.Zflag;
                 }
             }
 
@@ -136,14 +150,15 @@ module TSOS {
         }
 
         // 8D - Store accumulator in memory
-        private storeAcc(input): void {
-            _MemManager.writeMemory(input, Utils.byteWrap(this.Acc));
+        private storeAcc(smallNum: number, bigNum: number): void {
+            let memLoc = Utils.byteStitch(smallNum, bigNum);
+            _MemManager.writeMemory(memLoc, Utils.byteWrap(this.Acc));
             this.PC++;
         }
 
         // 6D - Add with carry
-        private addWithCarry(input): void {
-            this.Acc += _MemManager.readMemory(input);
+        private addWithCarry(smallNum: number, bigNum: number): void {
+            this.Acc += this.Acc = _MemManager.readMemory(Utils.byteStitch(smallNum, bigNum));
             this.Acc = Utils.byteWrap(this.Acc);
             this.PC++;
         }
@@ -155,8 +170,8 @@ module TSOS {
         }
 
         // AE - Load X register from memory
-        private loadXRegFromMem(input): void {
-            this.Xreg = _MemManager.readMemory(input);
+        private loadXRegFromMem(smallNum: number, bigNum: number): void {
+            this.Xreg = _MemManager.readMemory(Utils.byteStitch(smallNum, bigNum));
             this.PC++;
         }
 
@@ -167,15 +182,17 @@ module TSOS {
         }
 
         // AC - Load Y register from memory
-        private loadYRegFromMem(input): void {
-            this.Yreg = _MemManager.readMemory(input);
+        private loadYRegFromMem(smallNum: number, bigNum: number): void {
+            this.Yreg = _MemManager.readMemory(Utils.byteStitch(smallNum, bigNum));
             this.PC++;
         }
 
         // EC - Compare a byte in memory to X reg
-        private compareToXReg(input): void {
-            if (this.Xreg == _MemManager.readMemory(input)) {
+        private compareToXReg(smallNum: number, bigNum: number): void {
+            if (this.Xreg == _MemManager.readMemory(Utils.byteStitch(smallNum, bigNum))) {
                 this.Zflag = 1;
+            } else {
+                this.Zflag = 0;
             }
             this.PC++;
         }
@@ -190,9 +207,10 @@ module TSOS {
         }
 
         // EE - Increment value of byte
-        private incrementByte(input): void {
-            let value = _MemManager.readMemory(input) + 1;
-            _MemManager.writeMemory(input, Utils.byteWrap(value));
+        private incrementByte(smallNum: number, bigNum: number): void {
+            let value = _MemManager.readMemory(Utils.byteStitch(smallNum, bigNum)) + 1;
+            _MemManager.writeMemory(Utils.byteStitch(smallNum, bigNum), Utils.byteWrap(value));
+            this.PC++;
         }
 
         // FF - System Call
