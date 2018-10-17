@@ -293,6 +293,10 @@ var TSOS;
             _StdOut.putText(_MemManager.readMemory(0x01, 0x02).toString());
         };
         Shell.prototype.shellRun = function (args) {
+            if (args.length == 0) {
+                _StdOut.putText("[ERROR] Could not find PID " + args);
+                return false;
+            }
             var program = TSOS.Pcb.getFromPid(args);
             if (program) {
                 program.state = "RUNNING";

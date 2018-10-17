@@ -444,6 +444,10 @@ module TSOS {
         }
 
         public shellRun(args) {
+            if (args.length == 0) {
+                _StdOut.putText("[ERROR] Could not find PID " + args);
+                return false;
+            }
             let program = Pcb.getFromPid(<number>args);
             if (program) {
                 program.state = "RUNNING";
