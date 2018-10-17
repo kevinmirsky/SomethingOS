@@ -115,7 +115,7 @@ module TSOS {
                 }
                 default: {
                     //Invalid OP code! Wanna freak out? Course you do...
-                    _StdOut.putText("[ERROR] Invalid OP-code " + instruction.toString(16)
+                    _StdOut.putText("[ERROR] Invalid Opcode " + instruction.toString(16)
                     + ". Terminating.");
                     this.isExecuting = false;
                 }

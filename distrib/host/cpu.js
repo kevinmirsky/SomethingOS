@@ -90,7 +90,7 @@ var TSOS;
                     break;
                 }
                 default: {
-                    _StdOut.putText("[ERROR] Invalid OP-code " + instruction.toString(16)
+                    _StdOut.putText("[ERROR] Invalid Opcode " + instruction.toString(16)
                         + ". Terminating.");
                     this.isExecuting = false;
                 }
