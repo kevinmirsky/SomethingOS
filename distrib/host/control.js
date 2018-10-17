@@ -49,9 +49,11 @@ var TSOS;
             if (singleStep) {
                 singleStep = false;
                 document.getElementById("btnTakeStep").disabled = true;
+                document.getElementById("btnSingleStep").value = "SINGLE STEP";
             }
             else {
                 singleStep = true;
+                document.getElementById("btnSingleStep").value = "\<SINGLE STEP\>";
                 document.getElementById("btnTakeStep").disabled = false;
             }
             canStep = false;

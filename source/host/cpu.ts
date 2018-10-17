@@ -65,7 +65,7 @@ module TSOS {
                     break;
                 }
                 case 0x8D: {
-                    this.storeAcc(_MemManager.readMemory(this.PC));
+                    this.storeAcc(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
                     break;
                 }
                 case 0x6D: {
@@ -136,8 +136,9 @@ module TSOS {
         }
 
         // 8D - Store accumulator in memory
-        private storeAcc(input): void {
-            _MemManager.writeMemory(input, Utils.byteWrap(this.Acc));
+        private storeAcc(smallNum: number, bigNum: number): void {
+            let memLoc = Utils.byteStitch(smallNum, bigNum);
+            _MemManager.writeMemory(memLoc, Utils.byteWrap(this.Acc));
             this.PC++;
         }
 
