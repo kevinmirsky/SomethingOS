@@ -98,7 +98,7 @@ module TSOS {
                     break;
                 }
                 case 0xEC: {
-                    this.compareToXReg(_MemManager.readMemory(this.PC));
+                    this.compareToXReg(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
                     break;
                 }
                 case 0xD0: {
@@ -174,8 +174,8 @@ module TSOS {
         }
 
         // EC - Compare a byte in memory to X reg
-        private compareToXReg(input): void {
-            if (this.Xreg == _MemManager.readMemory(input)) {
+        private compareToXReg(smallNum: number, bigNum: number): void {
+            if (this.Xreg == _MemManager.readMemory(Utils.byteStitch(smallNum, bigNum))) {
                 this.Zflag = 1;
             }
             this.PC++;

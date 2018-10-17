@@ -74,7 +74,7 @@ var TSOS;
                     break;
                 }
                 case 0xEC: {
-                    this.compareToXReg(_MemManager.readMemory(this.PC));
+                    this.compareToXReg(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
                     break;
                 }
                 case 0xD0: {
@@ -129,8 +129,8 @@ var TSOS;
             this.Yreg = _MemManager.readMemory(TSOS.Utils.byteStitch(smallNum, bigNum));
             this.PC++;
         };
-        Cpu.prototype.compareToXReg = function (input) {
-            if (this.Xreg == _MemManager.readMemory(input)) {
+        Cpu.prototype.compareToXReg = function (smallNum, bigNum) {
+            if (this.Xreg == _MemManager.readMemory(TSOS.Utils.byteStitch(smallNum, bigNum))) {
                 this.Zflag = 1;
             }
             this.PC++;
