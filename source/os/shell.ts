@@ -451,6 +451,7 @@ module TSOS {
             let program = Pcb.getFromPid(<number>args);
             if (program) {
                 program.state = "RUNNING";
+                _CPU.init(); //Reset any lingering values
                 _CPU.PC = program.PC;
                 _CPU.isExecuting = true;
             } else {

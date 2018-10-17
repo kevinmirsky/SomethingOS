@@ -150,6 +150,7 @@ var TSOS;
         Cpu.prototype.incrementByte = function (smallNum, bigNum) {
             var value = _MemManager.readMemory(TSOS.Utils.byteStitch(smallNum, bigNum)) + 1;
             _MemManager.writeMemory(TSOS.Utils.byteStitch(smallNum, bigNum), TSOS.Utils.byteWrap(value));
+            this.PC++;
         };
         Cpu.prototype.sysCall = function () {
             switch (this.Xreg) {

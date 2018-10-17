@@ -300,6 +300,7 @@ var TSOS;
             var program = TSOS.Pcb.getFromPid(args);
             if (program) {
                 program.state = "RUNNING";
+                _CPU.init();
                 _CPU.PC = program.PC;
                 _CPU.isExecuting = true;
             }

@@ -198,6 +198,7 @@ module TSOS {
         private incrementByte(smallNum: number, bigNum: number): void {
             let value = _MemManager.readMemory(Utils.byteStitch(smallNum, bigNum)) + 1;
             _MemManager.writeMemory(Utils.byteStitch(smallNum, bigNum), Utils.byteWrap(value));
+            this.PC++;
         }
 
         // FF - System Call
