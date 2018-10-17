@@ -179,6 +179,8 @@ module TSOS {
         private compareToXReg(smallNum: number, bigNum: number): void {
             if (this.Xreg == _MemManager.readMemory(Utils.byteStitch(smallNum, bigNum))) {
                 this.Zflag = 1;
+            } else {
+                this.Zflag = 0;
             }
             this.PC++;
         }

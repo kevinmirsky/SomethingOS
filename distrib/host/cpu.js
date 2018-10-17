@@ -135,6 +135,9 @@ var TSOS;
             if (this.Xreg == _MemManager.readMemory(TSOS.Utils.byteStitch(smallNum, bigNum))) {
                 this.Zflag = 1;
             }
+            else {
+                this.Zflag = 0;
+            }
             this.PC++;
         };
         Cpu.prototype.branchOnNotEqual = function (input) {
