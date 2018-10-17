@@ -82,7 +82,7 @@ var TSOS;
                     break;
                 }
                 case 0xEE: {
-                    this.incrementByte(_MemManager.readMemory(this.PC));
+                    this.incrementByte(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
                     break;
                 }
                 case 0xFF: {
@@ -142,9 +142,9 @@ var TSOS;
             }
             this.PC++;
         };
-        Cpu.prototype.incrementByte = function (input) {
-            var value = _MemManager.readMemory(input) + 1;
-            _MemManager.writeMemory(input, TSOS.Utils.byteWrap(value));
+        Cpu.prototype.incrementByte = function (smallNum, bigNum) {
+            var value = _MemManager.readMemory(TSOS.Utils.byteStitch(smallNum, bigNum)) + 1;
+            _MemManager.writeMemory(TSOS.Utils.byteStitch(smallNum, bigNum), TSOS.Utils.byteWrap(value));
         };
         Cpu.prototype.sysCall = function () {
             switch (this.Xreg) {

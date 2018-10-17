@@ -106,7 +106,7 @@ module TSOS {
                     break;
                 }
                 case 0xEE: {
-                    this.incrementByte(_MemManager.readMemory(this.PC));
+                    this.incrementByte(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
                     break;
                 }
                 case 0xFF: {
@@ -191,9 +191,9 @@ module TSOS {
         }
 
         // EE - Increment value of byte
-        private incrementByte(input): void {
-            let value = _MemManager.readMemory(input) + 1;
-            _MemManager.writeMemory(input, Utils.byteWrap(value));
+        private incrementByte(smallNum: number, bigNum: number): void {
+            let value = _MemManager.readMemory(Utils.byteStitch(smallNum, bigNum)) + 1;
+            _MemManager.writeMemory(Utils.byteStitch(smallNum, bigNum), Utils.byteWrap(value));
         }
 
         // FF - System Call
