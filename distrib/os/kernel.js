@@ -21,6 +21,9 @@ var TSOS;
             this.krnTrace("Creating and Launching the shell.");
             _OsShell = new TSOS.Shell();
             _OsShell.init();
+            _MemManager.refreshMemoryViewer();
+            TSOS.deviceDisplayDriver.displayPcb();
+            TSOS.deviceDisplayDriver.displayCpu();
             if (_GLaDOS) {
                 _GLaDOS.afterStartup();
             }

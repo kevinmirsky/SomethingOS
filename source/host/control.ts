@@ -95,16 +95,19 @@ module TSOS {
             _CPU = new Cpu();  // Note: We could simulate multi-core systems by instantiating more than one instance of the CPU here.
             _CPU.init();       //       There's more to do, like dealing with scheduling and such, but this would be a start. Pretty cool.
 
+            //start Memory
+            _MemManager = new MemManager(256);
+
+            //Branding
+            document.getElementById("bannerBranding").innerText = APP_NAME + " " + APP_VERSION;
+
             // ... then set the host clock pulse ...
             _hardwareClockID = setInterval(Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
             // .. and call the OS Kernel Bootstrap routine.
             _Kernel = new Kernel();
             _Kernel.krnBootstrap();  // _GLaDOS.afterStartup() will get called in there, if configured.
             //initialize branding display
-            document.getElementById("bannerBranding").innerText = APP_NAME + " " + APP_VERSION;
 
-            //Activate memory
-            _MemManager = new MemManager(256);
         }
 
         public static hostBtnHaltOS_click(btn): void {
