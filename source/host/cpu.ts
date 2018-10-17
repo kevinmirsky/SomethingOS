@@ -85,7 +85,7 @@ module TSOS {
                     break;
                 }
                 case 0xAC: {
-                    this.loadYRegFromMem(_MemManager.readMemory(this.PC));
+                    this.loadYRegFromMem(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
                     break;
                 }
                 case 0xEA: {
@@ -168,8 +168,8 @@ module TSOS {
         }
 
         // AC - Load Y register from memory
-        private loadYRegFromMem(input): void {
-            this.Yreg = _MemManager.readMemory(input);
+        private loadYRegFromMem(smallNum: number, bigNum: number): void {
+            this.Yreg = _MemManager.readMemory(Utils.byteStitch(smallNum, bigNum));
             this.PC++;
         }
 
