@@ -55,7 +55,7 @@ var TSOS;
                     break;
                 }
                 case 0xAE: {
-                    this.loadXRegFromMem(_MemManager.readMemory(this.PC));
+                    this.loadXRegFromMem(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
                     break;
                 }
                 case 0xA0: {
@@ -117,8 +117,8 @@ var TSOS;
             this.Xreg = input;
             this.PC++;
         };
-        Cpu.prototype.loadXRegFromMem = function (input) {
-            this.Xreg = _MemManager.readMemory(input);
+        Cpu.prototype.loadXRegFromMem = function (smallNum, bigNum) {
+            this.Xreg = _MemManager.readMemory(TSOS.Utils.byteStitch(smallNum, bigNum));
             this.PC++;
         };
         Cpu.prototype.loadYReg = function (input) {

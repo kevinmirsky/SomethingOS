@@ -77,7 +77,7 @@ module TSOS {
                     break;
                 }
                 case 0xAE: {
-                    this.loadXRegFromMem(_MemManager.readMemory(this.PC));
+                    this.loadXRegFromMem(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
                     break;
                 }
                 case 0xA0: {
@@ -156,8 +156,8 @@ module TSOS {
         }
 
         // AE - Load X register from memory
-        private loadXRegFromMem(input): void {
-            this.Xreg = _MemManager.readMemory(input);
+        private loadXRegFromMem(smallNum: number, bigNum: number): void {
+            this.Xreg = _MemManager.readMemory(Utils.byteStitch(smallNum, bigNum));
             this.PC++;
         }
 
