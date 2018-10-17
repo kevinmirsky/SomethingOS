@@ -47,7 +47,7 @@ var TSOS;
                     break;
                 }
                 case 0x6D: {
-                    this.addWithCarry(_MemManager.readMemory(this.PC));
+                    this.addWithCarry(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
                     break;
                 }
                 case 0xA2: {
@@ -108,8 +108,8 @@ var TSOS;
             _MemManager.writeMemory(memLoc, TSOS.Utils.byteWrap(this.Acc));
             this.PC++;
         };
-        Cpu.prototype.addWithCarry = function (input) {
-            this.Acc += _MemManager.readMemory(input);
+        Cpu.prototype.addWithCarry = function (smallNum, bigNum) {
+            this.Acc += this.Acc = _MemManager.readMemory(TSOS.Utils.byteStitch(smallNum, bigNum));
             this.Acc = TSOS.Utils.byteWrap(this.Acc);
             this.PC++;
         };

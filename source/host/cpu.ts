@@ -69,7 +69,7 @@ module TSOS {
                     break;
                 }
                 case 0x6D: {
-                    this.addWithCarry(_MemManager.readMemory(this.PC));
+                    this.addWithCarry(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
                     break;
                 }
                 case 0xA2: {
@@ -143,8 +143,8 @@ module TSOS {
         }
 
         // 6D - Add with carry
-        private addWithCarry(input): void {
-            this.Acc += _MemManager.readMemory(input);
+        private addWithCarry(smallNum: number, bigNum: number): void {
+            this.Acc += this.Acc = _MemManager.readMemory(Utils.byteStitch(smallNum, bigNum));
             this.Acc = Utils.byteWrap(this.Acc);
             this.PC++;
         }
