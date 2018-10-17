@@ -120,6 +120,18 @@ module TSOS {
                     this.isExecuting = false;
                 }
             }
+            if (this.isExecuting == false) {
+                //Let's wrap things up here. Pack it into the PCB and set it to done
+                let program = Pcb.getRunning();
+                if (program) {
+                    program.state = "COMPLETE";
+                    program.PC = this.PC;
+                    program.Acc = this.Acc;
+                    program.Xreg = this.Xreg;
+                    program.Yreg = this.Yreg;
+                    program.Zflag = this.Zflag;
+                }
+            }
 
         }
 

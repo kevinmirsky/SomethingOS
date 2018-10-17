@@ -95,6 +95,17 @@ var TSOS;
                     this.isExecuting = false;
                 }
             }
+            if (this.isExecuting == false) {
+                var program = TSOS.Pcb.getRunning();
+                if (program) {
+                    program.state = "COMPLETE";
+                    program.PC = this.PC;
+                    program.Acc = this.Acc;
+                    program.Xreg = this.Xreg;
+                    program.Yreg = this.Yreg;
+                    program.Zflag = this.Zflag;
+                }
+            }
         };
         Cpu.prototype.loadAcc = function (input) {
             this.Acc = input;
