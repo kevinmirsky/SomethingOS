@@ -1,5 +1,5 @@
 var APP_NAME = "CYBERCORE";
-var APP_VERSION = "0.2.17";
+var APP_VERSION = "0.2.20";
 var CPU_CLOCK_INTERVAL = 100;
 var TIMER_IRQ = 0;
 var KEYBOARD_IRQ = 1;

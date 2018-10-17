@@ -133,7 +133,7 @@ module TSOS {
             if (singleStep) {
                 singleStep = false;
                 (<HTMLButtonElement>document.getElementById("btnTakeStep")).disabled = true;
-                (<HTMLButtonElement>document.getElementById("btnSingleStep")).value = "SINGLE STEP";
+                (<HTMLButtonElement>document.getElementById("btnSingleStep")).value = " SINGLE STEP ";
 
             } else {
                 singleStep = true;
