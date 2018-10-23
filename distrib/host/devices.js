@@ -1,31 +1,30 @@
 var TSOS;
 (function (TSOS) {
-    var Devices = (function () {
-        function Devices() {
+    class Devices {
+        constructor() {
             _hardwareClockID = -1;
         }
-        Devices.hostClockPulse = function () {
+        static hostClockPulse() {
             _OSclock++;
             _Kernel.krnOnCPUClockPulse();
-            var date = new Date();
+            let date = new Date();
             document.getElementById("bannerTime").innerText = date.toLocaleDateString()
                 + "  |  " + date.toLocaleTimeString();
-        };
-        Devices.hostEnableKeyboardInterrupt = function () {
+        }
+        static hostEnableKeyboardInterrupt() {
             document.addEventListener("keydown", Devices.hostOnKeypress, false);
-        };
-        Devices.hostDisableKeyboardInterrupt = function () {
+        }
+        static hostDisableKeyboardInterrupt() {
             document.removeEventListener("keydown", Devices.hostOnKeypress, false);
-        };
-        Devices.hostOnKeypress = function (event) {
+        }
+        static hostOnKeypress(event) {
             if (event.target.id === "display") {
                 event.preventDefault();
                 var params = new Array(event.which, event.shiftKey);
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(KEYBOARD_IRQ, params));
             }
-        };
-        return Devices;
-    }());
+        }
+    }
     TSOS.Devices = Devices;
 })(TSOS || (TSOS = {}));
 //# sourceMappingURL=devices.js.map

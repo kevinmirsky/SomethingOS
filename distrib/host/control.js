@@ -1,9 +1,7 @@
 var TSOS;
 (function (TSOS) {
-    var Control = (function () {
-        function Control() {
-        }
-        Control.hostInit = function () {
+    class Control {
+        static hostInit() {
             _Canvas = document.getElementById('display');
             _DrawingContext = _Canvas.getContext("2d");
             TSOS.CanvasTextFunctions.enable(_DrawingContext);
@@ -13,16 +11,15 @@ var TSOS;
                 _GLaDOS = new Glados();
                 _GLaDOS.init();
             }
-        };
-        Control.hostLog = function (msg, source) {
-            if (source === void 0) { source = "?"; }
+        }
+        static hostLog(msg, source = "?") {
             var clock = _OSclock;
             var now = new Date().getTime();
             var str = "({ clock:" + clock + ", source:" + source + ", msg:" + msg + ", now:" + now + " })" + "\n";
             var taLog = document.getElementById("taHostLog");
             taLog.value = str + taLog.value;
-        };
-        Control.hostBtnStartOS_click = function (btn) {
+        }
+        static hostBtnStartOS_click(btn) {
             btn.disabled = true;
             document.getElementById("btnHaltOS").disabled = false;
             document.getElementById("btnReset").disabled = false;
@@ -35,17 +32,17 @@ var TSOS;
             _hardwareClockID = setInterval(TSOS.Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
             _Kernel = new TSOS.Kernel();
             _Kernel.krnBootstrap();
-        };
-        Control.hostBtnHaltOS_click = function (btn) {
+        }
+        static hostBtnHaltOS_click(btn) {
             Control.hostLog("Emergency halt", "host");
             Control.hostLog("Attempting Kernel shutdown.", "host");
             _Kernel.krnShutdown();
             clearInterval(_hardwareClockID);
-        };
-        Control.hostBtnReset_click = function (btn) {
+        }
+        static hostBtnReset_click(btn) {
             location.reload(true);
-        };
-        Control.hostBtnSingleStep_click = function (btn) {
+        }
+        static hostBtnSingleStep_click(btn) {
             if (singleStep) {
                 singleStep = false;
                 document.getElementById("btnTakeStep").disabled = true;
@@ -57,12 +54,11 @@ var TSOS;
                 document.getElementById("btnTakeStep").disabled = false;
             }
             canStep = false;
-        };
-        Control.hostBtnTakeStep_click = function (btn) {
+        }
+        static hostBtnTakeStep_click(btn) {
             canStep = true;
-        };
-        return Control;
-    }());
+        }
+    }
     TSOS.Control = Control;
 })(TSOS || (TSOS = {}));
 //# sourceMappingURL=control.js.map
