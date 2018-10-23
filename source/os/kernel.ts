@@ -55,7 +55,8 @@ module TSOS {
             _OsShell = new Shell();
             _OsShell.init();
 
-            _MemManager.refreshMemoryViewer();
+            deviceDisplayDriver.buildMemoryDisplay();
+            //_MemManager.refreshMemoryViewer();
             deviceDisplayDriver.displayPcb();
             deviceDisplayDriver.displayCpu();
 

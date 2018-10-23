@@ -45,5 +45,14 @@ module TSOS {
             inputElement.value = super.dumpMemory();
             //inputElement.value = super.mainMem.join(" ");
         }
+
+        public memDump(): string[] {
+            let output = [];
+            for (let i = 0; i < this.mainMem.length; i++) {
+                let preparedValue = this.mainMem[i].toString(16).toUpperCase().padStart(2, "0");
+                output.push(preparedValue);
+            }
+            return output;
+        }
     }
 }

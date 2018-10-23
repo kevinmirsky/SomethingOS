@@ -68,6 +68,30 @@ module TSOS {
             cellZflag.innerHTML = _CPU.Zflag.toString(16).toUpperCase();
         }
 
+        public static buildMemoryDisplay(): void {
+            /*
+            This function should only be called once!
+
+            This builds the memory table's initial structure so we can update
+            it more smoothly per cycle.
+             */
+            let ROW_LENGTH = 8;
+
+            let mem = _MemManager.memDump();
+            let table = <HTMLTableElement>document.getElementById("tableMemory");
+            let row;
+            for (let i = 0; i < mem.length; i++) {
+                if (i % ROW_LENGTH === 0) {
+                    //New row. Set it up and let's go.
+                    row = table.insertRow(-1); //Add bottom most row
+                    let cell = row.insertCell(0);
+                    cell.innerHTML = "0x" + i.toString(16).toUpperCase().padStart(3, "0");
+                }
+                let cell = row.insertCell(-1);
+                cell.innerHTML = mem[i].toString();
+            }
+        }
+
         public displayMemory(): void {
             //We'll migrate the code here later
         }
