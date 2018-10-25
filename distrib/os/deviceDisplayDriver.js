@@ -51,7 +51,8 @@ var TSOS;
                 }
                 let cell = row.insertCell(-1);
                 cell.id = "cellMem" + i.toString(16).toUpperCase();
-                cell.innerHTML = mem[i];
+                cell.className = "cell-mem";
+                cell.innerHTML = mem[i].toString();
             }
         }
         static updateMemory() {
