@@ -50,10 +50,14 @@ var TSOS;
                     cell.innerHTML = "0x" + i.toString(16).toUpperCase().padStart(3, "0");
                 }
                 let cell = row.insertCell(-1);
+                cell.className = "cell-mem";
                 cell.innerHTML = mem[i].toString();
             }
         }
         displayMemory() {
+            let mem = _MemManager.memDump();
+            for (let i = 0; i < mem.length; i++) {
+            }
         }
     }
     TSOS.deviceDisplayDriver = deviceDisplayDriver;

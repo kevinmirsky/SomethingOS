@@ -1,5 +1,14 @@
 /* TSOS.css */
 
+:root {
+    --main-pink: #ff3d5b;
+    --main-blue: #a2e0d5;
+    --main-yellow: #fdee06;
+    --glow-pink: #712032;
+    --dull-pink: #ff3d5b;
+    --dull-yellow: #9b8c06;
+}
+
 * {
     box-sizing: border-box;
 }
@@ -10,7 +19,7 @@ body {
     font-size: 12pt;
     font-weight: bold;
     font-style: normal;
-    color: #ff3d5b;
+    color: var(--main-pink);
     background: black;
     text-shadow: 0px 0px 5px #ff4362;
 
@@ -59,6 +68,13 @@ h3 {
     padding-right: 40px;
 }
 
+.cell-mem {
+    font-weight: normal;
+    color: var(--dull-pink);
+    text-shadow: 0px 0px 5px var(--dull-pink);
+
+}
+
 ul {
     list-style-type: none;
     margin: 0;
@@ -67,7 +83,7 @@ ul {
     overflow: hidden;
     background-color: #000000;
     color: #ff3d5b;
-    border: 2px solid #ff3d5b;;
+    border: 2px solid #ff3d5b;
 }
 
 li {

@@ -88,12 +88,17 @@ module TSOS {
                     cell.innerHTML = "0x" + i.toString(16).toUpperCase().padStart(3, "0");
                 }
                 let cell = row.insertCell(-1);
+                cell.className = "cell-mem";
                 cell.innerHTML = mem[i].toString();
             }
         }
 
         public displayMemory(): void {
             //We'll migrate the code here later
+            let mem = _MemManager.memDump();
+            for (let i = 0; i < mem.length; i++) {
+
+            }
         }
     }
 }
