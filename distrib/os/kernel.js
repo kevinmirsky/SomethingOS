@@ -33,6 +33,7 @@ var TSOS;
             this.krnTrace("end shutdown OS");
         }
         krnOnCPUClockPulse() {
+            TSOS.deviceDisplayDriver.updateMemory();
             TSOS.deviceDisplayDriver.displayPcb();
             TSOS.deviceDisplayDriver.displayCpu();
             if (_KernelInterruptQueue.getSize() > 0) {
