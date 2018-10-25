@@ -4,6 +4,8 @@
     --main-pink: #ff3d5b;
     --main-blue: #a2e0d5;
     --main-yellow: #fdee06;
+    --not-white: #d5d5d5;
+    --bgr-gray: #292929;
     --glow-pink: #712032;
     --dull-pink: #ff3d5b;
     --dull-yellow: #9b8c06;
@@ -12,6 +14,12 @@
 * {
     box-sizing: border-box;
 }
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: var(--bgr-gray);
+}
+
 
 body {
     /*background: #909193 url(distrib/images/linen.png) repeat;*/
@@ -69,10 +77,33 @@ h3 {
 }
 
 .cell-mem {
-    font-weight: normal;
+    font-weight: bold;
     color: var(--dull-pink);
     text-shadow: 0px 0px 5px var(--dull-pink);
+}
 
+.cell-mem.curOp {
+    color: var(--main-yellow);
+    text-shadow: 0px 0px 5px var(--dull-yellow);
+}
+
+.cell-mem.curParam {
+    color: var(--main-blue);
+    text-shadow: 0px 0px 5px var(--main-blue);
+}
+
+.cell-memLabel {
+    font-weight: normal;
+    color: var(--not-white);
+    text-shadow: 0px 0px 5px var(--not-white);
+}
+
+textarea {
+    font-family: "Lucida Console", Monaco, monospace;
+    font-size: 10pt;
+    background: var(--bgr-gray);
+    color: var(--main-blue);
+    border: 2px solid var(--dull-pink);
 }
 
 ul {

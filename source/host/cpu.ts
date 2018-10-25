@@ -41,6 +41,7 @@ module TSOS {
             _Kernel.krnTrace('CPU cycle');
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
+            deviceDisplayDriver.resetMemoryHighlights();
             this.fetch();
 
             //Reset step flag for single step
@@ -51,40 +52,55 @@ module TSOS {
 
         public fetch(): void {
             let instruction: number = _MemManager.readMemory(this.PC);
+            //Add memory highlighting
+            deviceDisplayDriver.setCurrentOp(this.PC);
             this.PC++;
 
             //Decode
             //While we could store next value ahead of time, if we go out of bounds, we'll error out
             switch(instruction) {
                 case 0xA9: {
+                    deviceDisplayDriver.setCurrentParam(this.PC);
                     this.loadAcc(_MemManager.readMemory(this.PC));
                     break;
                 }
                 case 0xAD: {
+                    deviceDisplayDriver.setCurrentParam(this.PC);
+                    deviceDisplayDriver.setCurrentParam(this.PC + 1);
                     this.loadAccFromMem(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
                     break;
                 }
                 case 0x8D: {
+                    deviceDisplayDriver.setCurrentParam(this.PC);
+                    deviceDisplayDriver.setCurrentParam(this.PC + 1);
                     this.storeAcc(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
                     break;
                 }
                 case 0x6D: {
+                    deviceDisplayDriver.setCurrentParam(this.PC);
+                    deviceDisplayDriver.setCurrentParam(this.PC + 1);
                     this.addWithCarry(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
                     break;
                 }
                 case 0xA2: {
+                    deviceDisplayDriver.setCurrentParam(this.PC);
                     this.loadXReg(_MemManager.readMemory(this.PC));
                     break;
                 }
                 case 0xAE: {
+                    deviceDisplayDriver.setCurrentParam(this.PC);
+                    deviceDisplayDriver.setCurrentParam(this.PC + 1);
                     this.loadXRegFromMem(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
                     break;
                 }
                 case 0xA0: {
+                    deviceDisplayDriver.setCurrentParam(this.PC);
                     this.loadYReg(_MemManager.readMemory(this.PC));
                     break;
                 }
                 case 0xAC: {
+                    deviceDisplayDriver.setCurrentParam(this.PC);
+                    deviceDisplayDriver.setCurrentParam(this.PC + 1);
                     this.loadYRegFromMem(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
                     break;
                 }
@@ -98,14 +114,19 @@ module TSOS {
                     break;
                 }
                 case 0xEC: {
+                    deviceDisplayDriver.setCurrentParam(this.PC);
+                    deviceDisplayDriver.setCurrentParam(this.PC + 1);
                     this.compareToXReg(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
                     break;
                 }
                 case 0xD0: {
+                    deviceDisplayDriver.setCurrentParam(this.PC);
                     this.branchOnNotEqual(_MemManager.readMemory(this.PC));
                     break;
                 }
                 case 0xEE: {
+                    deviceDisplayDriver.setCurrentParam(this.PC);
+                    deviceDisplayDriver.setCurrentParam(this.PC + 1);
                     this.incrementByte(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
                     break;
                 }

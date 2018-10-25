@@ -48,6 +48,7 @@ var TSOS;
                     row = table.insertRow(-1);
                     let cell = row.insertCell(0);
                     cell.innerHTML = "0x" + i.toString(16).toUpperCase().padStart(3, "0");
+                    cell.className = "cell-memLabel";
                 }
                 let cell = row.insertCell(-1);
                 cell.id = "cellMem" + i.toString(16).toUpperCase();
@@ -61,6 +62,26 @@ var TSOS;
                 let cell = document.getElementById("cellMem"
                     + i.toString(16).toUpperCase());
                 cell.innerHTML = mem[i];
+            }
+        }
+        static setCurrentOp(memLoc) {
+            let id = "cellMem" + memLoc.toString(16).toUpperCase();
+            let cell = document.getElementById(id);
+            cell.className = "cell-mem curOp";
+        }
+        static setCurrentParam(memLoc) {
+            let id = "cellMem" + memLoc.toString(16).toUpperCase();
+            let cell = document.getElementById(id);
+            cell.className = "cell-mem curParam";
+        }
+        static resetMemoryHighlights() {
+            let params = document.getElementsByClassName("cell-mem curParam");
+            while (params.length) {
+                params[0].className = "cell-mem";
+            }
+            let ops = document.getElementsByClassName("cell-mem curOp");
+            while (ops.length) {
+                ops[0].className = "cell-mem";
             }
         }
     }

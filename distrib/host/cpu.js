@@ -19,6 +19,7 @@ var TSOS;
         }
         cycle() {
             _Kernel.krnTrace('CPU cycle');
+            TSOS.deviceDisplayDriver.resetMemoryHighlights();
             this.fetch();
             if (singleStep) {
                 canStep = false;
@@ -26,37 +27,51 @@ var TSOS;
         }
         fetch() {
             let instruction = _MemManager.readMemory(this.PC);
+            TSOS.deviceDisplayDriver.setCurrentOp(this.PC);
             this.PC++;
             switch (instruction) {
                 case 0xA9: {
+                    TSOS.deviceDisplayDriver.setCurrentParam(this.PC);
                     this.loadAcc(_MemManager.readMemory(this.PC));
                     break;
                 }
                 case 0xAD: {
+                    TSOS.deviceDisplayDriver.setCurrentParam(this.PC);
+                    TSOS.deviceDisplayDriver.setCurrentParam(this.PC + 1);
                     this.loadAccFromMem(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
                     break;
                 }
                 case 0x8D: {
+                    TSOS.deviceDisplayDriver.setCurrentParam(this.PC);
+                    TSOS.deviceDisplayDriver.setCurrentParam(this.PC + 1);
                     this.storeAcc(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
                     break;
                 }
                 case 0x6D: {
+                    TSOS.deviceDisplayDriver.setCurrentParam(this.PC);
+                    TSOS.deviceDisplayDriver.setCurrentParam(this.PC + 1);
                     this.addWithCarry(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
                     break;
                 }
                 case 0xA2: {
+                    TSOS.deviceDisplayDriver.setCurrentParam(this.PC);
                     this.loadXReg(_MemManager.readMemory(this.PC));
                     break;
                 }
                 case 0xAE: {
+                    TSOS.deviceDisplayDriver.setCurrentParam(this.PC);
+                    TSOS.deviceDisplayDriver.setCurrentParam(this.PC + 1);
                     this.loadXRegFromMem(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
                     break;
                 }
                 case 0xA0: {
+                    TSOS.deviceDisplayDriver.setCurrentParam(this.PC);
                     this.loadYReg(_MemManager.readMemory(this.PC));
                     break;
                 }
                 case 0xAC: {
+                    TSOS.deviceDisplayDriver.setCurrentParam(this.PC);
+                    TSOS.deviceDisplayDriver.setCurrentParam(this.PC + 1);
                     this.loadYRegFromMem(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
                     break;
                 }
@@ -68,14 +83,19 @@ var TSOS;
                     break;
                 }
                 case 0xEC: {
+                    TSOS.deviceDisplayDriver.setCurrentParam(this.PC);
+                    TSOS.deviceDisplayDriver.setCurrentParam(this.PC + 1);
                     this.compareToXReg(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
                     break;
                 }
                 case 0xD0: {
+                    TSOS.deviceDisplayDriver.setCurrentParam(this.PC);
                     this.branchOnNotEqual(_MemManager.readMemory(this.PC));
                     break;
                 }
                 case 0xEE: {
+                    TSOS.deviceDisplayDriver.setCurrentParam(this.PC);
+                    TSOS.deviceDisplayDriver.setCurrentParam(this.PC + 1);
                     this.incrementByte(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
                     break;
                 }
