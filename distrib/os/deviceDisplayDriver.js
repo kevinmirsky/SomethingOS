@@ -50,10 +50,17 @@ var TSOS;
                     cell.innerHTML = "0x" + i.toString(16).toUpperCase().padStart(3, "0");
                 }
                 let cell = row.insertCell(-1);
-                cell.innerHTML = mem[i].toString();
+                cell.id = "cellMem" + i.toString(16).toUpperCase();
+                cell.innerHTML = mem[i];
             }
         }
-        displayMemory() {
+        static updateMemory() {
+            let mem = _MemManager.memDump();
+            for (let i = 0; i < mem.length; i++) {
+                let cell = document.getElementById("cellMem"
+                    + i.toString(16).toUpperCase());
+                cell.innerHTML = mem[i];
+            }
         }
     }
     TSOS.deviceDisplayDriver = deviceDisplayDriver;
