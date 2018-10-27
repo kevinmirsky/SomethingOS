@@ -92,6 +92,11 @@ h3 {
     text-shadow: 0px 0px 5px var(--main-blue);
 }
 
+.cell-mem.curRW {
+    color: var(--not-white);
+    text-shadow: 0px 0px 5px var(--not-white);
+}
+
 .cell-memLabel {
     font-weight: normal;
     color: var(--not-white);

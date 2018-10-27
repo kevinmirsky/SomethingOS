@@ -116,6 +116,12 @@ module TSOS {
             cell.className = "cell-mem curParam";
         }
 
+        public static setCurrentReadWrite(memLoc: number): void {
+            let id = "cellMem" + memLoc.toString(16).toUpperCase();
+            let cell = <HTMLTableCellElement> document.getElementById(id);
+            cell.className = "cell-mem curRW";
+        }
+
         public static resetMemoryHighlights(): void {
             let params = document.getElementsByClassName("cell-mem curParam");
             while (params.length) {

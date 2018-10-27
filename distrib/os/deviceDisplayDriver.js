@@ -74,6 +74,11 @@ var TSOS;
             let cell = document.getElementById(id);
             cell.className = "cell-mem curParam";
         }
+        static setCurrentReadWrite(memLoc) {
+            let id = "cellMem" + memLoc.toString(16).toUpperCase();
+            let cell = document.getElementById(id);
+            cell.className = "cell-mem curRW";
+        }
         static resetMemoryHighlights() {
             let params = document.getElementsByClassName("cell-mem curParam");
             while (params.length) {
