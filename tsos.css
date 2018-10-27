@@ -1,8 +1,25 @@
 /* TSOS.css */
 
+:root {
+    --main-pink: #ff3d5b;
+    --main-blue: #a2e0d5;
+    --main-yellow: #fdee06;
+    --not-white: #d5d5d5;
+    --bgr-gray: #292929;
+    --glow-pink: #712032;
+    --dull-pink: #ff3d5b;
+    --dull-yellow: #9b8c06;
+}
+
 * {
     box-sizing: border-box;
 }
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: var(--bgr-gray);
+}
+
 
 body {
     /*background: #909193 url(distrib/images/linen.png) repeat;*/
@@ -10,7 +27,7 @@ body {
     font-size: 12pt;
     font-weight: bold;
     font-style: normal;
-    color: #ff3d5b;
+    color: var(--main-pink);
     background: black;
     text-shadow: 0px 0px 5px #ff4362;
 
@@ -59,6 +76,41 @@ h3 {
     padding-right: 40px;
 }
 
+.cell-mem {
+    font-weight: bold;
+    color: var(--dull-pink);
+    text-shadow: 0px 0px 5px var(--dull-pink);
+}
+
+.cell-mem.curOp {
+    color: var(--main-yellow);
+    text-shadow: 0px 0px 5px var(--dull-yellow);
+}
+
+.cell-mem.curParam {
+    color: var(--main-blue);
+    text-shadow: 0px 0px 5px var(--main-blue);
+}
+
+.cell-mem.curRW {
+    color: var(--not-white);
+    text-shadow: 0px 0px 5px var(--not-white);
+}
+
+.cell-memLabel {
+    font-weight: normal;
+    color: var(--not-white);
+    text-shadow: 0px 0px 5px var(--not-white);
+}
+
+textarea {
+    font-family: "Lucida Console", Monaco, monospace;
+    font-size: 10pt;
+    background: var(--bgr-gray);
+    color: var(--main-blue);
+    border: 2px solid var(--dull-pink);
+}
+
 ul {
     list-style-type: none;
     margin: 0;
@@ -67,7 +119,7 @@ ul {
     overflow: hidden;
     background-color: #000000;
     color: #ff3d5b;
-    border: 2px solid #ff3d5b;;
+    border: 2px solid #ff3d5b;
 }
 
 li {

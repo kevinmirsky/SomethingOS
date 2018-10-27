@@ -55,7 +55,8 @@ module TSOS {
             _OsShell = new Shell();
             _OsShell.init();
 
-            _MemManager.refreshMemoryViewer();
+            deviceDisplayDriver.buildMemoryDisplay();
+            //_MemManager.refreshMemoryViewer();
             deviceDisplayDriver.displayPcb();
             deviceDisplayDriver.displayCpu();
 
@@ -86,7 +87,7 @@ module TSOS {
                that it has to look for interrupts and process them if it finds any.                           */
 
             //This is going here so it's updated frequently. However I want to see if there's a better space for it.
-            _MemManager.refreshMemoryViewer();
+            deviceDisplayDriver.updateMemory();
             deviceDisplayDriver.displayPcb();
             deviceDisplayDriver.displayCpu();
 

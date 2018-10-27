@@ -68,8 +68,70 @@ module TSOS {
             cellZflag.innerHTML = _CPU.Zflag.toString(16).toUpperCase();
         }
 
-        public displayMemory(): void {
-            //We'll migrate the code here later
+        public static buildMemoryDisplay(): void {
+            /*
+            This function should only be called once!
+
+            This builds the memory table's initial structure so we can update
+            it more smoothly per cycle.
+             */
+            let ROW_LENGTH = 8;
+
+            let mem = _MemManager.memDump();
+            let table = <HTMLTableElement>document.getElementById("tableMemory");
+            let row;
+            for (let i = 0; i < mem.length; i++) {
+                if (i % ROW_LENGTH === 0) {
+                    //New row. Set it up and let's go.
+                    row = table.insertRow(-1); //Add bottom most row
+                    let cell = row.insertCell(0);
+                    cell.innerHTML = "0x" + i.toString(16).toUpperCase().padStart(3, "0");
+                    cell.className = "cell-memLabel";
+                }
+                let cell = row.insertCell(-1);
+                cell.id = "cellMem" + i.toString(16).toUpperCase();
+                cell.className = "cell-mem";
+                cell.innerHTML = mem[i].toString();
+            }
+        }
+
+        public static updateMemory(): void {
+            let  mem = _MemManager.memDump();
+            for (let i = 0; i < mem.length; i++) {
+                let cell = document.getElementById("cellMem"
+                    + i.toString(16).toUpperCase());
+                cell.innerHTML = mem[i];
+            }
+        }
+
+        public static setCurrentOp(memLoc: number): void {
+            let id = "cellMem" + memLoc.toString(16).toUpperCase();
+            let cell = <HTMLTableCellElement> document.getElementById(id);
+            cell.className = "cell-mem curOp";
+        }
+
+        public static setCurrentParam(memLoc: number): void {
+            let id = "cellMem" + memLoc.toString(16).toUpperCase();
+            let cell = <HTMLTableCellElement> document.getElementById(id);
+            cell.className = "cell-mem curParam";
+        }
+
+        public static setCurrentReadWrite(memLoc: number): void {
+            let id = "cellMem" + memLoc.toString(16).toUpperCase();
+            let cell = <HTMLTableCellElement> document.getElementById(id);
+            cell.className = "cell-mem curRW";
+        }
+
+        public static resetMemoryHighlights(): void {
+            let params = document.getElementsByClassName("cell-mem curParam");
+            while (params.length) {
+                params[0].className = "cell-mem";
+            }
+
+            let ops = document.getElementsByClassName("cell-mem curOp");
+            while (ops.length) {
+                ops[0].className = "cell-mem";
+            }
         }
     }
 }

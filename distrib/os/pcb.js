@@ -1,7 +1,7 @@
 var TSOS;
 (function (TSOS) {
-    var Pcb = (function () {
-        function Pcb(memStart, memRange) {
+    class Pcb {
+        constructor(memStart, memRange) {
             this.priority = 99;
             this.state = "NEW";
             this.PC = 0;
@@ -15,8 +15,8 @@ var TSOS;
             this.pid = Pcb.pidCounter++;
             Pcb.instances.push(this);
         }
-        Pcb.prototype.dump = function () {
-            var output = [];
+        dump() {
+            let output = [];
             output.push(["cellPid" + this.pid, this.pid.toString()]);
             output.push(["cellPriority" + this.pid, this.priority.toString()]);
             output.push(["cellState" + this.pid, this.state.toString()]);
@@ -28,38 +28,37 @@ var TSOS;
             output.push(["cellmemoryOffset" + this.pid, this.memoryOffset.toString(16)]);
             output.push(["cellmemoryRange" + this.pid, this.memoryRange.toString()]);
             return output;
-        };
-        Pcb.prototype.delete = function () {
-            for (var i = 1; i < Pcb.instances.length; i++) {
+        }
+        delete() {
+            for (let i = 1; i < Pcb.instances.length; i++) {
                 if (Pcb.instances[i].pid == this.pid) {
                     Pcb.instances.splice(i, 1);
                     return true;
                 }
             }
             return false;
-        };
-        Pcb.getFromPid = function (pid) {
-            for (var i = 0; i < Pcb.instances.length; i++) {
+        }
+        static getFromPid(pid) {
+            for (let i = 0; i < Pcb.instances.length; i++) {
                 if (Pcb.instances[i].pid == pid) {
                     return Pcb.instances[i];
                 }
             }
             return false;
-        };
-        Pcb.getRunning = function () {
-            for (var i = 0; i < Pcb.instances.length; i++) {
+        }
+        static getRunning() {
+            for (let i = 0; i < Pcb.instances.length; i++) {
                 if (Pcb.instances[i].state == "RUNNING") {
                     return Pcb.instances[i];
                 }
             }
             return false;
-        };
-        Pcb.prototype.init = function () {
-        };
-        Pcb.instances = [];
-        Pcb.pidCounter = 0;
-        return Pcb;
-    }());
+        }
+        init() {
+        }
+    }
+    Pcb.instances = [];
+    Pcb.pidCounter = 0;
     TSOS.Pcb = Pcb;
 })(TSOS || (TSOS = {}));
 //# sourceMappingURL=pcb.js.map

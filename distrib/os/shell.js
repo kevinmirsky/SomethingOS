@@ -1,13 +1,13 @@
 var TSOS;
 (function (TSOS) {
-    var Shell = (function () {
-        function Shell() {
+    class Shell {
+        constructor() {
             this.promptStr = ">";
             this.commandList = [];
             this.curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
             this.apologies = "[sorry]";
         }
-        Shell.prototype.init = function () {
+        init() {
             var sc;
             sc = new TSOS.ShellCommand(this.shellVer, "ver", "- Displays the current version data.");
             this.commandList[this.commandList.length] = sc;
@@ -45,11 +45,11 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellDebugChangePcb, "changepcbtest", "- [DEBUG] This deletes a pcb for a process. Testing purposes only.");
             this.commandList[this.commandList.length] = sc;
             this.putPrompt();
-        };
-        Shell.prototype.putPrompt = function () {
+        }
+        putPrompt() {
             _StdOut.putText(this.promptStr);
-        };
-        Shell.prototype.handleInput = function (buffer) {
+        }
+        handleInput(buffer) {
             _Kernel.krnTrace("Shell Command~" + buffer);
             var userCommand = this.parseInput(buffer);
             var cmd = userCommand.command;
@@ -80,16 +80,16 @@ var TSOS;
                     this.execute(this.shellInvalidCommand);
                 }
             }
-        };
-        Shell.prototype.execute = function (fn, args) {
+        }
+        execute(fn, args) {
             _StdOut.advanceLine();
             fn(args);
             if (_StdOut.currentXPosition > 0) {
                 _StdOut.advanceLine();
             }
             this.putPrompt();
-        };
-        Shell.prototype.cmdComplete = function (input, tabCount) {
+        }
+        cmdComplete(input, tabCount) {
             var index = 0;
             var timesMatched = 0;
             while (index < this.commandList.length) {
@@ -102,8 +102,8 @@ var TSOS;
                 index++;
             }
             return input;
-        };
-        Shell.prototype.parseInput = function (buffer) {
+        }
+        parseInput(buffer) {
             var retVal = new TSOS.UserCommand();
             buffer = TSOS.Utils.trim(buffer);
             buffer = buffer.toLowerCase();
@@ -118,8 +118,8 @@ var TSOS;
                 }
             }
             return retVal;
-        };
-        Shell.prototype.shellInvalidCommand = function () {
+        }
+        shellInvalidCommand() {
             _StdOut.putText("[ERROR] Invalid Command. ");
             if (_SarcasticMode) {
                 _StdOut.putText("Unbelievable. You, [subject name here],");
@@ -129,14 +129,14 @@ var TSOS;
             else {
                 _StdOut.putText("Type 'help' for, well... help.");
             }
-        };
-        Shell.prototype.shellCurse = function () {
+        }
+        shellCurse() {
             _StdOut.putText("Oh, so that's how it's going to be, eh? Fine.");
             _StdOut.advanceLine();
             _StdOut.putText("Bitch.");
             _SarcasticMode = true;
-        };
-        Shell.prototype.shellApology = function () {
+        }
+        shellApology() {
             if (_SarcasticMode) {
                 _StdOut.putText("I think we can put our differences behind us.");
                 _StdOut.advanceLine();
@@ -146,26 +146,26 @@ var TSOS;
             else {
                 _StdOut.putText("For what?");
             }
-        };
-        Shell.prototype.shellVer = function (args) {
+        }
+        shellVer(args) {
             _StdOut.putText(APP_NAME + " version " + APP_VERSION);
-        };
-        Shell.prototype.shellHelp = function (args) {
+        }
+        shellHelp(args) {
             _StdOut.putText("Commands:");
             for (var i in _OsShell.commandList) {
                 _StdOut.advanceLine();
                 _StdOut.putText("  " + _OsShell.commandList[i].command + " " + _OsShell.commandList[i].description);
             }
-        };
-        Shell.prototype.shellShutdown = function (args) {
+        }
+        shellShutdown(args) {
             _StdOut.putText("Shutting down...");
             _Kernel.krnShutdown();
-        };
-        Shell.prototype.shellCls = function (args) {
+        }
+        shellCls(args) {
             _StdOut.clearScreen();
             _StdOut.resetXY();
-        };
-        Shell.prototype.shellMan = function (args) {
+        }
+        shellMan(args) {
             if (args.length > 0) {
                 var topic = args[0];
                 for (var i in _OsShell.commandList) {
@@ -179,8 +179,8 @@ var TSOS;
             else {
                 _StdOut.putText("Usage: man <topic>  Please supply a topic.");
             }
-        };
-        Shell.prototype.shellTrace = function (args) {
+        }
+        shellTrace(args) {
             if (args.length > 0) {
                 var setting = args[0];
                 switch (setting) {
@@ -204,59 +204,59 @@ var TSOS;
             else {
                 _StdOut.putText("Usage: trace <on | off>");
             }
-        };
-        Shell.prototype.shellRot13 = function (args) {
+        }
+        shellRot13(args) {
             if (args.length > 0) {
                 _StdOut.putText(args.join(' ') + " = '" + TSOS.Utils.rot13(args.join(' ')) + "'");
             }
             else {
                 _StdOut.putText("Usage: rot13 <string>  Please supply a string.");
             }
-        };
-        Shell.prototype.shellPrompt = function (args) {
+        }
+        shellPrompt(args) {
             if (args.length > 0) {
                 _OsShell.promptStr = args[0];
             }
             else {
                 _StdOut.putText("Usage: prompt <string>  Please supply a string.");
             }
-        };
-        Shell.prototype.shellWhereAmI = function (args) {
+        }
+        shellWhereAmI(args) {
             _StdOut.putText("[ERROR] GPS enabled cyberware not found. Contact a licensed cyberware " +
                 "professional for installation.");
-        };
-        Shell.prototype.shellDate = function (args) {
+        }
+        shellDate(args) {
             var d = new Date();
             _StdOut.putText(d.getFullYear().toString() + "-"
                 + (d.getMonth() + 1).toString() + "-" + d.getDate().toString() +
                 " " + d.getHours().toString() + ":" + d.getMinutes().toString());
-        };
-        Shell.prototype.shellUptime = function (args) {
-            var DECISEC_IN_SECOND = 10;
-            var DECISEC_IN_MINUTE = 600;
-            var DECISEC_IN_HOUR = 36000;
-            var DECISEC_IN_DAY = 864000;
-            var time = _OSclock;
-            var days = Math.floor(time / DECISEC_IN_DAY);
+        }
+        shellUptime(args) {
+            const DECISEC_IN_SECOND = 10;
+            const DECISEC_IN_MINUTE = 600;
+            const DECISEC_IN_HOUR = 36000;
+            const DECISEC_IN_DAY = 864000;
+            let time = _OSclock;
+            let days = Math.floor(time / DECISEC_IN_DAY);
             time = time % DECISEC_IN_DAY;
-            var hours = Math.floor(time / DECISEC_IN_HOUR);
+            let hours = Math.floor(time / DECISEC_IN_HOUR);
             time = time % DECISEC_IN_HOUR;
-            var minutes = Math.floor(time / DECISEC_IN_MINUTE);
+            let minutes = Math.floor(time / DECISEC_IN_MINUTE);
             time = time % DECISEC_IN_MINUTE;
-            var seconds = Math.floor(time / DECISEC_IN_SECOND);
+            let seconds = Math.floor(time / DECISEC_IN_SECOND);
             _StdOut.putText(days + " days, " + hours + " hours, "
                 + minutes + " minutes, " + seconds + " seconds");
-        };
-        Shell.prototype.shellLoad = function (args) {
-            var regex = new RegExp("^[a-fA-F0-9]+$");
-            var isValid = true;
-            var inputArray = [];
-            var input = document.getElementById("taProgramInput").value;
+        }
+        shellLoad(args) {
+            let regex = new RegExp("^[a-fA-F0-9]+$");
+            let isValid = true;
+            let inputArray = [];
+            let input = document.getElementById("taProgramInput").value;
             input = input.trim();
             input = input.replace(/\s/g, '');
             console.log(input.toString());
-            var CHUNK_SIZE = 2;
-            for (var i = 0; i < input.length; i += CHUNK_SIZE) {
+            const CHUNK_SIZE = 2;
+            for (let i = 0; i < input.length; i += CHUNK_SIZE) {
                 inputArray.push(input.substring(i, i + CHUNK_SIZE));
             }
             if (inputArray.length == 0) {
@@ -275,29 +275,29 @@ var TSOS;
             if (isValid) {
                 _StdOut.putText("User input validated. Loading...");
                 _MemManager.writeMemory(0x00, inputArray);
-                var process = new TSOS.Pcb(0x00, inputArray.length);
+                let process = new TSOS.Pcb(0x00, inputArray.length);
                 _StdOut.putText(" Done. PID: " + process.pid.toString());
             }
             else {
                 _StdOut.putText("[ERROR] User code malformed. Unable to load.");
             }
-        };
-        Shell.prototype.shellStatus = function (args) {
+        }
+        shellStatus(args) {
             document.getElementById("bannerStatus").innerText = args.join(' ');
-        };
-        Shell.prototype.shellCrash = function (args) {
+        }
+        shellCrash(args) {
             _Kernel.krnTrapError("User manually invoked failure.");
-        };
-        Shell.prototype.shellDebugMemtest = function (args) {
+        }
+        shellDebugMemtest(args) {
             _MemManager.writeMemory(0xF1, 0x01);
             _StdOut.putText(_MemManager.readMemory(0x01, 0x02).toString());
-        };
-        Shell.prototype.shellRun = function (args) {
+        }
+        shellRun(args) {
             if (args.length == 0) {
                 _StdOut.putText("[ERROR] Could not find PID " + args);
                 return false;
             }
-            var program = TSOS.Pcb.getFromPid(args);
+            let program = TSOS.Pcb.getFromPid(args);
             if (program) {
                 program.state = "RUNNING";
                 _CPU.init();
@@ -307,12 +307,11 @@ var TSOS;
             else {
                 _StdOut.putText("[ERROR] Could not find PID " + args);
             }
-        };
-        Shell.prototype.shellDebugChangePcb = function (args) {
+        }
+        shellDebugChangePcb(args) {
             TSOS.Pcb.instances[0].priority = 1;
-        };
-        return Shell;
-    }());
+        }
+    }
     TSOS.Shell = Shell;
 })(TSOS || (TSOS = {}));
 //# sourceMappingURL=shell.js.map

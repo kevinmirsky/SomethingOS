@@ -1,9 +1,7 @@
 var TSOS;
 (function (TSOS) {
-    var Kernel = (function () {
-        function Kernel() {
-        }
-        Kernel.prototype.krnBootstrap = function () {
+    class Kernel {
+        krnBootstrap() {
             TSOS.Control.hostLog("bootstrap", "host");
             _KernelInterruptQueue = new TSOS.Queue();
             _KernelBuffers = new Array();
@@ -21,21 +19,21 @@ var TSOS;
             this.krnTrace("Creating and Launching the shell.");
             _OsShell = new TSOS.Shell();
             _OsShell.init();
-            _MemManager.refreshMemoryViewer();
+            TSOS.deviceDisplayDriver.buildMemoryDisplay();
             TSOS.deviceDisplayDriver.displayPcb();
             TSOS.deviceDisplayDriver.displayCpu();
             if (_GLaDOS) {
                 _GLaDOS.afterStartup();
             }
-        };
-        Kernel.prototype.krnShutdown = function () {
+        }
+        krnShutdown() {
             this.krnTrace("begin shutdown OS");
             this.krnTrace("Disabling the interrupts.");
             this.krnDisableInterrupts();
             this.krnTrace("end shutdown OS");
-        };
-        Kernel.prototype.krnOnCPUClockPulse = function () {
-            _MemManager.refreshMemoryViewer();
+        }
+        krnOnCPUClockPulse() {
+            TSOS.deviceDisplayDriver.updateMemory();
             TSOS.deviceDisplayDriver.displayPcb();
             TSOS.deviceDisplayDriver.displayCpu();
             if (_KernelInterruptQueue.getSize() > 0) {
@@ -53,14 +51,14 @@ var TSOS;
             else {
                 this.krnTrace("Idle");
             }
-        };
-        Kernel.prototype.krnEnableInterrupts = function () {
+        }
+        krnEnableInterrupts() {
             TSOS.Devices.hostEnableKeyboardInterrupt();
-        };
-        Kernel.prototype.krnDisableInterrupts = function () {
+        }
+        krnDisableInterrupts() {
             TSOS.Devices.hostDisableKeyboardInterrupt();
-        };
-        Kernel.prototype.krnInterruptHandler = function (irq, params) {
+        }
+        krnInterruptHandler(irq, params) {
             this.krnTrace("Handling IRQ~" + irq);
             switch (irq) {
                 case TIMER_IRQ:
@@ -73,10 +71,10 @@ var TSOS;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
             }
-        };
-        Kernel.prototype.krnTimerISR = function () {
-        };
-        Kernel.prototype.krnTrace = function (msg) {
+        }
+        krnTimerISR() {
+        }
+        krnTrace(msg) {
             if (_Trace) {
                 if (msg === "Idle") {
                     if (_OSclock % 10 == 0) {
@@ -87,14 +85,13 @@ var TSOS;
                     TSOS.Control.hostLog(msg, "OS");
                 }
             }
-        };
-        Kernel.prototype.krnTrapError = function (msg) {
+        }
+        krnTrapError(msg) {
             TSOS.Control.hostLog("OS ERROR - TRAP: " + msg);
             _StdOut.putText("[SYS FAILURE] OS ERROR: " + msg);
             this.krnShutdown();
-        };
-        return Kernel;
-    }());
+        }
+    }
     TSOS.Kernel = Kernel;
 })(TSOS || (TSOS = {}));
 //# sourceMappingURL=kernel.js.map

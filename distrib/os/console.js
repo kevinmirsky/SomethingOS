@@ -1,17 +1,7 @@
 var TSOS;
 (function (TSOS) {
-    var Console = (function () {
-        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer, tabCount, tabBuffer, historyStack, futureStack, openHistoryItem) {
-            if (currentFont === void 0) { currentFont = _DefaultFontFamily; }
-            if (currentFontSize === void 0) { currentFontSize = _DefaultFontSize; }
-            if (currentXPosition === void 0) { currentXPosition = 0; }
-            if (currentYPosition === void 0) { currentYPosition = _DefaultFontSize; }
-            if (buffer === void 0) { buffer = ""; }
-            if (tabCount === void 0) { tabCount = 0; }
-            if (tabBuffer === void 0) { tabBuffer = ""; }
-            if (historyStack === void 0) { historyStack = []; }
-            if (futureStack === void 0) { futureStack = []; }
-            if (openHistoryItem === void 0) { openHistoryItem = ""; }
+    class Console {
+        constructor(currentFont = _DefaultFontFamily, currentFontSize = _DefaultFontSize, currentXPosition = 0, currentYPosition = _DefaultFontSize, buffer = "", tabCount = 0, tabBuffer = "", historyStack = [], futureStack = [], openHistoryItem = "") {
             this.currentFont = currentFont;
             this.currentFontSize = currentFontSize;
             this.currentXPosition = currentXPosition;
@@ -23,25 +13,25 @@ var TSOS;
             this.futureStack = futureStack;
             this.openHistoryItem = openHistoryItem;
         }
-        Console.prototype.init = function () {
+        init() {
             this.clearScreen();
             this.resetXY();
-        };
-        Console.prototype.clearScreen = function () {
+        }
+        clearScreen() {
             _DrawingContext.clearRect(0, 0, _Canvas.width, _Canvas.height);
-        };
-        Console.prototype.resetXY = function () {
+        }
+        resetXY() {
             this.currentXPosition = 0;
             this.currentYPosition = this.currentFontSize;
-        };
-        Console.prototype.handleInput = function () {
+        }
+        handleInput() {
             while (_KernelInputQueue.getSize() > 0) {
                 var chr = _KernelInputQueue.dequeue();
                 if (chr === String.fromCharCode(9)) {
                     if (this.tabBuffer === "") {
                         this.tabBuffer = this.buffer;
                     }
-                    var completedTerm = _OsShell.cmdComplete(this.tabBuffer, this.tabCount);
+                    let completedTerm = _OsShell.cmdComplete(this.tabBuffer, this.tabCount);
                     this.removeText(this.buffer);
                     this.buffer = "";
                     this.putText(completedTerm);
@@ -67,7 +57,7 @@ var TSOS;
                             this.futureStack.push(this.openHistoryItem);
                             this.removeText(this.buffer);
                             this.buffer = "";
-                            var recalledLine = this.historyStack.pop();
+                            let recalledLine = this.historyStack.pop();
                             this.putText(recalledLine);
                             this.buffer = recalledLine;
                             this.openHistoryItem = recalledLine;
@@ -78,7 +68,7 @@ var TSOS;
                             this.historyStack.push(this.openHistoryItem);
                             this.removeText(this.buffer);
                             this.buffer = "";
-                            var recalledLine = this.futureStack.pop();
+                            let recalledLine = this.futureStack.pop();
                             this.putText(recalledLine);
                             this.buffer = recalledLine;
                             this.openHistoryItem = recalledLine;
@@ -97,54 +87,54 @@ var TSOS;
                     }
                 }
             }
-        };
-        Console.prototype.putText = function (text) {
+        }
+        putText(text) {
             if (text !== "") {
-                for (var i = 0; i < text.length; i++) {
+                for (let i = 0; i < text.length; i++) {
                     this.putChar(text[i]);
                 }
             }
-        };
-        Console.prototype.putChar = function (char) {
+        }
+        putChar(char) {
             _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, char);
             var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, char);
             this.currentXPosition = this.currentXPosition + offset;
             if (this.currentXPosition > _Canvas.width - 10) {
                 this.advanceLine();
             }
-        };
-        Console.prototype.removeText = function (text) {
+        }
+        removeText(text) {
             if (this.currentXPosition <= 0) {
                 this.retreatLine();
             }
-            var xOffset = this.currentXPosition - _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
-            var yOffset = this.currentYPosition - _DefaultFontSize;
+            let xOffset = this.currentXPosition - _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
+            let yOffset = this.currentYPosition - _DefaultFontSize;
             _DrawingContext.clearRect(xOffset, yOffset, this.currentXPosition, this.currentYPosition + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize));
             var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
             this.currentXPosition = this.currentXPosition - offset;
-        };
-        Console.prototype.advanceLine = function () {
+        }
+        advanceLine() {
             this.currentXPosition = 0;
             this.currentYPosition += _DefaultFontSize +
                 _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
                 _FontHeightMargin;
             if (this.currentYPosition > _Canvas.height) {
-                var offset = this.currentYPosition - _Canvas.height + _FontHeightMargin;
+                let offset = this.currentYPosition - _Canvas.height + _FontHeightMargin;
                 this.moveCanvas(offset);
                 this.currentYPosition -= offset;
             }
-        };
-        Console.prototype.retreatLine = function () {
+        }
+        retreatLine() {
             this.currentYPosition -= _DefaultFontSize +
                 _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
                 _FontHeightMargin;
             this.reCalcX();
-        };
-        Console.prototype.reCalcX = function () {
-            var correctX = 0;
-            var lineCount = 0;
+        }
+        reCalcX() {
+            let correctX = 0;
+            let lineCount = 0;
             correctX += _DrawingContext.measureText(this.currentFont, this.currentFontSize, _OsShell.promptStr);
-            for (var i = 0; i < this.buffer.length; i++) {
+            for (let i = 0; i < this.buffer.length; i++) {
                 correctX += _DrawingContext.measureText(this.currentFont, this.currentFontSize, this.buffer[i]);
                 if ((correctX > _Canvas.width - 10) && i != this.buffer.length - 1) {
                     correctX = 0;
@@ -152,14 +142,13 @@ var TSOS;
                 }
             }
             this.currentXPosition = correctX;
-        };
-        Console.prototype.moveCanvas = function (amount) {
-            var imgData = _Canvas.getContext("2d").getImageData(0, 0, _Canvas.width, this.currentYPosition + _FontHeightMargin);
+        }
+        moveCanvas(amount) {
+            let imgData = _Canvas.getContext("2d").getImageData(0, 0, _Canvas.width, this.currentYPosition + _FontHeightMargin);
             this.clearScreen();
             _Canvas.getContext("2d").putImageData(imgData, 0, -amount);
-        };
-        return Console;
-    }());
+        }
+    }
     TSOS.Console = Console;
 })(TSOS || (TSOS = {}));
 //# sourceMappingURL=console.js.map
