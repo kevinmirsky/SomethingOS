@@ -2,8 +2,8 @@ module TSOS {
 
     export class MemManager extends Memory {
 
-        private static SEGMENT_SIZE = 256;
-        private static segments = [];
+        public static SEGMENT_SIZE = 256;
+        public static segments = [];
 
         constructor(size: number) {
             {super(size)}
