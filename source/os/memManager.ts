@@ -18,7 +18,7 @@ module TSOS {
                 console.log("Writing from array");
                 for (let i = 0; i < input.length; i++) {
                     let parsedInput = parseInt(input[i], 16);
-                    if (parsedInput <= super.mainMem.length) {
+                    if (parsedInput <= this.mainMem.length) {
                         super.storeValue(i + index, parsedInput);
                     } else {
                         //Be kind and tell them what was the problem?
@@ -28,7 +28,7 @@ module TSOS {
                 }
             } else {
                 //Single Value
-                if (input <= super.mainMem.length) {
+                if (input <= this.mainMem.length) {
                     super.storeValue(index, input);
                 } else {
                     throw "Memory storage exception: Attempted to store out of bounds";
