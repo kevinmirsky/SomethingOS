@@ -116,7 +116,7 @@ module TSOS {
                 "triggers a shutdown");
             this.commandList[this.commandList.length] = sc;
 
-            //DebugMemTest
+            //run
             sc = new ShellCommand(this.shellRun,
                 "run",
                 "<pid> - Run a specified program");
