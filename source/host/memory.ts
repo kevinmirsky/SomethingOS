@@ -7,7 +7,7 @@ module TSOS {
 
 
         protected constructor(memSize: number = 256) {
-            this.mainMem = new Array(256);
+            this.mainMem = new Array(memSize);
             this.init();
         }
 
