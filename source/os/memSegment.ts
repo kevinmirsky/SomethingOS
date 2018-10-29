@@ -2,6 +2,8 @@ module TSOS {
 
     export class MemSegment {
 
+        public isOccupied = false;
+
         constructor(public firstByte, public lastByte) {
 
         }
