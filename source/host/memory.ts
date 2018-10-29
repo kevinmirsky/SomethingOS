@@ -19,7 +19,7 @@ module TSOS {
         }
 
         protected storeValue(index: number, value: number): void {
-            if (value > 0xFF) {
+            if (value >= this.mainMem.length) {
                 /*
                  Should the OS really crash when this happens? Maybe not, but this should make memory controller
                  issues glaringly obvious... If the memory controller is working properly, this sort of error should
@@ -32,10 +32,10 @@ module TSOS {
             this.mainMem[index] = value;
         }
 
-        protected accessAddress(startIndex: number, endIndex?: number): any {
-            if (endIndex) {
+        protected accessAddress(startIndex: number, length?: number): any {
+            if (length) {
                 let values = [];
-                for (let i = startIndex;i <= endIndex; i++) {
+                for (let i = startIndex;i <= length; i++) {
                     values.push(this.mainMem[i]);
                 }
                 return values;

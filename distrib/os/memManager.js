@@ -14,22 +14,21 @@ var TSOS;
                 console.log("Writing from array");
                 for (let i = 0; i < input.length; i++) {
                     let parsedInput = parseInt(input[i], 16);
-                    if (parsedInput <= 0xFF) {
+                    if (parsedInput <= super.mainMem.length) {
                         super.storeValue(i + index, parsedInput);
                     }
                     else {
                         console.log(input[i]);
-                        throw "Memory storage exception: Attempted to store value larger than 0xFF";
+                        throw "Memory storage exception: Attempted to store out of bounds";
                     }
                 }
             }
             else {
-                if (input <= 0xFF) {
-                    console.log(input.toString(16));
+                if (input <= super.mainMem.length) {
                     super.storeValue(index, input);
                 }
                 else {
-                    throw "Memory storage exception: Attempted to store value larger than 0xFF";
+                    throw "Memory storage exception: Attempted to store out of bounds";
                 }
             }
         }

@@ -11,16 +11,16 @@ var TSOS;
             }
         }
         storeValue(index, value) {
-            if (value > 0xFF) {
+            if (value >= this.mainMem.length) {
                 _Kernel.krnTrapError("Memory instructed to store oversized value in memory: "
                     + value.toString(16));
             }
             this.mainMem[index] = value;
         }
-        accessAddress(startIndex, endIndex) {
-            if (endIndex) {
+        accessAddress(startIndex, length) {
+            if (length) {
                 let values = [];
-                for (let i = startIndex; i <= endIndex; i++) {
+                for (let i = startIndex; i <= length; i++) {
                     values.push(this.mainMem[i]);
                 }
                 return values;
