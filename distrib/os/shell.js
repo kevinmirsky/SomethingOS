@@ -40,10 +40,6 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
             sc = new TSOS.ShellCommand(this.shellRun, "run", "<pid> - Run a specified program");
             this.commandList[this.commandList.length] = sc;
-            sc = new TSOS.ShellCommand(this.shellDebugMemtest, "memtest", "- [DEBUG] This tests the basic storage of memory.");
-            this.commandList[this.commandList.length] = sc;
-            sc = new TSOS.ShellCommand(this.shellDebugChangePcb, "changepcbtest", "- [DEBUG] This deletes a pcb for a process. Testing purposes only.");
-            this.commandList[this.commandList.length] = sc;
             this.putPrompt();
         }
         putPrompt() {

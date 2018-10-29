@@ -122,18 +122,6 @@ module TSOS {
                 "<pid> - Run a specified program");
             this.commandList[this.commandList.length] = sc;
 
-            //DebugMemTest
-            sc = new ShellCommand(this.shellDebugMemtest,
-                "memtest",
-                "- [DEBUG] This tests the basic storage of memory.");
-            this.commandList[this.commandList.length] = sc;
-
-            //DebugMemTest
-            sc = new ShellCommand(this.shellDebugChangePcb,
-                "changepcbtest",
-                "- [DEBUG] This deletes a pcb for a process. Testing purposes only.");
-            this.commandList[this.commandList.length] = sc;
-
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
