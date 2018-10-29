@@ -2,8 +2,21 @@ module TSOS {
 
     export class MemManager extends Memory {
 
+        private static SEGMENT_SIZE = 256;
+        private static segments = [];
+
         constructor(size: number) {
             {super(size)}
+            this.createSegments();
+        }
+
+        private createSegments() {
+            for (let i = 0; i < this.mainMem.length; i += MemManager.SEGMENT_SIZE) {
+                if (i + MemManager.SEGMENT_SIZE <= this.mainMem.length) {
+                    MemManager.segments.push(new MemSegment(i, i + MemManager.SEGMENT_SIZE - 1));
+                }
+            }
+            console.log(MemManager.segments);
         }
 
         public readMemory(startIndex: number, endIndex?: number): any {
