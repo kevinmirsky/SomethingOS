@@ -411,9 +411,18 @@ module TSOS {
                 /*
                 ACTUAL LOADING OCCURS HERE
                 */
-                _MemManager.writeMemory(0x00, inputArray);
-                let process = new Pcb(0x00, inputArray.length);
-                _StdOut.putText(" Done. PID: " + process.pid.toString());
+                let segment = _MemManager.getFreeSegment(inputArray.length);
+                if (segment) {
+                    //All good, proceed as usual
+                    _MemManager.writeMemory(segment.firstByte, inputArray);
+                    let process = new Pcb(segment.firstByte, inputArray.length);
+                    segment.isOccupied = true;
+                    _StdOut.putText(" Done. PID: " + process.pid.toString());
+                } else {
+                    //No segment available. Cannot load
+                    _StdOut.putText("[ERROR] No available memory segments. Unable to load.")
+                }
+
             } else {
                 _StdOut.putText("[ERROR] User code malformed. Unable to load.");
             }

@@ -21,13 +21,37 @@ module TSOS {
         }
 
         /**
+         * Gets the first available segment, with the optional parameter to look for a segment
+         * of a certain size.
+         * If a segment is available, the first segment is returned.
+         * If no segment is available, returns false.
+         */
+        public getFreeSegment(size?: number): any {
+            for (let i = 0; i < this.segments.length; i++) {
+                if (!this.segments[i].isOccupied){
+                    if (size) {
+                        //run che
+                        if ((this.segments[i].lastByte - this.segments[i].firstByte) > size) {
+                            return this.segments[i];
+                    } else {
+                            return this.segments[i];
+                        }
+                    }
+
+                }
+            }
+            return false;
+        }
+        /**
          * Gets the first available segment, no extra logic.
          * If no segment exists, returns false
          */
-        public getFreeSegment(): any {
+        public AgetFreeSegment(size): any {
             for (let i = 0; i < this.segments.length; i++) {
-                if (!this.segments[i].isOccupied){
-                    return this.segments[i];
+                if (!this.segments[i].isOccupied) {
+                    if ((this.segments[i].lastByte - this.segments[i].firstByte) > size) {
+                        return this.segments[i];
+                    }
                 }
             }
             return false;

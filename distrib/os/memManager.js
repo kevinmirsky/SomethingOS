@@ -18,10 +18,27 @@ var TSOS;
             }
             console.log(this.segments);
         }
-        getFreeSegment() {
+        getFreeSegment(size) {
             for (let i = 0; i < this.segments.length; i++) {
                 if (!this.segments[i].isOccupied) {
-                    return this.segments[i];
+                    if (size) {
+                        if ((this.segments[i].lastByte - this.segments[i].firstByte) > size) {
+                            return this.segments[i];
+                        }
+                        else {
+                            return this.segments[i];
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+        AgetFreeSegment(size) {
+            for (let i = 0; i < this.segments.length; i++) {
+                if (!this.segments[i].isOccupied) {
+                    if ((this.segments[i].lastByte - this.segments[i].firstByte) > size) {
+                        return this.segments[i];
+                    }
                 }
             }
             return false;
