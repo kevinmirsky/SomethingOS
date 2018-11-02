@@ -97,11 +97,11 @@ module TSOS {
 
             //Build buttons
             let buttonDiv = <HTMLDivElement> document.getElementById("divMemButtons");
-            for (let i = 0; i < MemManager.segments.length; i++) {
+            for (let i = 0; i < _MemManager.segments.length; i++) {
                 let btn = <HTMLButtonElement> document.createElement("button");
                 btn.innerText = "SEG " + i;
                 btn.className = "mem_button";
-                btn.value = MemManager.segments[i].firstByte.toString(16).toUpperCase();
+                btn.value = _MemManager.segments[i].firstByte.toString(16).toUpperCase();
                 btn.addEventListener("click", (e:Event) => this.scrollTo(btn.value));
                 buttonDiv.appendChild(btn);
             }

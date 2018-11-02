@@ -3,21 +3,29 @@ module TSOS {
     export class MemManager extends Memory {
 
         public static SEGMENT_SIZE = 256;
-        public static segments = [];
+        public segments;
 
         constructor(size: number) {
             {super(size)}
+            {this.segments = []}
             this.createSegments();
         }
 
         private createSegments() {
             for (let i = 0; i < this.mainMem.length; i += MemManager.SEGMENT_SIZE) {
                 if (i + MemManager.SEGMENT_SIZE <= this.mainMem.length) {
-                    MemManager.segments.push(new MemSegment(i, i + MemManager.SEGMENT_SIZE - 1));
+                    this.segments.push(new MemSegment(i, i + MemManager.SEGMENT_SIZE - 1));
                 }
             }
-            console.log(MemManager.segments);
+            console.log(this.segments);
         }
+        /*
+        public getFreeSegment(): MemSegment {
+            for (let i = 0; i < this.segments.length; i++) {
+                if (MemManager.this)
+            }
+        }
+        */
 
         public readMemory(startIndex: number, endIndex?: number): any {
             return super.accessAddress(startIndex, endIndex);

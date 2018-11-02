@@ -5,15 +5,18 @@ var TSOS;
             {
                 super(size);
             }
+            {
+                this.segments = [];
+            }
             this.createSegments();
         }
         createSegments() {
             for (let i = 0; i < this.mainMem.length; i += MemManager.SEGMENT_SIZE) {
                 if (i + MemManager.SEGMENT_SIZE <= this.mainMem.length) {
-                    MemManager.segments.push(new TSOS.MemSegment(i, i + MemManager.SEGMENT_SIZE - 1));
+                    this.segments.push(new TSOS.MemSegment(i, i + MemManager.SEGMENT_SIZE - 1));
                 }
             }
-            console.log(MemManager.segments);
+            console.log(this.segments);
         }
         readMemory(startIndex, endIndex) {
             return super.accessAddress(startIndex, endIndex);
@@ -55,7 +58,6 @@ var TSOS;
         }
     }
     MemManager.SEGMENT_SIZE = 256;
-    MemManager.segments = [];
     TSOS.MemManager = MemManager;
 })(TSOS || (TSOS = {}));
 //# sourceMappingURL=memManager.js.map

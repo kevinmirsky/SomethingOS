@@ -408,6 +408,9 @@ module TSOS {
             });
             if (isValid) {
                 _StdOut.putText("User input validated. Loading...");
+                /*
+                ACTUAL LOADING OCCURS HERE
+                */
                 _MemManager.writeMemory(0x00, inputArray);
                 let process = new Pcb(0x00, inputArray.length);
                 _StdOut.putText(" Done. PID: " + process.pid.toString());
