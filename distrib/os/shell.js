@@ -275,13 +275,16 @@ var TSOS;
                     _MemManager.writeMemory(segment.firstByte, inputArray);
                     let process = new TSOS.Pcb(segment.firstByte, inputArray.length);
                     segment.isOccupied = true;
+                    _StdOut.advanceLine();
                     _StdOut.putText(" Done. PID: " + process.pid.toString());
                 }
                 else {
+                    _StdOut.advanceLine();
                     _StdOut.putText("[ERROR] No available memory segments. Unable to load.");
                 }
             }
             else {
+                _StdOut.advanceLine();
                 _StdOut.putText("[ERROR] User code malformed. Unable to load.");
             }
         }
