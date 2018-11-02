@@ -19,13 +19,20 @@ module TSOS {
             }
             console.log(this.segments);
         }
-        /*
-        public getFreeSegment(): MemSegment {
+
+        /**
+         * Gets the first available segment, no extra logic.
+         * If no segment exists, returns false
+         */
+        public getFreeSegment(): any {
             for (let i = 0; i < this.segments.length; i++) {
-                if (MemManager.this)
+                if (!this.segments[i].isOccupied){
+                    return this.segments[i];
+                }
             }
+            return false;
         }
-        */
+
 
         public readMemory(startIndex: number, endIndex?: number): any {
             return super.accessAddress(startIndex, endIndex);

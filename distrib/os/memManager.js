@@ -18,6 +18,14 @@ var TSOS;
             }
             console.log(this.segments);
         }
+        getFreeSegment() {
+            for (let i = 0; i < this.segments.length; i++) {
+                if (!this.segments[i].isOccupied) {
+                    return this.segments[i];
+                }
+            }
+            return false;
+        }
         readMemory(startIndex, endIndex) {
             return super.accessAddress(startIndex, endIndex);
         }
