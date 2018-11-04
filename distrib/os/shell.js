@@ -309,6 +309,7 @@ var TSOS;
                 program.state = "RUNNING";
                 _CPU.init();
                 _CPU.PC = program.PC;
+                _CPU.currentPCB = program;
                 _CPU.isExecuting = true;
             }
             else {

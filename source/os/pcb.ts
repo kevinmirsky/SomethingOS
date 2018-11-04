@@ -10,10 +10,10 @@ module TSOS {
         public priority: number = 99; //No give priority? No get priority!
         public state: string = "NEW";
         public PC = 0;
-        private Acc: number = 0;
-        private Xreg: number = 0;
-        private Yreg: number = 0;
-        private Zflag: number = 0;
+        public Acc: number = 0;
+        public Xreg: number = 0;
+        public Yreg: number = 0;
+        public Zflag: number = 0;
         public memoryOffset: number;
         public memoryRange: number;
 

@@ -22,59 +22,64 @@ var TSOS;
         cycle() {
             _Kernel.krnTrace('CPU cycle');
             TSOS.deviceDisplayDriver.resetMemoryHighlights();
-            this.fetch();
+            try {
+                this.fetch();
+            }
+            catch (e) {
+                this.crash(e);
+            }
             if (singleStep) {
                 canStep = false;
             }
         }
         fetch() {
-            let instruction = _MemManager.readMemory(this.PC);
+            let instruction = this.protectedRead(this.PC);
             TSOS.deviceDisplayDriver.setCurrentOp(this.PC);
             this.PC++;
             switch (instruction) {
                 case 0xA9: {
                     TSOS.deviceDisplayDriver.setCurrentParam(this.PC);
-                    this.loadAcc(_MemManager.readMemory(this.PC));
+                    this.loadAcc(this.protectedRead(this.PC));
                     break;
                 }
                 case 0xAD: {
                     TSOS.deviceDisplayDriver.setCurrentParam(this.PC);
                     TSOS.deviceDisplayDriver.setCurrentParam(this.PC + 1);
-                    this.loadAccFromMem(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
+                    this.loadAccFromMem(this.protectedRead(this.PC), this.protectedRead(++this.PC));
                     break;
                 }
                 case 0x8D: {
                     TSOS.deviceDisplayDriver.setCurrentParam(this.PC);
                     TSOS.deviceDisplayDriver.setCurrentParam(this.PC + 1);
-                    this.storeAcc(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
+                    this.storeAcc(this.protectedRead(this.PC), this.protectedRead(++this.PC));
                     break;
                 }
                 case 0x6D: {
                     TSOS.deviceDisplayDriver.setCurrentParam(this.PC);
                     TSOS.deviceDisplayDriver.setCurrentParam(this.PC + 1);
-                    this.addWithCarry(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
+                    this.addWithCarry(this.protectedRead(this.PC), this.protectedRead(++this.PC));
                     break;
                 }
                 case 0xA2: {
                     TSOS.deviceDisplayDriver.setCurrentParam(this.PC);
-                    this.loadXReg(_MemManager.readMemory(this.PC));
+                    this.loadXReg(this.protectedRead(this.PC));
                     break;
                 }
                 case 0xAE: {
                     TSOS.deviceDisplayDriver.setCurrentParam(this.PC);
                     TSOS.deviceDisplayDriver.setCurrentParam(this.PC + 1);
-                    this.loadXRegFromMem(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
+                    this.loadXRegFromMem(this.protectedRead(this.PC), this.protectedRead(++this.PC));
                     break;
                 }
                 case 0xA0: {
                     TSOS.deviceDisplayDriver.setCurrentParam(this.PC);
-                    this.loadYReg(_MemManager.readMemory(this.PC));
+                    this.loadYReg(this.protectedRead(this.PC));
                     break;
                 }
                 case 0xAC: {
                     TSOS.deviceDisplayDriver.setCurrentParam(this.PC);
                     TSOS.deviceDisplayDriver.setCurrentParam(this.PC + 1);
-                    this.loadYRegFromMem(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
+                    this.loadYRegFromMem(this.protectedRead(this.PC), this.protectedRead(++this.PC));
                     break;
                 }
                 case 0xEA: {
@@ -87,18 +92,18 @@ var TSOS;
                 case 0xEC: {
                     TSOS.deviceDisplayDriver.setCurrentParam(this.PC);
                     TSOS.deviceDisplayDriver.setCurrentParam(this.PC + 1);
-                    this.compareToXReg(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
+                    this.compareToXReg(this.protectedRead(this.PC), this.protectedRead(++this.PC));
                     break;
                 }
                 case 0xD0: {
                     TSOS.deviceDisplayDriver.setCurrentParam(this.PC);
-                    this.branchOnNotEqual(_MemManager.readMemory(this.PC));
+                    this.branchOnNotEqual(this.protectedRead(this.PC));
                     break;
                 }
                 case 0xEE: {
                     TSOS.deviceDisplayDriver.setCurrentParam(this.PC);
                     TSOS.deviceDisplayDriver.setCurrentParam(this.PC + 1);
-                    this.incrementByte(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
+                    this.incrementByte(this.protectedRead(this.PC), this.protectedRead(++this.PC));
                     break;
                 }
                 case 0xFF: {
@@ -106,9 +111,7 @@ var TSOS;
                     break;
                 }
                 default: {
-                    _StdOut.putText("[ERROR] Invalid Opcode " + instruction.toString(16)
-                        + ". Terminating.");
-                    this.isExecuting = false;
+                    this.crash("Invalid Opcode " + instruction.toString(16) + ".");
                 }
             }
             if (this.isExecuting == false) {
@@ -129,16 +132,16 @@ var TSOS;
         }
         loadAccFromMem(smallNum, bigNum) {
             console.log("Byte stitch is " + TSOS.Utils.byteStitch(smallNum, bigNum).toString(16));
-            this.Acc = _MemManager.readMemory(TSOS.Utils.byteStitch(smallNum, bigNum));
+            this.Acc = this.protectedRead(TSOS.Utils.byteStitch(smallNum, bigNum));
             this.PC++;
         }
         storeAcc(smallNum, bigNum) {
             let memLoc = TSOS.Utils.byteStitch(smallNum, bigNum);
-            _MemManager.writeMemory(memLoc, TSOS.Utils.byteWrap(this.Acc));
+            this.protectedWrite(memLoc, TSOS.Utils.byteWrap(this.Acc));
             this.PC++;
         }
         addWithCarry(smallNum, bigNum) {
-            this.Acc += this.Acc = _MemManager.readMemory(TSOS.Utils.byteStitch(smallNum, bigNum));
+            this.Acc += this.Acc = this.protectedRead(TSOS.Utils.byteStitch(smallNum, bigNum));
             this.Acc = TSOS.Utils.byteWrap(this.Acc);
             this.PC++;
         }
@@ -147,7 +150,7 @@ var TSOS;
             this.PC++;
         }
         loadXRegFromMem(smallNum, bigNum) {
-            this.Xreg = _MemManager.readMemory(TSOS.Utils.byteStitch(smallNum, bigNum));
+            this.Xreg = this.protectedRead(TSOS.Utils.byteStitch(smallNum, bigNum));
             this.PC++;
         }
         loadYReg(input) {
@@ -155,11 +158,11 @@ var TSOS;
             this.PC++;
         }
         loadYRegFromMem(smallNum, bigNum) {
-            this.Yreg = _MemManager.readMemory(TSOS.Utils.byteStitch(smallNum, bigNum));
+            this.Yreg = this.protectedRead(TSOS.Utils.byteStitch(smallNum, bigNum));
             this.PC++;
         }
         compareToXReg(smallNum, bigNum) {
-            if (this.Xreg == _MemManager.readMemory(TSOS.Utils.byteStitch(smallNum, bigNum))) {
+            if (this.Xreg == this.protectedRead(TSOS.Utils.byteStitch(smallNum, bigNum))) {
                 this.Zflag = 1;
             }
             else {
@@ -175,8 +178,8 @@ var TSOS;
             this.PC++;
         }
         incrementByte(smallNum, bigNum) {
-            let value = _MemManager.readMemory(TSOS.Utils.byteStitch(smallNum, bigNum)) + 1;
-            _MemManager.writeMemory(TSOS.Utils.byteStitch(smallNum, bigNum), TSOS.Utils.byteWrap(value));
+            let value = this.protectedRead(TSOS.Utils.byteStitch(smallNum, bigNum)) + 1;
+            this.protectedWrite(TSOS.Utils.byteStitch(smallNum, bigNum), TSOS.Utils.byteWrap(value));
             this.PC++;
         }
         sysCall() {
@@ -191,7 +194,7 @@ var TSOS;
                     let nextValue;
                     let terminated = false;
                     while (!terminated) {
-                        nextValue = _MemManager.readMemory(TSOS.Utils.byteWrap(i));
+                        nextValue = this.protectedRead(TSOS.Utils.byteWrap(i));
                         if (!(nextValue == 0x00)) {
                             outBuffer += String.fromCharCode(nextValue);
                         }
@@ -207,21 +210,40 @@ var TSOS;
         protectedRead(index) {
             let adjAddress = index + this.currentPCB.memoryOffset;
             if (this.isOutOfBounds(adjAddress)) {
-                return false;
+                throw "Memory read access violation.";
             }
             return _MemManager.readMemory(adjAddress);
         }
         protectedWrite(index, input) {
             let adjAddress = index + this.currentPCB.memoryOffset;
             if (this.isOutOfBounds(adjAddress)) {
-                return false;
+                throw "Memory write access violation.";
             }
             _MemManager.writeMemory(adjAddress, input);
             return true;
         }
         isOutOfBounds(index) {
             return (index < this.currentPCB.memoryOffset
-                || index > this.currentPCB.memoryOffset + this.currentPCB.memoryRange);
+                || index >= this.currentPCB.memoryOffset + this.currentPCB.memoryRange);
+        }
+        crash(msg) {
+            let output = "[ERROR] ";
+            if (msg) {
+                output += msg;
+            }
+            else {
+                output += "CPU runtime error.";
+            }
+            _StdOut.putText(output);
+            _StdOut.advanceLine();
+            _StdOut.putText("Terminating.");
+            this.isExecuting = false;
+            this.currentPCB.state = "TERMINATED";
+            this.currentPCB.PC = this.PC;
+            this.currentPCB.Acc = this.Acc;
+            this.currentPCB.Xreg = this.Xreg;
+            this.currentPCB.Yreg = this.Yreg;
+            this.currentPCB.Zflag = this.Zflag;
         }
     }
     TSOS.Cpu = Cpu;

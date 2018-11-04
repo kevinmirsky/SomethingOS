@@ -44,7 +44,11 @@ module TSOS {
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
             deviceDisplayDriver.resetMemoryHighlights();
-            this.fetch();
+            try {
+                this.fetch();
+            } catch(e) {
+                this.crash(e);
+            }
 
             //Reset step flag for single step
             if (singleStep) {
@@ -53,7 +57,7 @@ module TSOS {
         }
 
         public fetch(): void {
-            let instruction: number = _MemManager.readMemory(this.PC);
+            let instruction: number = this.protectedRead(this.PC);
             //Add memory highlighting
             deviceDisplayDriver.setCurrentOp(this.PC);
             this.PC++;
@@ -75,47 +79,47 @@ module TSOS {
             switch(instruction) {
                 case 0xA9: {
                     deviceDisplayDriver.setCurrentParam(this.PC);
-                    this.loadAcc(_MemManager.readMemory(this.PC));
+                    this.loadAcc(this.protectedRead(this.PC));
                     break;
                 }
                 case 0xAD: {
                     deviceDisplayDriver.setCurrentParam(this.PC);
                     deviceDisplayDriver.setCurrentParam(this.PC + 1);
-                    this.loadAccFromMem(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
+                    this.loadAccFromMem(this.protectedRead(this.PC), this.protectedRead(++this.PC));
                     break;
                 }
                 case 0x8D: {
                     deviceDisplayDriver.setCurrentParam(this.PC);
                     deviceDisplayDriver.setCurrentParam(this.PC + 1);
-                    this.storeAcc(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
+                    this.storeAcc(this.protectedRead(this.PC), this.protectedRead(++this.PC));
                     break;
                 }
                 case 0x6D: {
                     deviceDisplayDriver.setCurrentParam(this.PC);
                     deviceDisplayDriver.setCurrentParam(this.PC + 1);
-                    this.addWithCarry(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
+                    this.addWithCarry(this.protectedRead(this.PC), this.protectedRead(++this.PC));
                     break;
                 }
                 case 0xA2: {
                     deviceDisplayDriver.setCurrentParam(this.PC);
-                    this.loadXReg(_MemManager.readMemory(this.PC));
+                    this.loadXReg(this.protectedRead(this.PC));
                     break;
                 }
                 case 0xAE: {
                     deviceDisplayDriver.setCurrentParam(this.PC);
                     deviceDisplayDriver.setCurrentParam(this.PC + 1);
-                    this.loadXRegFromMem(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
+                    this.loadXRegFromMem(this.protectedRead(this.PC), this.protectedRead(++this.PC));
                     break;
                 }
                 case 0xA0: {
                     deviceDisplayDriver.setCurrentParam(this.PC);
-                    this.loadYReg(_MemManager.readMemory(this.PC));
+                    this.loadYReg(this.protectedRead(this.PC));
                     break;
                 }
                 case 0xAC: {
                     deviceDisplayDriver.setCurrentParam(this.PC);
                     deviceDisplayDriver.setCurrentParam(this.PC + 1);
-                    this.loadYRegFromMem(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
+                    this.loadYRegFromMem(this.protectedRead(this.PC), this.protectedRead(++this.PC));
                     break;
                 }
                 case 0xEA: {
@@ -130,18 +134,18 @@ module TSOS {
                 case 0xEC: {
                     deviceDisplayDriver.setCurrentParam(this.PC);
                     deviceDisplayDriver.setCurrentParam(this.PC + 1);
-                    this.compareToXReg(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
+                    this.compareToXReg(this.protectedRead(this.PC), this.protectedRead(++this.PC));
                     break;
                 }
                 case 0xD0: {
                     deviceDisplayDriver.setCurrentParam(this.PC);
-                    this.branchOnNotEqual(_MemManager.readMemory(this.PC));
+                    this.branchOnNotEqual(this.protectedRead(this.PC));
                     break;
                 }
                 case 0xEE: {
                     deviceDisplayDriver.setCurrentParam(this.PC);
                     deviceDisplayDriver.setCurrentParam(this.PC + 1);
-                    this.incrementByte(_MemManager.readMemory(this.PC), _MemManager.readMemory(++this.PC));
+                    this.incrementByte(this.protectedRead(this.PC), this.protectedRead(++this.PC));
                     break;
                 }
                 case 0xFF: {
@@ -150,9 +154,8 @@ module TSOS {
                 }
                 default: {
                     //Invalid OP code! Wanna freak out? Course you do...
-                    _StdOut.putText("[ERROR] Invalid Opcode " + instruction.toString(16)
-                    + ". Terminating.");
-                    this.isExecuting = false;
+                    this.crash("Invalid Opcode " + instruction.toString(16) + ".");
+
                 }
             }
             if (this.isExecuting == false) {
@@ -180,20 +183,20 @@ module TSOS {
         // AD - Load the accumulator from memory
         private loadAccFromMem(smallNum: number, bigNum: number): void {
             console.log("Byte stitch is " + Utils.byteStitch(smallNum, bigNum).toString(16));
-            this.Acc = _MemManager.readMemory(Utils.byteStitch(smallNum, bigNum));
+            this.Acc = this.protectedRead(Utils.byteStitch(smallNum, bigNum));
             this.PC++;
         }
 
         // 8D - Store accumulator in memory
         private storeAcc(smallNum: number, bigNum: number): void {
             let memLoc = Utils.byteStitch(smallNum, bigNum);
-            _MemManager.writeMemory(memLoc, Utils.byteWrap(this.Acc));
+            this.protectedWrite(memLoc, Utils.byteWrap(this.Acc));
             this.PC++;
         }
 
         // 6D - Add with carry
         private addWithCarry(smallNum: number, bigNum: number): void {
-            this.Acc += this.Acc = _MemManager.readMemory(Utils.byteStitch(smallNum, bigNum));
+            this.Acc += this.Acc = this.protectedRead(Utils.byteStitch(smallNum, bigNum));
             this.Acc = Utils.byteWrap(this.Acc);
             this.PC++;
         }
@@ -206,7 +209,7 @@ module TSOS {
 
         // AE - Load X register from memory
         private loadXRegFromMem(smallNum: number, bigNum: number): void {
-            this.Xreg = _MemManager.readMemory(Utils.byteStitch(smallNum, bigNum));
+            this.Xreg = this.protectedRead(Utils.byteStitch(smallNum, bigNum));
             this.PC++;
         }
 
@@ -218,13 +221,13 @@ module TSOS {
 
         // AC - Load Y register from memory
         private loadYRegFromMem(smallNum: number, bigNum: number): void {
-            this.Yreg = _MemManager.readMemory(Utils.byteStitch(smallNum, bigNum));
+            this.Yreg = this.protectedRead(Utils.byteStitch(smallNum, bigNum));
             this.PC++;
         }
 
         // EC - Compare a byte in memory to X reg
         private compareToXReg(smallNum: number, bigNum: number): void {
-            if (this.Xreg == _MemManager.readMemory(Utils.byteStitch(smallNum, bigNum))) {
+            if (this.Xreg == this.protectedRead(Utils.byteStitch(smallNum, bigNum))) {
                 this.Zflag = 1;
             } else {
                 this.Zflag = 0;
@@ -243,8 +246,8 @@ module TSOS {
 
         // EE - Increment value of byte
         private incrementByte(smallNum: number, bigNum: number): void {
-            let value = _MemManager.readMemory(Utils.byteStitch(smallNum, bigNum)) + 1;
-            _MemManager.writeMemory(Utils.byteStitch(smallNum, bigNum), Utils.byteWrap(value));
+            let value = this.protectedRead(Utils.byteStitch(smallNum, bigNum)) + 1;
+            this.protectedWrite(Utils.byteStitch(smallNum, bigNum), Utils.byteWrap(value));
             this.PC++;
         }
 
@@ -262,7 +265,7 @@ module TSOS {
                     let terminated = false;
 
                     while(!terminated) {
-                        nextValue = _MemManager.readMemory(Utils.byteWrap(i));
+                        nextValue = this.protectedRead(Utils.byteWrap(i));
                         if (!(nextValue == 0x00)) {
                             //Add to buffer
                             outBuffer += String.fromCharCode(nextValue);
@@ -289,7 +292,7 @@ module TSOS {
         private protectedRead(index: number): any {
             let adjAddress = index + this.currentPCB.memoryOffset;
             if (this.isOutOfBounds(adjAddress)) {
-                return false;
+                throw "Memory read access violation."
             }
             return _MemManager.readMemory(adjAddress);
         }
@@ -305,7 +308,7 @@ module TSOS {
         private protectedWrite(index: number, input: number): boolean {
             let adjAddress = index + this.currentPCB.memoryOffset;
             if (this.isOutOfBounds(adjAddress)) {
-                return false;
+                throw "Memory write access violation.";
             }
             _MemManager.writeMemory(adjAddress, input);
             return true;
@@ -319,7 +322,38 @@ module TSOS {
          */
         private isOutOfBounds(index: number): boolean {
             return (index < this.currentPCB.memoryOffset
-            || index > this.currentPCB.memoryOffset + this.currentPCB.memoryRange)
+            || index >= this.currentPCB.memoryOffset + this.currentPCB.memoryRange)
+            /* >= accounts for length. If it was just >, then we'd allow 1 value greater than we should.
+            For example:
+            if we start at 0x00 and only load in ONE value at 0x00, range would be 1, allowing 0x01 as valid.
+            That shouldn't be valid.
+
+            */
+        }
+
+        /**
+         * Crashes program.
+         *
+         * msg is an optional message
+         */
+        private crash(msg?:string) {
+            let output = "[ERROR] ";
+            if (msg) {
+                output += msg;
+            } else {
+                output += "CPU runtime error."
+            }
+            _StdOut.putText(output);
+            _StdOut.advanceLine();
+            _StdOut.putText("Terminating.");
+            this.isExecuting = false;
+            this.currentPCB.state = "TERMINATED";
+            //We're being nice and letting user see what was happening when everything went wrong
+            this.currentPCB.PC = this.PC;
+            this.currentPCB.Acc = this.Acc;
+            this.currentPCB.Xreg = this.Xreg;
+            this.currentPCB.Yreg = this.Yreg;
+            this.currentPCB.Zflag = this.Zflag;
         }
     }
 }
