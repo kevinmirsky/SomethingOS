@@ -132,16 +132,16 @@ var TSOS;
         }
         loadAccFromMem(smallNum, bigNum) {
             console.log("Byte stitch is " + TSOS.Utils.byteStitch(smallNum, bigNum).toString(16));
-            this.Acc = this.protectedRead(TSOS.Utils.byteStitch(smallNum, bigNum));
+            this.Acc = this.offsetProtectedRead(TSOS.Utils.byteStitch(smallNum, bigNum));
             this.PC++;
         }
         storeAcc(smallNum, bigNum) {
             let memLoc = TSOS.Utils.byteStitch(smallNum, bigNum);
-            this.protectedWrite(memLoc, TSOS.Utils.byteWrap(this.Acc));
+            this.offsetProtectedWrite(memLoc, TSOS.Utils.byteWrap(this.Acc));
             this.PC++;
         }
         addWithCarry(smallNum, bigNum) {
-            this.Acc += this.Acc = this.protectedRead(TSOS.Utils.byteStitch(smallNum, bigNum));
+            this.Acc += this.Acc = this.offsetProtectedRead(TSOS.Utils.byteStitch(smallNum, bigNum));
             this.Acc = TSOS.Utils.byteWrap(this.Acc);
             this.PC++;
         }
@@ -150,7 +150,7 @@ var TSOS;
             this.PC++;
         }
         loadXRegFromMem(smallNum, bigNum) {
-            this.Xreg = this.protectedRead(TSOS.Utils.byteStitch(smallNum, bigNum));
+            this.Xreg = this.offsetProtectedRead(TSOS.Utils.byteStitch(smallNum, bigNum));
             this.PC++;
         }
         loadYReg(input) {
@@ -158,11 +158,11 @@ var TSOS;
             this.PC++;
         }
         loadYRegFromMem(smallNum, bigNum) {
-            this.Yreg = this.protectedRead(TSOS.Utils.byteStitch(smallNum, bigNum));
+            this.Yreg = this.offsetProtectedRead(TSOS.Utils.byteStitch(smallNum, bigNum));
             this.PC++;
         }
         compareToXReg(smallNum, bigNum) {
-            if (this.Xreg == this.protectedRead(TSOS.Utils.byteStitch(smallNum, bigNum))) {
+            if (this.Xreg == this.offsetProtectedRead(TSOS.Utils.byteStitch(smallNum, bigNum))) {
                 this.Zflag = 1;
             }
             else {
@@ -178,8 +178,8 @@ var TSOS;
             this.PC++;
         }
         incrementByte(smallNum, bigNum) {
-            let value = this.protectedRead(TSOS.Utils.byteStitch(smallNum, bigNum)) + 1;
-            this.protectedWrite(TSOS.Utils.byteStitch(smallNum, bigNum), TSOS.Utils.byteWrap(value));
+            let value = this.offsetProtectedRead(TSOS.Utils.byteStitch(smallNum, bigNum)) + 1;
+            this.offsetProtectedWrite(TSOS.Utils.byteStitch(smallNum, bigNum), TSOS.Utils.byteWrap(value));
             this.PC++;
         }
         sysCall() {
@@ -194,7 +194,7 @@ var TSOS;
                     let nextValue;
                     let terminated = false;
                     while (!terminated) {
-                        nextValue = this.protectedRead(TSOS.Utils.byteWrap(i));
+                        nextValue = this.offsetProtectedRead(TSOS.Utils.byteWrap(i));
                         if (!(nextValue == 0x00)) {
                             outBuffer += String.fromCharCode(nextValue);
                         }
@@ -208,21 +208,31 @@ var TSOS;
             }
         }
         protectedRead(index) {
-            let adjAddress = index + this.currentPCB.memoryOffset;
+            let adjAddress = index;
             if (this.isOutOfBounds(adjAddress)) {
-                throw "Memory read access violation.";
+                throw "Memory read access violation." + adjAddress.toString(16);
             }
             return _MemManager.readMemory(adjAddress);
         }
         protectedWrite(index, input) {
-            let adjAddress = index + this.currentPCB.memoryOffset;
+            let adjAddress = index;
             if (this.isOutOfBounds(adjAddress)) {
-                throw "Memory write access violation.";
+                throw "Memory write access violation. " + adjAddress.toString(16);
             }
             _MemManager.writeMemory(adjAddress, input);
             return true;
         }
+        offsetProtectedRead(index) {
+            index += this.currentPCB.memoryOffset;
+            return this.protectedRead(index);
+        }
+        offsetProtectedWrite(index, input) {
+            index += this.currentPCB.memoryOffset;
+            input += this.currentPCB.memoryOffset;
+            this.protectedWrite(index, input);
+        }
         isOutOfBounds(index) {
+            console.log(this.currentPCB.memoryOffset.toString(16));
             return (index < this.currentPCB.memoryOffset
                 || index >= this.currentPCB.memoryOffset + this.currentPCB.memoryRange);
         }

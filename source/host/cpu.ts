@@ -183,20 +183,20 @@ module TSOS {
         // AD - Load the accumulator from memory
         private loadAccFromMem(smallNum: number, bigNum: number): void {
             console.log("Byte stitch is " + Utils.byteStitch(smallNum, bigNum).toString(16));
-            this.Acc = this.protectedRead(Utils.byteStitch(smallNum, bigNum));
+            this.Acc = this.offsetProtectedRead(Utils.byteStitch(smallNum, bigNum));
             this.PC++;
         }
 
         // 8D - Store accumulator in memory
         private storeAcc(smallNum: number, bigNum: number): void {
             let memLoc = Utils.byteStitch(smallNum, bigNum);
-            this.protectedWrite(memLoc, Utils.byteWrap(this.Acc));
+            this.offsetProtectedWrite(memLoc, Utils.byteWrap(this.Acc));
             this.PC++;
         }
 
         // 6D - Add with carry
         private addWithCarry(smallNum: number, bigNum: number): void {
-            this.Acc += this.Acc = this.protectedRead(Utils.byteStitch(smallNum, bigNum));
+            this.Acc += this.Acc = this.offsetProtectedRead(Utils.byteStitch(smallNum, bigNum));
             this.Acc = Utils.byteWrap(this.Acc);
             this.PC++;
         }
@@ -209,7 +209,7 @@ module TSOS {
 
         // AE - Load X register from memory
         private loadXRegFromMem(smallNum: number, bigNum: number): void {
-            this.Xreg = this.protectedRead(Utils.byteStitch(smallNum, bigNum));
+            this.Xreg = this.offsetProtectedRead(Utils.byteStitch(smallNum, bigNum));
             this.PC++;
         }
 
@@ -221,13 +221,13 @@ module TSOS {
 
         // AC - Load Y register from memory
         private loadYRegFromMem(smallNum: number, bigNum: number): void {
-            this.Yreg = this.protectedRead(Utils.byteStitch(smallNum, bigNum));
+            this.Yreg = this.offsetProtectedRead(Utils.byteStitch(smallNum, bigNum));
             this.PC++;
         }
 
         // EC - Compare a byte in memory to X reg
         private compareToXReg(smallNum: number, bigNum: number): void {
-            if (this.Xreg == this.protectedRead(Utils.byteStitch(smallNum, bigNum))) {
+            if (this.Xreg == this.offsetProtectedRead(Utils.byteStitch(smallNum, bigNum))) {
                 this.Zflag = 1;
             } else {
                 this.Zflag = 0;
@@ -246,8 +246,8 @@ module TSOS {
 
         // EE - Increment value of byte
         private incrementByte(smallNum: number, bigNum: number): void {
-            let value = this.protectedRead(Utils.byteStitch(smallNum, bigNum)) + 1;
-            this.protectedWrite(Utils.byteStitch(smallNum, bigNum), Utils.byteWrap(value));
+            let value = this.offsetProtectedRead(Utils.byteStitch(smallNum, bigNum)) + 1;
+            this.offsetProtectedWrite(Utils.byteStitch(smallNum, bigNum), Utils.byteWrap(value));
             this.PC++;
         }
 
@@ -265,7 +265,7 @@ module TSOS {
                     let terminated = false;
 
                     while(!terminated) {
-                        nextValue = this.protectedRead(Utils.byteWrap(i));
+                        nextValue = this.offsetProtectedRead(Utils.byteWrap(i));
                         if (!(nextValue == 0x00)) {
                             //Add to buffer
                             outBuffer += String.fromCharCode(nextValue);
@@ -289,10 +289,10 @@ module TSOS {
          * Returns value on success
          * Returns false on failure. Indicative of an out of bounds read.
          */
-        private protectedRead(index: number): any {
-            let adjAddress = index + this.currentPCB.memoryOffset;
+        private protectedRead(index: number): number {
+            let adjAddress = index;
             if (this.isOutOfBounds(adjAddress)) {
-                throw "Memory read access violation."
+                throw "Memory read access violation." + adjAddress.toString(16);
             }
             return _MemManager.readMemory(adjAddress);
         }
@@ -306,12 +306,23 @@ module TSOS {
          * Returns false on failure. Indicative of an out of bounds write.
          */
         private protectedWrite(index: number, input: number): boolean {
-            let adjAddress = index + this.currentPCB.memoryOffset;
+            let adjAddress = index;
             if (this.isOutOfBounds(adjAddress)) {
-                throw "Memory write access violation.";
+                throw "Memory write access violation. " + adjAddress.toString(16);
             }
             _MemManager.writeMemory(adjAddress, input);
             return true;
+        }
+
+        private offsetProtectedRead(index: number): number {
+            index += this.currentPCB.memoryOffset;
+            return this.protectedRead(index);
+        }
+
+        private offsetProtectedWrite(index: number, input: number) {
+            index += this.currentPCB.memoryOffset;
+            input += this.currentPCB.memoryOffset;
+            this.protectedWrite(index, input);
         }
 
         /**
@@ -321,6 +332,7 @@ module TSOS {
          * Returns true if out of bounds, false if not out of bounds
          */
         private isOutOfBounds(index: number): boolean {
+            console.log(this.currentPCB.memoryOffset.toString(16));
             return (index < this.currentPCB.memoryOffset
             || index >= this.currentPCB.memoryOffset + this.currentPCB.memoryRange)
             /* >= accounts for length. If it was just >, then we'd allow 1 value greater than we should.
