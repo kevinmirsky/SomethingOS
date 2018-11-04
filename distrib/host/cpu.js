@@ -1,13 +1,14 @@
 var TSOS;
 (function (TSOS) {
     class Cpu {
-        constructor(PC = 0, Acc = 0, Xreg = 0, Yreg = 0, Zflag = 0, isExecuting = false) {
+        constructor(PC = 0, Acc = 0, Xreg = 0, Yreg = 0, Zflag = 0, isExecuting = false, currentPCB) {
             this.PC = PC;
             this.Acc = Acc;
             this.Xreg = Xreg;
             this.Yreg = Yreg;
             this.Zflag = Zflag;
             this.isExecuting = isExecuting;
+            this.currentPCB = currentPCB;
         }
         init() {
             this.PC = 0;
@@ -16,6 +17,7 @@ var TSOS;
             this.Yreg = 0;
             this.Zflag = 0;
             this.isExecuting = false;
+            this.currentPCB = null;
         }
         cycle() {
             _Kernel.krnTrace('CPU cycle');
@@ -201,6 +203,25 @@ var TSOS;
                     }
                 }
             }
+        }
+        protectedRead(index) {
+            let adjAddress = index + this.currentPCB.memoryOffset;
+            if (this.isOutOfBounds(adjAddress)) {
+                return false;
+            }
+            return _MemManager.readMemory(adjAddress);
+        }
+        protectedWrite(index, input) {
+            let adjAddress = index + this.currentPCB.memoryOffset;
+            if (this.isOutOfBounds(adjAddress)) {
+                return false;
+            }
+            _MemManager.writeMemory(adjAddress, input);
+            return true;
+        }
+        isOutOfBounds(index) {
+            return (index < this.currentPCB.memoryOffset
+                || index > this.currentPCB.memoryOffset + this.currentPCB.memoryRange);
         }
     }
     TSOS.Cpu = Cpu;

@@ -415,8 +415,10 @@ module TSOS {
                 if (segment) {
                     //All good, proceed as usual
                     _MemManager.writeMemory(segment.firstByte, inputArray);
-                    let process = new Pcb(segment.firstByte, inputArray.length);
                     segment.isOccupied = true;
+                    let process = new Pcb(segment.firstByte, inputArray.length);
+                    //To accommodate for memory offset, we're just bumping PC to be in line.
+                    process.PC = segment.firstByte;
                     _StdOut.advanceLine();
                     _StdOut.putText(" Done. PID: " + process.pid.toString());
                 } else {

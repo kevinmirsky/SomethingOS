@@ -24,7 +24,8 @@ module TSOS {
                     public Xreg: number = 0,
                     public Yreg: number = 0,
                     public Zflag: number = 0,
-                    public isExecuting: boolean = false) {
+                    public isExecuting: boolean = false,
+                    public currentPCB: Pcb) {
 
         }
 
@@ -35,6 +36,7 @@ module TSOS {
             this.Yreg = 0;
             this.Zflag = 0;
             this.isExecuting = false;
+            this.currentPCB = null;
         }
 
         public cycle(): void {
@@ -58,6 +60,18 @@ module TSOS {
 
             //Decode
             //While we could store next value ahead of time, if we go out of bounds, we'll error out
+            /* TODO Account for memory access offsets!
+               Currently we start in the right place, but memory accessors do not know about offset
+               Either we handle this internally, or we enforce it in function call.
+               Thinking aloud, we should get make the read/write functions bound by the size of the program
+
+               I think we're better off restricting programs to accessing mem locations within their size
+               and not within their segment. Allowing the latter would enable someone to write code that
+               SOMETIMES works, depending on if the program is allocated extra memory.
+               If you need it, you need to declare it.
+
+               Should we assign a segment to PCB?
+             */
             switch(instruction) {
                 case 0xA9: {
                     deviceDisplayDriver.setCurrentParam(this.PC);
@@ -261,6 +275,51 @@ module TSOS {
                 }
             }
 
+        }
+
+        /**
+         * Internal function for reads which takes into account
+         * memory protection.
+         *
+         * Should be used for ALL reads within CPU.
+         *
+         * Returns value on success
+         * Returns false on failure. Indicative of an out of bounds read.
+         */
+        private protectedRead(index: number): any {
+            let adjAddress = index + this.currentPCB.memoryOffset;
+            if (this.isOutOfBounds(adjAddress)) {
+                return false;
+            }
+            return _MemManager.readMemory(adjAddress);
+        }
+
+        /**
+         * Internal function for writes which takes into account
+         * memory protection.
+         *
+         * Should be used for ALL writes within CPU.
+         *
+         * Returns false on failure. Indicative of an out of bounds write.
+         */
+        private protectedWrite(index: number, input: number): boolean {
+            let adjAddress = index + this.currentPCB.memoryOffset;
+            if (this.isOutOfBounds(adjAddress)) {
+                return false;
+            }
+            _MemManager.writeMemory(adjAddress, input);
+            return true;
+        }
+
+        /**
+         * Simple function to determine if memory location is out of bounds
+         * Checks for upper and lower bounds
+         *
+         * Returns true if out of bounds, false if not out of bounds
+         */
+        private isOutOfBounds(index: number): boolean {
+            return (index < this.currentPCB.memoryOffset
+            || index > this.currentPCB.memoryOffset + this.currentPCB.memoryRange)
         }
     }
 }

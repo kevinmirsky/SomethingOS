@@ -14,8 +14,8 @@ module TSOS {
         private Xreg: number = 0;
         private Yreg: number = 0;
         private Zflag: number = 0;
-        private memoryOffset: number;
-        private memoryRange: number;
+        public memoryOffset: number;
+        public memoryRange: number;
 
         //internal flags
         private inInstances = false;
