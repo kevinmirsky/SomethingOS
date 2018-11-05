@@ -228,7 +228,6 @@ var TSOS;
         }
         offsetProtectedWrite(index, input) {
             index += this.currentPCB.memoryOffset;
-            input += this.currentPCB.memoryOffset;
             this.protectedWrite(index, input);
         }
         isOutOfBounds(index) {

@@ -321,7 +321,6 @@ module TSOS {
 
         private offsetProtectedWrite(index: number, input: number) {
             index += this.currentPCB.memoryOffset;
-            input += this.currentPCB.memoryOffset;
             this.protectedWrite(index, input);
         }
 
