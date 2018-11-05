@@ -96,7 +96,7 @@ module TSOS {
             _CPU.init();       //       There's more to do, like dealing with scheduling and such, but this would be a start. Pretty cool.
 
             //start Memory
-            _MemManager = new MemManager(256);
+            _MemManager = new MemManager(768);
 
             //Branding
             document.getElementById("bannerBranding").innerText = APP_NAME + " " + APP_VERSION;

@@ -5,6 +5,43 @@ var TSOS;
             {
                 super(size);
             }
+            {
+                this.segments = [];
+            }
+            this.createSegments();
+        }
+        createSegments() {
+            for (let i = 0; i < this.mainMem.length; i += MemManager.SEGMENT_SIZE) {
+                if (i + MemManager.SEGMENT_SIZE <= this.mainMem.length) {
+                    this.segments.push(new TSOS.MemSegment(i, i + MemManager.SEGMENT_SIZE - 1));
+                }
+            }
+            console.log(this.segments);
+        }
+        getFreeSegment(size) {
+            for (let i = 0; i < this.segments.length; i++) {
+                if (!this.segments[i].isOccupied) {
+                    if (size) {
+                        if ((this.segments[i].lastByte - this.segments[i].firstByte) > size) {
+                            return this.segments[i];
+                        }
+                        else {
+                            return this.segments[i];
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+        AgetFreeSegment(size) {
+            for (let i = 0; i < this.segments.length; i++) {
+                if (!this.segments[i].isOccupied) {
+                    if ((this.segments[i].lastByte - this.segments[i].firstByte) > size) {
+                        return this.segments[i];
+                    }
+                }
+            }
+            return false;
         }
         readMemory(startIndex, endIndex) {
             return super.accessAddress(startIndex, endIndex);
@@ -14,22 +51,21 @@ var TSOS;
                 console.log("Writing from array");
                 for (let i = 0; i < input.length; i++) {
                     let parsedInput = parseInt(input[i], 16);
-                    if (parsedInput <= 0xFF) {
+                    if (parsedInput <= this.mainMem.length) {
                         super.storeValue(i + index, parsedInput);
                     }
                     else {
                         console.log(input[i]);
-                        throw "Memory storage exception: Attempted to store value larger than 0xFF";
+                        throw "Memory storage exception: Attempted to store out of bounds";
                     }
                 }
             }
             else {
-                if (input <= 0xFF) {
-                    console.log(input.toString(16));
+                if (input <= this.mainMem.length) {
                     super.storeValue(index, input);
                 }
                 else {
-                    throw "Memory storage exception: Attempted to store value larger than 0xFF";
+                    throw "Memory storage exception: Attempted to store out of bounds";
                 }
             }
         }
@@ -46,6 +82,7 @@ var TSOS;
             return output;
         }
     }
+    MemManager.SEGMENT_SIZE = 256;
     TSOS.MemManager = MemManager;
 })(TSOS || (TSOS = {}));
 //# sourceMappingURL=memManager.js.map

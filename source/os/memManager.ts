@@ -2,9 +2,61 @@ module TSOS {
 
     export class MemManager extends Memory {
 
+        public static SEGMENT_SIZE = 256;
+        public segments;
+
         constructor(size: number) {
             {super(size)}
+            {this.segments = []}
+            this.createSegments();
         }
+
+        private createSegments() {
+            for (let i = 0; i < this.mainMem.length; i += MemManager.SEGMENT_SIZE) {
+                if (i + MemManager.SEGMENT_SIZE <= this.mainMem.length) {
+                    this.segments.push(new MemSegment(i, i + MemManager.SEGMENT_SIZE - 1));
+                }
+            }
+            console.log(this.segments);
+        }
+
+        /**
+         * Gets the first available segment, with the optional parameter to look for a segment
+         * of a certain size.
+         * If a segment is available, the first segment is returned.
+         * If no segment is available, returns false.
+         */
+        public getFreeSegment(size?: number): any {
+            for (let i = 0; i < this.segments.length; i++) {
+                if (!this.segments[i].isOccupied){
+                    if (size) {
+                        //run che
+                        if ((this.segments[i].lastByte - this.segments[i].firstByte) > size) {
+                            return this.segments[i];
+                    } else {
+                            return this.segments[i];
+                        }
+                    }
+
+                }
+            }
+            return false;
+        }
+        /**
+         * Gets the first available segment, no extra logic.
+         * If no segment exists, returns false
+         */
+        public AgetFreeSegment(size): any {
+            for (let i = 0; i < this.segments.length; i++) {
+                if (!this.segments[i].isOccupied) {
+                    if ((this.segments[i].lastByte - this.segments[i].firstByte) > size) {
+                        return this.segments[i];
+                    }
+                }
+            }
+            return false;
+        }
+
 
         public readMemory(startIndex: number, endIndex?: number): any {
             return super.accessAddress(startIndex, endIndex);
@@ -18,21 +70,20 @@ module TSOS {
                 console.log("Writing from array");
                 for (let i = 0; i < input.length; i++) {
                     let parsedInput = parseInt(input[i], 16);
-                    if (parsedInput <= 0xFF) {
+                    if (parsedInput <= this.mainMem.length) {
                         super.storeValue(i + index, parsedInput);
                     } else {
                         //Be kind and tell them what was the problem?
                         console.log(input[i]);
-                        throw "Memory storage exception: Attempted to store value larger than 0xFF";
+                        throw "Memory storage exception: Attempted to store out of bounds";
                     }
                 }
             } else {
                 //Single Value
-                if (input <= 0xFF) {
-                    console.log(input.toString(16));
+                if (input <= this.mainMem.length) {
                     super.storeValue(index, input);
                 } else {
-                    throw "Memory storage exception: Attempted to store value larger than 0xFF";
+                    throw "Memory storage exception: Attempted to store out of bounds";
                 }
             }
         }

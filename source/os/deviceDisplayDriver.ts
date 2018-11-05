@@ -80,6 +80,7 @@ module TSOS {
             let mem = _MemManager.memDump();
             let table = <HTMLTableElement>document.getElementById("tableMemory");
             let row;
+            //Build table
             for (let i = 0; i < mem.length; i++) {
                 if (i % ROW_LENGTH === 0) {
                     //New row. Set it up and let's go.
@@ -93,6 +94,22 @@ module TSOS {
                 cell.className = "cell-mem";
                 cell.innerHTML = mem[i].toString();
             }
+
+            //Build buttons
+            let buttonDiv = <HTMLDivElement> document.getElementById("divMemButtons");
+            for (let i = 0; i < _MemManager.segments.length; i++) {
+                let btn = <HTMLButtonElement> document.createElement("button");
+                btn.innerText = "SEG " + i;
+                btn.className = "mem_button";
+                btn.value = _MemManager.segments[i].firstByte.toString(16).toUpperCase();
+                btn.addEventListener("click", (e:Event) => this.scrollTo(btn.value));
+                buttonDiv.appendChild(btn);
+            }
+        }
+
+        public static scrollTo(cell) {
+            let memLoc = document.getElementById("cellMem" + cell);
+            memLoc.scrollIntoView();
         }
 
         public static updateMemory(): void {

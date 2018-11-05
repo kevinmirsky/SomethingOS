@@ -40,10 +40,6 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
             sc = new TSOS.ShellCommand(this.shellRun, "run", "<pid> - Run a specified program");
             this.commandList[this.commandList.length] = sc;
-            sc = new TSOS.ShellCommand(this.shellDebugMemtest, "memtest", "- [DEBUG] This tests the basic storage of memory.");
-            this.commandList[this.commandList.length] = sc;
-            sc = new TSOS.ShellCommand(this.shellDebugChangePcb, "changepcbtest", "- [DEBUG] This deletes a pcb for a process. Testing purposes only.");
-            this.commandList[this.commandList.length] = sc;
             this.putPrompt();
         }
         putPrompt() {
@@ -274,11 +270,22 @@ var TSOS;
             });
             if (isValid) {
                 _StdOut.putText("User input validated. Loading...");
-                _MemManager.writeMemory(0x00, inputArray);
-                let process = new TSOS.Pcb(0x00, inputArray.length);
-                _StdOut.putText(" Done. PID: " + process.pid.toString());
+                let segment = _MemManager.getFreeSegment(inputArray.length);
+                if (segment) {
+                    _MemManager.writeMemory(segment.firstByte, inputArray);
+                    segment.isOccupied = true;
+                    let process = new TSOS.Pcb(segment.firstByte, inputArray.length);
+                    process.PC = segment.firstByte;
+                    _StdOut.advanceLine();
+                    _StdOut.putText(" Done. PID: " + process.pid.toString());
+                }
+                else {
+                    _StdOut.advanceLine();
+                    _StdOut.putText("[ERROR] No available memory segments. Unable to load.");
+                }
             }
             else {
+                _StdOut.advanceLine();
                 _StdOut.putText("[ERROR] User code malformed. Unable to load.");
             }
         }
@@ -302,6 +309,7 @@ var TSOS;
                 program.state = "RUNNING";
                 _CPU.init();
                 _CPU.PC = program.PC;
+                _CPU.currentPCB = program;
                 _CPU.isExecuting = true;
             }
             else {

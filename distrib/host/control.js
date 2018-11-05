@@ -27,7 +27,7 @@ var TSOS;
             document.getElementById("display").focus();
             _CPU = new TSOS.Cpu();
             _CPU.init();
-            _MemManager = new TSOS.MemManager(256);
+            _MemManager = new TSOS.MemManager(768);
             document.getElementById("bannerBranding").innerText = APP_NAME + " " + APP_VERSION;
             _hardwareClockID = setInterval(TSOS.Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
             _Kernel = new TSOS.Kernel();

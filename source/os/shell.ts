@@ -116,22 +116,10 @@ module TSOS {
                 "triggers a shutdown");
             this.commandList[this.commandList.length] = sc;
 
-            //DebugMemTest
+            //run
             sc = new ShellCommand(this.shellRun,
                 "run",
                 "<pid> - Run a specified program");
-            this.commandList[this.commandList.length] = sc;
-
-            //DebugMemTest
-            sc = new ShellCommand(this.shellDebugMemtest,
-                "memtest",
-                "- [DEBUG] This tests the basic storage of memory.");
-            this.commandList[this.commandList.length] = sc;
-
-            //DebugMemTest
-            sc = new ShellCommand(this.shellDebugChangePcb,
-                "changepcbtest",
-                "- [DEBUG] This deletes a pcb for a process. Testing purposes only.");
             this.commandList[this.commandList.length] = sc;
 
             // ps  - list the running processes and their IDs
@@ -420,10 +408,27 @@ module TSOS {
             });
             if (isValid) {
                 _StdOut.putText("User input validated. Loading...");
-                _MemManager.writeMemory(0x00, inputArray);
-                let process = new Pcb(0x00, inputArray.length);
-                _StdOut.putText(" Done. PID: " + process.pid.toString());
+                /*
+                ACTUAL LOADING OCCURS HERE
+                */
+                let segment = _MemManager.getFreeSegment(inputArray.length);
+                if (segment) {
+                    //All good, proceed as usual
+                    _MemManager.writeMemory(segment.firstByte, inputArray);
+                    segment.isOccupied = true;
+                    let process = new Pcb(segment.firstByte, inputArray.length);
+                    //To accommodate for memory offset, we're just bumping PC to be in line.
+                    process.PC = segment.firstByte;
+                    _StdOut.advanceLine();
+                    _StdOut.putText(" Done. PID: " + process.pid.toString());
+                } else {
+                    //No segment available. Cannot load
+                    _StdOut.advanceLine();
+                    _StdOut.putText("[ERROR] No available memory segments. Unable to load.")
+                }
+
             } else {
+                _StdOut.advanceLine();
                 _StdOut.putText("[ERROR] User code malformed. Unable to load.");
             }
         }
@@ -453,6 +458,7 @@ module TSOS {
                 program.state = "RUNNING";
                 _CPU.init(); //Reset any lingering values
                 _CPU.PC = program.PC;
+                _CPU.currentPCB = program;
                 _CPU.isExecuting = true;
             } else {
                 _StdOut.putText("[ERROR] Could not find PID " + args);

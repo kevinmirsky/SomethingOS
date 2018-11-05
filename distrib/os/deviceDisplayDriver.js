@@ -55,6 +55,19 @@ var TSOS;
                 cell.className = "cell-mem";
                 cell.innerHTML = mem[i].toString();
             }
+            let buttonDiv = document.getElementById("divMemButtons");
+            for (let i = 0; i < _MemManager.segments.length; i++) {
+                let btn = document.createElement("button");
+                btn.innerText = "SEG " + i;
+                btn.className = "mem_button";
+                btn.value = _MemManager.segments[i].firstByte.toString(16).toUpperCase();
+                btn.addEventListener("click", (e) => this.scrollTo(btn.value));
+                buttonDiv.appendChild(btn);
+            }
+        }
+        static scrollTo(cell) {
+            let memLoc = document.getElementById("cellMem" + cell);
+            memLoc.scrollIntoView();
         }
         static updateMemory() {
             let mem = _MemManager.memDump();
