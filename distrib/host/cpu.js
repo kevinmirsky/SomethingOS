@@ -173,7 +173,10 @@ var TSOS;
         branchOnNotEqual(input) {
             if (this.Zflag == 0) {
                 this.PC += input;
-                this.PC = TSOS.Utils.byteWrap(this.PC);
+                console.log("BEFORE: " + this.PC);
+                this.PC = ((this.PC - this.currentPCB.memoryOffset) % (0x100))
+                    + this.currentPCB.memoryOffset;
+                console.log("AFTER: " + this.PC);
             }
             this.PC++;
         }
@@ -231,7 +234,6 @@ var TSOS;
             this.protectedWrite(index, input);
         }
         isOutOfBounds(index) {
-            console.log(this.currentPCB.memoryOffset.toString(16));
             return (index < this.currentPCB.memoryOffset
                 || index >= this.currentPCB.memoryOffset + this.currentPCB.memoryRange);
         }

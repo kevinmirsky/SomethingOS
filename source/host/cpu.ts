@@ -239,7 +239,19 @@ module TSOS {
         private branchOnNotEqual(input): void {
             if (this.Zflag == 0) {
                 this.PC += input;
-                this.PC = Utils.byteWrap(this.PC);
+                console.log("BEFORE: " + this.PC);
+                // 0x100 is the maximum size of the segment. Programs are written around this constant
+                this.PC = ((this.PC - this.currentPCB.memoryOffset) % (0x100))
+                    + this.currentPCB.memoryOffset;
+                console.log("AFTER: " + this.PC);
+
+                /*
+                if (this.PC >= this.currentPCB.memoryOffset + this.currentPCB.memoryRange) {
+
+                }
+                */
+
+                //this.PC = Utils.byteWrap(this.PC);
             }
             this.PC++;
         }
@@ -331,7 +343,6 @@ module TSOS {
          * Returns true if out of bounds, false if not out of bounds
          */
         private isOutOfBounds(index: number): boolean {
-            console.log(this.currentPCB.memoryOffset.toString(16));
             return (index < this.currentPCB.memoryOffset
             || index >= this.currentPCB.memoryOffset + this.currentPCB.memoryRange)
             /* >= accounts for length. If it was just >, then we'd allow 1 value greater than we should.
