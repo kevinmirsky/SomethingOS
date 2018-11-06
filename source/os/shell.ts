@@ -122,6 +122,12 @@ module TSOS {
                 "<pid> - Run a specified program");
             this.commandList[this.commandList.length] = sc;
 
+            //run
+            sc = new ShellCommand(this.shellRunall,
+                "runall",
+                "<pid> - Run all programs waiting to be ran");
+            this.commandList[this.commandList.length] = sc;
+
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
@@ -459,6 +465,14 @@ module TSOS {
                 _Scheduler.requestRun(program);
             } else {
                 _StdOut.putText("[ERROR] Could not find PID " + args);
+            }
+        }
+
+        public shellRunall(args) {
+            for (let i = 0; i < Pcb.instances.length; i++) {
+                if (Pcb.instances[i].state == "NEW") {
+                    _Scheduler.requestRun(Pcb.instances[i]);
+                }
             }
         }
 
