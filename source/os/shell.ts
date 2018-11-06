@@ -453,9 +453,10 @@ module TSOS {
                 _StdOut.putText("[ERROR] Could not find PID " + args);
                 return false;
             }
-            let program = Pcb.getFromPid(<number>args);
+            let program = <Pcb>Pcb.getFromPid(<number>args);
             if (program) {
-                _Scheduler.readyQueue.enqueue(program);
+                //Only new programs should be ran. Otherwise it's already in the queue
+                _Scheduler.requestRun(program);
             } else {
                 _StdOut.putText("[ERROR] Could not find PID " + args);
             }

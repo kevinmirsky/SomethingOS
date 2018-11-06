@@ -6,7 +6,7 @@ module TSOS {
         QBIT_LENGTH: number = 6;
         QbitState: number = 0;
 
-        public runProcess(pcb: Pcb) {
+        private runProcess(pcb: Pcb) {
             this.runningPcb = pcb;
             if (pcb) {
                 pcb.state = "RUNNING";
@@ -94,6 +94,14 @@ module TSOS {
         public runNext() {
             let runningPcb = this.readyQueue.dequeue();
             this.runProcess(runningPcb);
+        }
+
+        public requestRun(program: Pcb) {
+            if(program.state == "NEW") {
+                _Scheduler.readyQueue.enqueue(program);
+            } else {
+                _StdOut.putText("[ERROR] Program already scheduled or completed.");
+            }
         }
 
     }

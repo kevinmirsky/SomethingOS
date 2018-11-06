@@ -72,6 +72,14 @@ var TSOS;
             let runningPcb = this.readyQueue.dequeue();
             this.runProcess(runningPcb);
         }
+        requestRun(program) {
+            if (program.state == "NEW") {
+                _Scheduler.readyQueue.enqueue(program);
+            }
+            else {
+                _StdOut.putText("[ERROR] Program already scheduled or completed.");
+            }
+        }
     }
     TSOS.Scheduler = Scheduler;
 })(TSOS || (TSOS = {}));

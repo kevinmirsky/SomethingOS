@@ -306,7 +306,7 @@ var TSOS;
             }
             let program = TSOS.Pcb.getFromPid(args);
             if (program) {
-                _Scheduler.readyQueue.enqueue(program);
+                _Scheduler.requestRun(program);
             }
             else {
                 _StdOut.putText("[ERROR] Could not find PID " + args);
