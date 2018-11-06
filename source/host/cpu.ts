@@ -18,14 +18,14 @@
 module TSOS {
 
     export class Cpu {
+        public currentPCB: Pcb;
 
         constructor(public PC: number = 0,
                     public Acc: number = 0,
                     public Xreg: number = 0,
                     public Yreg: number = 0,
                     public Zflag: number = 0,
-                    public isExecuting: boolean = false,
-                    public currentPCB: Pcb) {
+                    public isExecuting: boolean = false) {
 
         }
 
@@ -54,6 +54,7 @@ module TSOS {
             if (singleStep) {
                 canStep = false;
             }
+            _Scheduler.incrementQbit();
         }
 
         public fetch(): void {
@@ -155,20 +156,15 @@ module TSOS {
                 default: {
                     //Invalid OP code! Wanna freak out? Course you do...
                     this.crash("Invalid Opcode " + instruction.toString(16) + ".");
-
                 }
             }
+            this.updatePcb();
             if (this.isExecuting == false) {
                 //Let's wrap things up here. Pack it into the PCB and set it to done
-                let program = Pcb.getRunning();
-                if (program) {
-                    program.state = "COMPLETE";
-                    program.PC = this.PC;
-                    program.Acc = this.Acc;
-                    program.Xreg = this.Xreg;
-                    program.Yreg = this.Yreg;
-                    program.Zflag = this.Zflag;
-                }
+                    this.currentPCB.state = "COMPLETE";
+                    this.updatePcb();
+                    _Scheduler.runningPcb = null;
+                // TODO Communicate with scheduler to let it know it needs to remove!
             }
 
         }
@@ -371,6 +367,10 @@ module TSOS {
             this.isExecuting = false;
             this.currentPCB.state = "TERMINATED";
             //We're being nice and letting user see what was happening when everything went wrong
+            this.updatePcb();
+        }
+
+        private updatePcb() {
             this.currentPCB.PC = this.PC;
             this.currentPCB.Acc = this.Acc;
             this.currentPCB.Xreg = this.Xreg;

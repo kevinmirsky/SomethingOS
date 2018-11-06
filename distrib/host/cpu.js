@@ -1,14 +1,13 @@
 var TSOS;
 (function (TSOS) {
     class Cpu {
-        constructor(PC = 0, Acc = 0, Xreg = 0, Yreg = 0, Zflag = 0, isExecuting = false, currentPCB) {
+        constructor(PC = 0, Acc = 0, Xreg = 0, Yreg = 0, Zflag = 0, isExecuting = false) {
             this.PC = PC;
             this.Acc = Acc;
             this.Xreg = Xreg;
             this.Yreg = Yreg;
             this.Zflag = Zflag;
             this.isExecuting = isExecuting;
-            this.currentPCB = currentPCB;
         }
         init() {
             this.PC = 0;
@@ -31,6 +30,7 @@ var TSOS;
             if (singleStep) {
                 canStep = false;
             }
+            _Scheduler.incrementQbit();
         }
         fetch() {
             let instruction = this.protectedRead(this.PC);
@@ -114,16 +114,11 @@ var TSOS;
                     this.crash("Invalid Opcode " + instruction.toString(16) + ".");
                 }
             }
+            this.updatePcb();
             if (this.isExecuting == false) {
-                let program = TSOS.Pcb.getRunning();
-                if (program) {
-                    program.state = "COMPLETE";
-                    program.PC = this.PC;
-                    program.Acc = this.Acc;
-                    program.Xreg = this.Xreg;
-                    program.Yreg = this.Yreg;
-                    program.Zflag = this.Zflag;
-                }
+                this.currentPCB.state = "COMPLETE";
+                this.updatePcb();
+                _Scheduler.runningPcb = null;
             }
         }
         loadAcc(input) {
@@ -250,6 +245,9 @@ var TSOS;
             _StdOut.putText("Terminating.");
             this.isExecuting = false;
             this.currentPCB.state = "TERMINATED";
+            this.updatePcb();
+        }
+        updatePcb() {
             this.currentPCB.PC = this.PC;
             this.currentPCB.Acc = this.Acc;
             this.currentPCB.Xreg = this.Xreg;

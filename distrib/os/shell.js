@@ -40,6 +40,8 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
             sc = new TSOS.ShellCommand(this.shellRun, "run", "<pid> - Run a specified program");
             this.commandList[this.commandList.length] = sc;
+            sc = new TSOS.ShellCommand(this.shellRunall, "runall", "<pid> - Run all programs waiting to be ran");
+            this.commandList[this.commandList.length] = sc;
             this.putPrompt();
         }
         putPrompt() {
@@ -306,14 +308,17 @@ var TSOS;
             }
             let program = TSOS.Pcb.getFromPid(args);
             if (program) {
-                program.state = "RUNNING";
-                _CPU.init();
-                _CPU.PC = program.PC;
-                _CPU.currentPCB = program;
-                _CPU.isExecuting = true;
+                _Scheduler.requestRun(program);
             }
             else {
                 _StdOut.putText("[ERROR] Could not find PID " + args);
+            }
+        }
+        shellRunall(args) {
+            for (let i = 0; i < TSOS.Pcb.instances.length; i++) {
+                if (TSOS.Pcb.instances[i].state == "NEW") {
+                    _Scheduler.requestRun(TSOS.Pcb.instances[i]);
+                }
             }
         }
         shellDebugChangePcb(args) {
