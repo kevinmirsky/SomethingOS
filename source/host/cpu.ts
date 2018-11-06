@@ -156,17 +156,13 @@ module TSOS {
                 default: {
                     //Invalid OP code! Wanna freak out? Course you do...
                     this.crash("Invalid Opcode " + instruction.toString(16) + ".");
-
                 }
             }
+            this.updatePcb();
             if (this.isExecuting == false) {
                 //Let's wrap things up here. Pack it into the PCB and set it to done
                     this.currentPCB.state = "COMPLETE";
-                    this.currentPCB.PC = this.PC;
-                    this.currentPCB.Acc = this.Acc;
-                    this.currentPCB.Xreg = this.Xreg;
-                    this.currentPCB.Yreg = this.Yreg;
-                    this.currentPCB.Zflag = this.Zflag;
+                    this.updatePcb();
                     _Scheduler.runningPcb = null;
                 // TODO Communicate with scheduler to let it know it needs to remove!
             }
@@ -371,6 +367,10 @@ module TSOS {
             this.isExecuting = false;
             this.currentPCB.state = "TERMINATED";
             //We're being nice and letting user see what was happening when everything went wrong
+            this.updatePcb();
+        }
+
+        private updatePcb() {
             this.currentPCB.PC = this.PC;
             this.currentPCB.Acc = this.Acc;
             this.currentPCB.Xreg = this.Xreg;

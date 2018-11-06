@@ -114,13 +114,10 @@ var TSOS;
                     this.crash("Invalid Opcode " + instruction.toString(16) + ".");
                 }
             }
+            this.updatePcb();
             if (this.isExecuting == false) {
                 this.currentPCB.state = "COMPLETE";
-                this.currentPCB.PC = this.PC;
-                this.currentPCB.Acc = this.Acc;
-                this.currentPCB.Xreg = this.Xreg;
-                this.currentPCB.Yreg = this.Yreg;
-                this.currentPCB.Zflag = this.Zflag;
+                this.updatePcb();
                 _Scheduler.runningPcb = null;
             }
         }
@@ -248,6 +245,9 @@ var TSOS;
             _StdOut.putText("Terminating.");
             this.isExecuting = false;
             this.currentPCB.state = "TERMINATED";
+            this.updatePcb();
+        }
+        updatePcb() {
             this.currentPCB.PC = this.PC;
             this.currentPCB.Acc = this.Acc;
             this.currentPCB.Xreg = this.Xreg;
