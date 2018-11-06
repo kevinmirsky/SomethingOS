@@ -16,6 +16,7 @@ var TSOS;
             this.krnTrace(_krnKeyboardDriver.status);
             this.krnTrace("Enabling the interrupts.");
             this.krnEnableInterrupts();
+            _Scheduler = new TSOS.Scheduler();
             this.krnTrace("Creating and Launching the shell.");
             _OsShell = new TSOS.Shell();
             _OsShell.init();
@@ -51,6 +52,7 @@ var TSOS;
             else {
                 this.krnTrace("Idle");
             }
+            _Scheduler.checkIfWaiting();
         }
         krnEnableInterrupts() {
             TSOS.Devices.hostEnableKeyboardInterrupt();
@@ -67,6 +69,20 @@ var TSOS;
                 case KEYBOARD_IRQ:
                     _krnKeyboardDriver.isr(params);
                     _StdIn.handleInput();
+                    break;
+                case SCHED_IRQ:
+                    switch (params) {
+                        case "SWAP":
+                            _Scheduler.swap(_Scheduler.readyQueue.dequeue());
+                            this.krnTrace("Swapping active program.");
+                            break;
+                        case "LOAD":
+                            this.krnTrace("CPU done, loading next in queue.");
+                            _Scheduler.runNext();
+                            break;
+                        default:
+                            break;
+                    }
                     break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");

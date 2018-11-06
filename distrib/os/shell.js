@@ -306,11 +306,7 @@ var TSOS;
             }
             let program = TSOS.Pcb.getFromPid(args);
             if (program) {
-                program.state = "RUNNING";
-                _CPU.init();
-                _CPU.PC = program.PC;
-                _CPU.currentPCB = program;
-                _CPU.isExecuting = true;
+                _Scheduler.readyQueue.enqueue(program);
             }
             else {
                 _StdOut.putText("[ERROR] Could not find PID " + args);

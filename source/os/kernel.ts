@@ -50,6 +50,9 @@ module TSOS {
             this.krnTrace("Enabling the interrupts.");
             this.krnEnableInterrupts();
 
+            // Enable Scheduler
+            _Scheduler = new Scheduler();
+
             // Launch the shell.
             this.krnTrace("Creating and Launching the shell.");
             _OsShell = new Shell();
@@ -107,6 +110,7 @@ module TSOS {
             } else {                      // If there are no interrupts and there is nothing being executed then just be idle. {
                 this.krnTrace("Idle");
             }
+            _Scheduler.checkIfWaiting();
         }
 
 
@@ -141,6 +145,21 @@ module TSOS {
                 case KEYBOARD_IRQ:
                     _krnKeyboardDriver.isr(params);   // Kernel mode device driver
                     _StdIn.handleInput();
+                    break;
+                case SCHED_IRQ:
+                    switch (params) {
+                        case "SWAP":
+                            _Scheduler.swap(_Scheduler.readyQueue.dequeue());
+                            this.krnTrace("Swapping active program.");
+                            break;
+                        case "LOAD":
+                            this.krnTrace("CPU done, loading next in queue.");
+                            _Scheduler.runNext();
+                            break;
+                        default:
+                            break;
+
+                    }
                     break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
