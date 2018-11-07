@@ -3,7 +3,7 @@ module TSOS {
     export class MemManager extends Memory {
 
         public static SEGMENT_SIZE = 256;
-        public segments;
+        public segments: MemSegment[];
 
         constructor(size: number) {
             {super(size)}

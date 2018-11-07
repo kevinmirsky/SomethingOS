@@ -143,6 +143,11 @@ module TSOS {
                 "<pid> - Forcefully end a program");
             this.commandList[this.commandList.length] = sc;
 
+            sc = new ShellCommand(this.shellClearMem,
+                "clearmem",
+                " - Clears the memory, killing any program in its way.");
+            this.commandList[this.commandList.length] = sc;
+
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
@@ -539,6 +544,55 @@ module TSOS {
                 _StdOut.putText("[ERROR] Could not find PID to kill.");
             }
 
+        }
+
+        public shellClearMem(args) {
+            for (let i = 0; i < _MemManager.segments.length; i++) {
+                //Ugh. This needs more work I think. It technically fulfills requirements? But it needs more love...
+
+                //Clean up all the junk we have pointing to it.
+                if(_MemManager.segments[i].isOccupied) {
+                    //Kill the processes occupying
+                    let pcb = Pcb.getFromMemLoc(_MemManager.segments[i].firstByte);
+
+                    /*
+                    You might be saying, WHY did you just repeat code? You literally have a function
+                    for this! Well...
+
+                    For some reason, this.shellKill is undefined. I don't know what JS is smoking, but
+                    it refuses to let me call shellKill, so for the time being, I'll just copy code.
+                    But I will move it into a new function which I BET will work. I'm guessing its because
+                    it gets loaded into the shell system and screws
+                     */
+
+                    if (pcb) {
+                        let program = <Pcb>Pcb.getFromPid(pcb.pid);
+                        if (program) {
+                            if (program.state == "TERMINATED" || program.state == "COMPLETE") {
+                                _StdOut.putText("[ERROR] Process is already dead.");
+                            } else if (program.state == "NEW" || program.state == "WAITING") {
+                                for (let i = 0; i < _Scheduler.readyQueue.q.length; i++) {
+                                    if (_Scheduler.readyQueue.q[i].pid == program.pid) {
+                                        //Remove from ready queue
+                                        _Scheduler.readyQueue.q.splice(i, 1);
+                                        program.state = "TERMINATED";
+                                        return;
+                                    }
+                                }
+                                program.state = "TERMINATED";
+                            } else if (program.state == "RUNNING") {
+                                program.state = "TERMINATED";
+                                _CPU.isExecuting = false;
+                            }
+                        } else {
+                            _StdOut.putText("[ERROR] Could not find PID to kill.");
+                        }
+                    }
+                    _MemManager.segments[i].isOccupied = false;
+                }
+                //Think of this like turning memory on and off to empty it out.
+                _MemManager.init();
+            }
         }
 
         public shellDebugChangePcb(args) {

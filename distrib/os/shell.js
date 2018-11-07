@@ -48,6 +48,8 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
             sc = new TSOS.ShellCommand(this.shellKill, "kill", "<pid> - Forcefully end a program");
             this.commandList[this.commandList.length] = sc;
+            sc = new TSOS.ShellCommand(this.shellClearMem, "clearmem", " - Clears the memory, killing any program in its way.");
+            this.commandList[this.commandList.length] = sc;
             this.putPrompt();
         }
         putPrompt() {
@@ -374,6 +376,40 @@ var TSOS;
             }
             else {
                 _StdOut.putText("[ERROR] Could not find PID to kill.");
+            }
+        }
+        shellClearMem(args) {
+            for (let i = 0; i < _MemManager.segments.length; i++) {
+                if (_MemManager.segments[i].isOccupied) {
+                    let pcb = TSOS.Pcb.getFromMemLoc(_MemManager.segments[i].firstByte);
+                    if (pcb) {
+                        let program = TSOS.Pcb.getFromPid(pcb.pid);
+                        if (program) {
+                            if (program.state == "TERMINATED" || program.state == "COMPLETE") {
+                                _StdOut.putText("[ERROR] Process is already dead.");
+                            }
+                            else if (program.state == "NEW" || program.state == "WAITING") {
+                                for (let i = 0; i < _Scheduler.readyQueue.q.length; i++) {
+                                    if (_Scheduler.readyQueue.q[i].pid == program.pid) {
+                                        _Scheduler.readyQueue.q.splice(i, 1);
+                                        program.state = "TERMINATED";
+                                        return;
+                                    }
+                                }
+                                program.state = "TERMINATED";
+                            }
+                            else if (program.state == "RUNNING") {
+                                program.state = "TERMINATED";
+                                _CPU.isExecuting = false;
+                            }
+                        }
+                        else {
+                            _StdOut.putText("[ERROR] Could not find PID to kill.");
+                        }
+                    }
+                    _MemManager.segments[i].isOccupied = false;
+                }
+                _MemManager.init();
             }
         }
         shellDebugChangePcb(args) {
