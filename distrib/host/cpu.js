@@ -32,54 +32,61 @@ var TSOS;
             }
             _Scheduler.incrementQbit();
         }
+        getPC() {
+            return this.PC + this.currentPCB.memoryOffset;
+        }
+        plusPlusGetPC() {
+            ++this.PC;
+            return this.PC + this.currentPCB.memoryOffset;
+        }
         fetch() {
-            let instruction = this.protectedRead(this.PC);
-            TSOS.deviceDisplayDriver.setCurrentOp(this.PC);
+            let instruction = this.protectedRead(this.getPC());
+            TSOS.deviceDisplayDriver.setCurrentOp(this.getPC());
             this.PC++;
             switch (instruction) {
                 case 0xA9: {
-                    TSOS.deviceDisplayDriver.setCurrentParam(this.PC);
-                    this.loadAcc(this.protectedRead(this.PC));
+                    TSOS.deviceDisplayDriver.setCurrentParam(this.getPC());
+                    this.loadAcc(this.protectedRead(this.getPC()));
                     break;
                 }
                 case 0xAD: {
-                    TSOS.deviceDisplayDriver.setCurrentParam(this.PC);
-                    TSOS.deviceDisplayDriver.setCurrentParam(this.PC + 1);
-                    this.loadAccFromMem(this.protectedRead(this.PC), this.protectedRead(++this.PC));
+                    TSOS.deviceDisplayDriver.setCurrentParam(this.getPC());
+                    TSOS.deviceDisplayDriver.setCurrentParam(this.getPC() + 1);
+                    this.loadAccFromMem(this.protectedRead(this.getPC()), this.protectedRead(this.plusPlusGetPC()));
                     break;
                 }
                 case 0x8D: {
-                    TSOS.deviceDisplayDriver.setCurrentParam(this.PC);
-                    TSOS.deviceDisplayDriver.setCurrentParam(this.PC + 1);
-                    this.storeAcc(this.protectedRead(this.PC), this.protectedRead(++this.PC));
+                    TSOS.deviceDisplayDriver.setCurrentParam(this.getPC());
+                    TSOS.deviceDisplayDriver.setCurrentParam(this.getPC() + 1);
+                    this.storeAcc(this.protectedRead(this.getPC()), this.protectedRead(this.plusPlusGetPC()));
                     break;
                 }
                 case 0x6D: {
-                    TSOS.deviceDisplayDriver.setCurrentParam(this.PC);
-                    TSOS.deviceDisplayDriver.setCurrentParam(this.PC + 1);
-                    this.addWithCarry(this.protectedRead(this.PC), this.protectedRead(++this.PC));
+                    TSOS.deviceDisplayDriver.setCurrentParam(this.getPC());
+                    TSOS.deviceDisplayDriver.setCurrentParam(this.getPC() + 1);
+                    this.addWithCarry(this.protectedRead(this.getPC()), this.protectedRead(this.plusPlusGetPC()));
                     break;
                 }
                 case 0xA2: {
-                    TSOS.deviceDisplayDriver.setCurrentParam(this.PC);
-                    this.loadXReg(this.protectedRead(this.PC));
+                    TSOS.deviceDisplayDriver.setCurrentParam(this.getPC());
+                    this.loadXReg(this.protectedRead(this.getPC()));
                     break;
                 }
                 case 0xAE: {
-                    TSOS.deviceDisplayDriver.setCurrentParam(this.PC);
-                    TSOS.deviceDisplayDriver.setCurrentParam(this.PC + 1);
-                    this.loadXRegFromMem(this.protectedRead(this.PC), this.protectedRead(++this.PC));
+                    TSOS.deviceDisplayDriver.setCurrentParam(this.getPC());
+                    TSOS.deviceDisplayDriver.setCurrentParam(this.getPC() + 1);
+                    this.loadXRegFromMem(this.protectedRead(this.getPC()), this.protectedRead(this.plusPlusGetPC()));
                     break;
                 }
                 case 0xA0: {
-                    TSOS.deviceDisplayDriver.setCurrentParam(this.PC);
-                    this.loadYReg(this.protectedRead(this.PC));
+                    TSOS.deviceDisplayDriver.setCurrentParam(this.getPC());
+                    this.loadYReg(this.protectedRead(this.getPC()));
                     break;
                 }
                 case 0xAC: {
-                    TSOS.deviceDisplayDriver.setCurrentParam(this.PC);
-                    TSOS.deviceDisplayDriver.setCurrentParam(this.PC + 1);
-                    this.loadYRegFromMem(this.protectedRead(this.PC), this.protectedRead(++this.PC));
+                    TSOS.deviceDisplayDriver.setCurrentParam(this.getPC());
+                    TSOS.deviceDisplayDriver.setCurrentParam(this.getPC() + 1);
+                    this.loadYRegFromMem(this.protectedRead(this.getPC()), this.protectedRead(this.plusPlusGetPC()));
                     break;
                 }
                 case 0xEA: {
@@ -90,20 +97,20 @@ var TSOS;
                     break;
                 }
                 case 0xEC: {
-                    TSOS.deviceDisplayDriver.setCurrentParam(this.PC);
-                    TSOS.deviceDisplayDriver.setCurrentParam(this.PC + 1);
-                    this.compareToXReg(this.protectedRead(this.PC), this.protectedRead(++this.PC));
+                    TSOS.deviceDisplayDriver.setCurrentParam(this.getPC());
+                    TSOS.deviceDisplayDriver.setCurrentParam(this.getPC() + 1);
+                    this.compareToXReg(this.protectedRead(this.getPC()), this.protectedRead(this.plusPlusGetPC()));
                     break;
                 }
                 case 0xD0: {
-                    TSOS.deviceDisplayDriver.setCurrentParam(this.PC);
-                    this.branchOnNotEqual(this.protectedRead(this.PC));
+                    TSOS.deviceDisplayDriver.setCurrentParam(this.getPC());
+                    this.branchOnNotEqual(this.protectedRead(this.getPC()));
                     break;
                 }
                 case 0xEE: {
-                    TSOS.deviceDisplayDriver.setCurrentParam(this.PC);
-                    TSOS.deviceDisplayDriver.setCurrentParam(this.PC + 1);
-                    this.incrementByte(this.protectedRead(this.PC), this.protectedRead(++this.PC));
+                    TSOS.deviceDisplayDriver.setCurrentParam(this.getPC());
+                    TSOS.deviceDisplayDriver.setCurrentParam(this.getPC() + 1);
+                    this.incrementByte(this.protectedRead(this.getPC()), this.protectedRead(this.plusPlusGetPC()));
                     break;
                 }
                 case 0xFF: {
@@ -169,8 +176,7 @@ var TSOS;
             if (this.Zflag == 0) {
                 this.PC += input;
                 console.log("BEFORE: " + this.PC);
-                this.PC = ((this.PC - this.currentPCB.memoryOffset) % (0x100))
-                    + this.currentPCB.memoryOffset;
+                this.PC = (this.PC % 0x100);
                 console.log("AFTER: " + this.PC);
             }
             this.PC++;
