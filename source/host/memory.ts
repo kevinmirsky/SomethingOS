@@ -11,7 +11,7 @@ module TSOS {
             this.init();
         }
 
-        private init(): void {
+        public init(): void {
             //Load up memory with empty values
             for (let i = 0; i < this.mainMem.length; i++) {
                 this.mainMem[i] = 0x00;

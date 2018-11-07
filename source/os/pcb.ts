@@ -63,6 +63,15 @@ module TSOS {
         return false;
     }
 
+        public static getFromMemLoc(memLoc: number): any {
+            for (let i = 0; i < Pcb.instances.length; i++) {
+                if (Pcb.instances[i].memoryOffset == memLoc) {
+                    return Pcb.instances[i];
+                }
+            }
+            return false;
+        }
+
         public static getRunning(): any {
             for (let i = 0; i < Pcb.instances.length; i++) {
                 if (Pcb.instances[i].state == "RUNNING") {

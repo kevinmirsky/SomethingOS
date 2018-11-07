@@ -46,6 +46,14 @@ var TSOS;
             }
             return false;
         }
+        static getFromMemLoc(memLoc) {
+            for (let i = 0; i < Pcb.instances.length; i++) {
+                if (Pcb.instances[i].memoryOffset == memLoc) {
+                    return Pcb.instances[i];
+                }
+            }
+            return false;
+        }
         static getRunning() {
             for (let i = 0; i < Pcb.instances.length; i++) {
                 if (Pcb.instances[i].state == "RUNNING") {
