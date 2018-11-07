@@ -4,7 +4,7 @@ var TSOS;
         constructor() {
             this.readyQueue = new TSOS.Queue();
             this.QBIT_LENGTH = 6;
-            this.QbitState = 0;
+            this.QbitState = 1;
         }
         runProcess(pcb) {
             this.runningPcb = pcb;
@@ -31,7 +31,7 @@ var TSOS;
             this.runningPcb.Yreg = _CPU.Yreg;
             this.runningPcb.Zflag = _CPU.Zflag;
             this.readyQueue.enqueue(this.runningPcb);
-            this.QbitState = 0;
+            this.QbitState = 1;
             this.runProcess(incomingPcb);
         }
         scheduleTick() {
@@ -58,7 +58,7 @@ var TSOS;
                         _KernelInterruptQueue.enqueue(new TSOS.Interrupt(2, "SWAP"));
                     }
                     else {
-                        this.QbitState = 0;
+                        this.QbitState = 1;
                     }
                 }
             }

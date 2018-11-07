@@ -44,6 +44,10 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
             sc = new TSOS.ShellCommand(this.shellPs, "ps", " - Display all PIDs of available processes");
             this.commandList[this.commandList.length] = sc;
+            sc = new TSOS.ShellCommand(this.shellQuantum, "quantum", "<int> - Change quantum bit for Round Robin Scheduling");
+            this.commandList[this.commandList.length] = sc;
+            sc = new TSOS.ShellCommand(this.shellKill, "kill", "<pid> - Forcefully end a program");
+            this.commandList[this.commandList.length] = sc;
             this.putPrompt();
         }
         putPrompt() {
@@ -330,6 +334,46 @@ var TSOS;
                     _StdOut.putText("[PID " + pcb.pid + "] -- " + pcb.state);
                     _StdOut.advanceLine();
                 }
+            }
+        }
+        shellQuantum(args) {
+            if (args != "") {
+                let num = parseInt(args, 10);
+                if (!isNaN(num) && num > 0) {
+                    _Scheduler.QBIT_LENGTH = num;
+                    _StdOut.putText("Quantum set to " + num);
+                }
+                else {
+                    _StdOut.putText("[ERROR] Invalid input. Quantum must be a number >0");
+                }
+            }
+            else {
+                _StdOut.putText("[INFO] Quantum is " + _Scheduler.QBIT_LENGTH);
+            }
+        }
+        shellKill(args) {
+            let program = TSOS.Pcb.getFromPid(args);
+            if (program) {
+                if (program.state == "TERMINATED" || program.state == "COMPLETE") {
+                    _StdOut.putText("[ERROR] Process is already dead.");
+                }
+                else if (program.state == "NEW" || program.state == "WAITING") {
+                    for (let i = 0; i < _Scheduler.readyQueue.q.length; i++) {
+                        if (_Scheduler.readyQueue.q[i].pid == program.pid) {
+                            _Scheduler.readyQueue.q.splice(i, 1);
+                            program.state = "TERMINATED";
+                            return;
+                        }
+                    }
+                    program.state = "TERMINATED";
+                }
+                else if (program.state == "RUNNING") {
+                    program.state = "TERMINATED";
+                    _CPU.isExecuting = false;
+                }
+            }
+            else {
+                _StdOut.putText("[ERROR] Could not find PID to kill.");
             }
         }
         shellDebugChangePcb(args) {

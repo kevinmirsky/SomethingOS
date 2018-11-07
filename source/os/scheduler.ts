@@ -4,7 +4,7 @@ module TSOS {
         readyQueue = new Queue();
         runningPcb: Pcb;
         QBIT_LENGTH: number = 6;
-        QbitState: number = 0;
+        QbitState: number = 1;
 
         private runProcess(pcb: Pcb) {
             this.runningPcb = pcb;
@@ -32,7 +32,7 @@ module TSOS {
             this.runningPcb.Yreg = _CPU.Yreg;
             this.runningPcb.Zflag = _CPU.Zflag;
             this.readyQueue.enqueue(this.runningPcb);
-            this.QbitState = 0;
+            this.QbitState = 1;
 
             //Load
             this.runProcess(incomingPcb);
@@ -41,6 +41,8 @@ module TSOS {
         /**
          * This function holds the main logic of the scheduler.
          * This runs before the CPU cycle
+         *
+         * NOT IN USE
          */
         public scheduleTick() {
             //TODO DO IT WITH INTERRUPTS YOU DUMMY
@@ -79,7 +81,7 @@ module TSOS {
                     if(!this.readyQueue.isEmpty()) {
                         _KernelInterruptQueue.enqueue(new Interrupt(2, "SWAP"));
                     } else {
-                        this.QbitState = 0;
+                        this.QbitState = 1;
                     }
                 }
             }
