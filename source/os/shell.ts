@@ -138,6 +138,11 @@ module TSOS {
                 "<int> - Change quantum bit for Round Robin Scheduling");
             this.commandList[this.commandList.length] = sc;
 
+            sc = new ShellCommand(this.shellKill,
+                "kill",
+                "<pid> - Forcefully end a program");
+            this.commandList[this.commandList.length] = sc;
+
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
@@ -509,6 +514,31 @@ module TSOS {
             } else {
                 _StdOut.putText("[INFO] Quantum is " + _Scheduler.QBIT_LENGTH);
             }
+        }
+
+        public shellKill(args) {
+            let program = <Pcb>Pcb.getFromPid(<number>args);
+            if (program) {
+                if (program.state == "TERMINATED" || program.state == "COMPLETE") {
+                    _StdOut.putText("[ERROR] Process is already dead.");
+                } else if (program.state == "NEW" || program.state == "WAITING") {
+                    for (let i = 0; i < _Scheduler.readyQueue.q.length; i++) {
+                        if (_Scheduler.readyQueue.q[i].pid == program.pid) {
+                            //Remove from ready queue
+                            _Scheduler.readyQueue.q.splice(i, 1);
+                            program.state = "TERMINATED";
+                            return;
+                        }
+                    }
+                    program.state = "TERMINATED";
+                } else if (program.state == "RUNNING") {
+                    program.state = "TERMINATED";
+                    _CPU.isExecuting = false;
+                }
+            } else {
+                _StdOut.putText("[ERROR] Could not find PID to kill.");
+            }
+
         }
 
         public shellDebugChangePcb(args) {
