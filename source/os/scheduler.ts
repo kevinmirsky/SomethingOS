@@ -93,6 +93,7 @@ module TSOS {
 
         public runNext() {
             let runningPcb = this.readyQueue.dequeue();
+            _Kernel.krnTrace("Running PID " + runningPcb.pid);
             this.runProcess(runningPcb);
         }
 

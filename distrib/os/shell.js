@@ -40,7 +40,9 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
             sc = new TSOS.ShellCommand(this.shellRun, "run", "<pid> - Run a specified program");
             this.commandList[this.commandList.length] = sc;
-            sc = new TSOS.ShellCommand(this.shellRunall, "runall", "<pid> - Run all programs waiting to be ran");
+            sc = new TSOS.ShellCommand(this.shellRunall, "runall", " - Run all programs waiting to be ran");
+            this.commandList[this.commandList.length] = sc;
+            sc = new TSOS.ShellCommand(this.shellPs, "ps", " - Display all PIDs of available processes");
             this.commandList[this.commandList.length] = sc;
             this.putPrompt();
         }
@@ -277,7 +279,7 @@ var TSOS;
                     _MemManager.writeMemory(segment.firstByte, inputArray);
                     segment.isOccupied = true;
                     let process = new TSOS.Pcb(segment.firstByte, inputArray.length);
-                    process.PC = segment.firstByte;
+                    process.PC = 0;
                     _StdOut.advanceLine();
                     _StdOut.putText(" Done. PID: " + process.pid.toString());
                 }
@@ -318,6 +320,15 @@ var TSOS;
             for (let i = 0; i < TSOS.Pcb.instances.length; i++) {
                 if (TSOS.Pcb.instances[i].state == "NEW") {
                     _Scheduler.requestRun(TSOS.Pcb.instances[i]);
+                }
+            }
+        }
+        shellPs(args) {
+            for (let i = 0; i < TSOS.Pcb.instances.length; i++) {
+                let pcb = TSOS.Pcb.instances[i];
+                if (pcb.state != "TERMINATED" && pcb.state != "COMPLETE") {
+                    _StdOut.putText("[PID " + pcb.pid + "] -- " + pcb.state);
+                    _StdOut.advanceLine();
                 }
             }
         }

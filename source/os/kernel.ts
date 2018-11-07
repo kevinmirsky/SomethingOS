@@ -149,11 +149,13 @@ module TSOS {
                 case SCHED_IRQ:
                     switch (params) {
                         case "SWAP":
-                            _Scheduler.swap(_Scheduler.readyQueue.dequeue());
-                            this.krnTrace("Swapping active program.");
+                            let oldPid = _Scheduler.runningPcb.pid;
+                            let newPcb = _Scheduler.readyQueue.dequeue();
+                            _Scheduler.swap(newPcb);
+                            this.krnTrace("Swapping out PID " + oldPid + ". Loading PID " + newPcb.pid);
                             break;
                         case "LOAD":
-                            this.krnTrace("CPU done, loading next in queue.");
+                            this.krnTrace("CPU free, loading next in queue.");
                             _Scheduler.runNext();
                             break;
                         default:

@@ -125,7 +125,12 @@ module TSOS {
             //run
             sc = new ShellCommand(this.shellRunall,
                 "runall",
-                "<pid> - Run all programs waiting to be ran");
+                " - Run all programs waiting to be ran");
+            this.commandList[this.commandList.length] = sc;
+
+            sc = new ShellCommand(this.shellPs,
+                "ps",
+                " - Display all PIDs of available processes");
             this.commandList[this.commandList.length] = sc;
 
             // ps  - list the running processes and their IDs
@@ -423,8 +428,7 @@ module TSOS {
                     _MemManager.writeMemory(segment.firstByte, inputArray);
                     segment.isOccupied = true;
                     let process = new Pcb(segment.firstByte, inputArray.length);
-                    //To accommodate for memory offset, we're just bumping PC to be in line.
-                    process.PC = segment.firstByte;
+                    process.PC = 0;
                     _StdOut.advanceLine();
                     _StdOut.putText(" Done. PID: " + process.pid.toString());
                 } else {
@@ -472,6 +476,18 @@ module TSOS {
             for (let i = 0; i < Pcb.instances.length; i++) {
                 if (Pcb.instances[i].state == "NEW") {
                     _Scheduler.requestRun(Pcb.instances[i]);
+                }
+            }
+        }
+
+        public shellPs(args) {
+            for (let i = 0; i < Pcb.instances.length; i++) {
+                let pcb = <Pcb> Pcb.instances[i];
+                if (pcb.state != "TERMINATED" && pcb.state != "COMPLETE") {
+                    //Check to see if "dead" and exclude
+                    //Why do we leave dead Pcbs? I like them sticking around in case you need to debug. *shrug*
+                    _StdOut.putText("[PID " + pcb.pid + "] -- " + pcb.state);
+                    _StdOut.advanceLine();
                 }
             }
         }
