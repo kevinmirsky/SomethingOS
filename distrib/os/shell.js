@@ -44,6 +44,8 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
             sc = new TSOS.ShellCommand(this.shellPs, "ps", " - Display all PIDs of available processes");
             this.commandList[this.commandList.length] = sc;
+            sc = new TSOS.ShellCommand(this.shellQuantum, "quantum", "<int> - Change quantum bit for Round Robin Scheduling");
+            this.commandList[this.commandList.length] = sc;
             this.putPrompt();
         }
         putPrompt() {
@@ -330,6 +332,21 @@ var TSOS;
                     _StdOut.putText("[PID " + pcb.pid + "] -- " + pcb.state);
                     _StdOut.advanceLine();
                 }
+            }
+        }
+        shellQuantum(args) {
+            if (args != "") {
+                let num = parseInt(args, 10);
+                if (!isNaN(num) && num > 0) {
+                    _Scheduler.QBIT_LENGTH = num;
+                    _StdOut.putText("Quantum set to " + num);
+                }
+                else {
+                    _StdOut.putText("[ERROR] Invalid input. Quantum must be a number >0");
+                }
+            }
+            else {
+                _StdOut.putText("[INFO] Quantum is " + _Scheduler.QBIT_LENGTH);
             }
         }
         shellDebugChangePcb(args) {
