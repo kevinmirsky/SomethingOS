@@ -284,7 +284,7 @@ var TSOS;
                 if (segment) {
                     _MemManager.writeMemory(segment.firstByte, inputArray);
                     segment.isOccupied = true;
-                    let process = new TSOS.Pcb(segment.firstByte, inputArray.length);
+                    let process = new TSOS.Pcb(segment.firstByte, 256);
                     process.PC = 0;
                     _StdOut.advanceLine();
                     _StdOut.putText(" Done. PID: " + process.pid.toString());
