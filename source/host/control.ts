@@ -98,6 +98,10 @@ module TSOS {
             //start Memory
             _MemManager = new MemManager(768);
 
+            //start Disk
+            _Disk = new Disk();
+            _DiskDriver = new deviceDriverDisk(_Disk);
+
             //Branding
             document.getElementById("bannerBranding").innerText = APP_NAME + " " + APP_VERSION;
 

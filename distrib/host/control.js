@@ -28,6 +28,8 @@ var TSOS;
             _CPU = new TSOS.Cpu();
             _CPU.init();
             _MemManager = new TSOS.MemManager(768);
+            _Disk = new TSOS.Disk();
+            _DiskDriver = new TSOS.deviceDriverDisk(_Disk);
             document.getElementById("bannerBranding").innerText = APP_NAME + " " + APP_VERSION;
             _hardwareClockID = setInterval(TSOS.Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
             _Kernel = new TSOS.Kernel();

@@ -148,6 +148,11 @@ module TSOS {
                 " - Clears the memory, killing any program in its way.");
             this.commandList[this.commandList.length] = sc;
 
+            sc = new ShellCommand(this.shellFormat,
+                "format",
+                " - Formats the disk.");
+            this.commandList[this.commandList.length] = sc;
+
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
@@ -593,6 +598,11 @@ module TSOS {
                 //Think of this like turning memory on and off to empty it out.
                 _MemManager.init();
             }
+        }
+
+        public shellFormat(args) {
+            //Hardcoded change for testing purposes
+            _DiskDriver.format();
         }
 
         public shellDebugChangePcb(args) {

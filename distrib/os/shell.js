@@ -50,6 +50,8 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
             sc = new TSOS.ShellCommand(this.shellClearMem, "clearmem", " - Clears the memory, killing any program in its way.");
             this.commandList[this.commandList.length] = sc;
+            sc = new TSOS.ShellCommand(this.shellFormat, "format", " - Formats the disk.");
+            this.commandList[this.commandList.length] = sc;
             this.putPrompt();
         }
         putPrompt() {
@@ -411,6 +413,9 @@ var TSOS;
                 }
                 _MemManager.init();
             }
+        }
+        shellFormat(args) {
+            _DiskDriver.format();
         }
         shellDebugChangePcb(args) {
             TSOS.Pcb.instances[0].priority = 1;
