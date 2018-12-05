@@ -442,7 +442,7 @@ module TSOS {
                     //All good, proceed as usual
                     _MemManager.writeMemory(segment.firstByte, inputArray);
                     segment.isOccupied = true;
-                    let process = new Pcb(segment.firstByte, inputArray.length);
+                    let process = new Pcb(segment.firstByte, 256);
                     process.PC = 0;
                     _StdOut.advanceLine();
                     _StdOut.putText(" Done. PID: " + process.pid.toString());
