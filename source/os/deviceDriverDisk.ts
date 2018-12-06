@@ -9,6 +9,10 @@ module TSOS {
             this.driverEntry = this.krnDiskDriverEntry;
         }
 
+        MAX_DATA_LENGTH = this.disk.blockSize - 4;
+        // 4 accounts for used bit and tsm bits;
+        // Should account for terminator byte (00) for names!
+
         public krnDiskDriverEntry() {
             this.status = "loaded";
         }
@@ -38,16 +42,22 @@ module TSOS {
             IND
              0  | USED - <0/1>
             1-3 | NEXT - <TSB>
-             4+ | NAME - <ASCII VALUE OF NAME>
+             4+ | NAME - <ASCII VALUE OF NAME> Terminate in 00?
              */
+            if (this.find(name) !== false) {
+                return false;
+            }
+
             let key = this.nextFreeBlock();
             if (key !== false) {
                 //Move set used until we know we can allocate space for internals?
                 this.setUsed(key, true);
-                let next = this.nextFreeBlock();
+                let next = this.nextFreeBlock(1,0,0);
                 if (next) {
                     this.setNext(key, next);
                     this.setName(key, name);
+
+                    this.setUsed(next,true);
                     //TODO UPDATE NEXT FILE
                 }
             } else {
@@ -59,10 +69,10 @@ module TSOS {
             return true;
         }
 
-        nextFreeBlock(t:number = 0, s:number = 0, m:number = 0) {
+        nextFreeBlock(t:number = 0, s:number = 0, b:number = 0) {
             for (let i = t; i < this.disk.tracks; i++) {
                 for (let j = s; j < this.disk.sectors; j++) {
-                    for (let k = m; k < this.disk.blocks; k++) {
+                    for (let k = b; k < this.disk.blocks; k++) {
                         let block = sessionStorage.getItem(deviceDriverDisk.buildLoc(i,j,k));
                         if (block && this.isEmpty(block)) {
                             return deviceDriverDisk.buildLoc(i,j,k);
@@ -74,6 +84,31 @@ module TSOS {
             console.log("Failed to find free block!");
             return false;
         }
+
+        find(name:string) {
+            // Quickest to match against hex values
+            // Parsing each file would be more work.
+            let hexName = "";
+            for (let i = 0; i < name.length; i++) {
+                hexName+= name.charCodeAt(i).toString(16).toUpperCase().padStart(2, "0");
+            }
+            hexName += "00";
+
+            //limit to region data values stored?
+            for (let i = 0; i < 1; i++) {
+                for (let j = 0; j < this.disk.sectors; j++) {
+                    for (let k = 0; k < this.disk.blocks; k++) {
+                        let data = sessionStorage.getItem(deviceDriverDisk.buildLoc(i,j,k)).substr(4);
+                        if (data.includes(hexName)) {
+                            return deviceDriverDisk.buildLoc(i,j,k);
+                        }
+                    }
+                }
+            }
+            // Could not find.
+            return false;
+        }
+
 
         /*
         * File metadata Util functions
@@ -109,6 +144,8 @@ module TSOS {
             }
         }
 
+
+
         setName(key, name) {
             // TODO CHECK IF NAME TOO LONG
             let value = sessionStorage.getItem(key);
@@ -117,6 +154,7 @@ module TSOS {
                 for (let i = 0; i < name.length; i++) {
                     hexName+= name.charCodeAt(i).toString(16).toUpperCase().padStart(2, "0");
                 }
+                hexName += "00"; //Terminator
                 value = Utils.replaceAt(value, 4, hexName);
                 sessionStorage.setItem(key, value);
             }

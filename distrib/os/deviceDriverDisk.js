@@ -4,6 +4,7 @@ var TSOS;
         constructor(disk) {
             super();
             this.disk = disk;
+            this.MAX_DATA_LENGTH = this.disk.blockSize - 4;
             this.driverEntry = this.krnDiskDriverEntry;
         }
         krnDiskDriverEntry() {
@@ -28,13 +29,17 @@ var TSOS;
             return "0".repeat(this.disk.blockSize);
         }
         createFile(name) {
+            if (this.find(name) !== false) {
+                return false;
+            }
             let key = this.nextFreeBlock();
             if (key !== false) {
                 this.setUsed(key, true);
-                let next = this.nextFreeBlock();
+                let next = this.nextFreeBlock(1, 0, 0);
                 if (next) {
                     this.setNext(key, next);
                     this.setName(key, name);
+                    this.setUsed(next, true);
                 }
             }
             else {
@@ -42,10 +47,10 @@ var TSOS;
             }
             return true;
         }
-        nextFreeBlock(t = 0, s = 0, m = 0) {
+        nextFreeBlock(t = 0, s = 0, b = 0) {
             for (let i = t; i < this.disk.tracks; i++) {
                 for (let j = s; j < this.disk.sectors; j++) {
-                    for (let k = m; k < this.disk.blocks; k++) {
+                    for (let k = b; k < this.disk.blocks; k++) {
                         let block = sessionStorage.getItem(deviceDriverDisk.buildLoc(i, j, k));
                         if (block && this.isEmpty(block)) {
                             return deviceDriverDisk.buildLoc(i, j, k);
@@ -54,6 +59,24 @@ var TSOS;
                 }
             }
             console.log("Failed to find free block!");
+            return false;
+        }
+        find(name) {
+            let hexName = "";
+            for (let i = 0; i < name.length; i++) {
+                hexName += name.charCodeAt(i).toString(16).toUpperCase().padStart(2, "0");
+            }
+            hexName += "00";
+            for (let i = 0; i < 1; i++) {
+                for (let j = 0; j < this.disk.sectors; j++) {
+                    for (let k = 0; k < this.disk.blocks; k++) {
+                        let data = sessionStorage.getItem(deviceDriverDisk.buildLoc(i, j, k)).substr(4);
+                        if (data.includes(hexName)) {
+                            return deviceDriverDisk.buildLoc(i, j, k);
+                        }
+                    }
+                }
+            }
             return false;
         }
         setUsed(key, isUsed) {
@@ -83,6 +106,7 @@ var TSOS;
                 for (let i = 0; i < name.length; i++) {
                     hexName += name.charCodeAt(i).toString(16).toUpperCase().padStart(2, "0");
                 }
+                hexName += "00";
                 value = TSOS.Utils.replaceAt(value, 4, hexName);
                 sessionStorage.setItem(key, value);
             }
