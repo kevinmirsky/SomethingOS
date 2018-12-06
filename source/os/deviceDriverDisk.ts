@@ -144,6 +144,13 @@ module TSOS {
             }
         }
 
+        getNext(key) {
+            let value = sessionStorage.getItem(key);
+            if (value !== null) {
+                value.substring(1,4);
+            }
+        }
+
 
 
         setName(key, name) {

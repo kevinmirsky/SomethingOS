@@ -99,6 +99,12 @@ var TSOS;
                 sessionStorage.setItem(key, TSOS.Utils.replaceAt(value, 1, tsm));
             }
         }
+        getNext(key) {
+            let value = sessionStorage.getItem(key);
+            if (value !== null) {
+                value.substring(1, 4);
+            }
+        }
         setName(key, name) {
             let value = sessionStorage.getItem(key);
             if (value !== null) {
