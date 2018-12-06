@@ -606,7 +606,12 @@ module TSOS {
         }
 
         public shellFormat(args) {
-            _DiskDriver.format();
+            let result = _DiskDriver.format();
+            if(result === true) {
+                _StdOut.putText("Format successful.")
+            } else {
+                _StdOut.put("[ERROR]: " + result);
+            }
         }
 
         public shellCreateFile(args) {

@@ -14,12 +14,17 @@ module TSOS {
         }
 
         public format() {
-            for (let i = 0; i < this.disk.tracks; i++) {
-                for (let j = 0; j < this.disk.sectors; j++) {
-                    for (let k = 0; k < this.disk.blocks; k++) {
-                        sessionStorage.setItem(deviceDriverDisk.buildLoc(i,j,k), this.emptyBlock());
+            try {
+                for (let i = 0; i < this.disk.tracks; i++) {
+                    for (let j = 0; j < this.disk.sectors; j++) {
+                        for (let k = 0; k < this.disk.blocks; k++) {
+                            sessionStorage.setItem(deviceDriverDisk.buildLoc(i, j, k), this.emptyBlock());
+                        }
                     }
                 }
+                return true;
+            } catch (e) {
+                return e;
             }
         }
 

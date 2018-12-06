@@ -417,7 +417,13 @@ var TSOS;
             }
         }
         shellFormat(args) {
-            _DiskDriver.format();
+            let result = _DiskDriver.format();
+            if (result === true) {
+                _StdOut.putText("Format successful.");
+            }
+            else {
+                _StdOut.put("[ERROR]: " + result);
+            }
         }
         shellCreateFile(args) {
             if (_DiskDriver.createFile(args[0])) {
