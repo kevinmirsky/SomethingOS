@@ -52,6 +52,8 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
             sc = new TSOS.ShellCommand(this.shellFormat, "format", " - Formats the disk.");
             this.commandList[this.commandList.length] = sc;
+            sc = new TSOS.ShellCommand(this.shellCreateFile, "create", "<name> - Creates a file with designated name");
+            this.commandList[this.commandList.length] = sc;
             this.putPrompt();
         }
         putPrompt() {
@@ -416,6 +418,14 @@ var TSOS;
         }
         shellFormat(args) {
             _DiskDriver.format();
+        }
+        shellCreateFile(args) {
+            if (_DiskDriver.createFile(args[0])) {
+                _StdOut.putText("File \"" + args[0] + "\" created.");
+            }
+            else {
+                _StdOut.putText("[ERROR] Could not create file.");
+            }
         }
         shellDebugChangePcb(args) {
             TSOS.Pcb.instances[0].priority = 1;

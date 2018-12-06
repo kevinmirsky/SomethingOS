@@ -30,6 +30,9 @@ var TSOS;
             bigNum = bigNum * 0x100;
             return (smallNum + bigNum);
         }
+        static replaceAt(string, index, replace) {
+            return string.substring(0, index) + replace + string.substring(index + replace.length);
+        }
     }
     TSOS.Utils = Utils;
 })(TSOS || (TSOS = {}));

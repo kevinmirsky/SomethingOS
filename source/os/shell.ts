@@ -153,6 +153,11 @@ module TSOS {
                 " - Formats the disk.");
             this.commandList[this.commandList.length] = sc;
 
+            sc = new ShellCommand(this.shellCreateFile,
+                "create",
+                "<name> - Creates a file with designated name");
+            this.commandList[this.commandList.length] = sc;
+
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
@@ -601,8 +606,15 @@ module TSOS {
         }
 
         public shellFormat(args) {
-            //Hardcoded change for testing purposes
             _DiskDriver.format();
+        }
+
+        public shellCreateFile(args) {
+            if(_DiskDriver.createFile(args[0])) {
+                _StdOut.putText("File \"" + args[0] + "\" created.");
+            } else {
+                _StdOut.putText("[ERROR] Could not create file.");
+            }
         }
 
         public shellDebugChangePcb(args) {

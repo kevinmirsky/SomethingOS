@@ -59,5 +59,9 @@ module TSOS {
             bigNum = bigNum * 0x100;
             return (smallNum + bigNum);
         }
+
+        public static replaceAt(string, index, replace) {
+            return string.substring(0, index) + replace + string.substring(index + replace.length);
+        }
     }
 }
