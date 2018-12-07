@@ -33,6 +33,13 @@ var TSOS;
         static replaceAt(string, index, replace) {
             return string.substring(0, index) + replace + string.substring(index + replace.length);
         }
+        static toHex(text) {
+            let hexName = "";
+            for (let i = 0; i < text.length; i++) {
+                hexName += text.charCodeAt(i).toString(16).toUpperCase().padStart(2, "0");
+            }
+            return hexName;
+        }
     }
     TSOS.Utils = Utils;
 })(TSOS || (TSOS = {}));

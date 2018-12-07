@@ -54,6 +54,8 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
             sc = new TSOS.ShellCommand(this.shellCreateFile, "create", "<name> - Creates a file with designated name");
             this.commandList[this.commandList.length] = sc;
+            sc = new TSOS.ShellCommand(this.shellWriteFile, "write", "<name> \"<data>\" - Changes a file's contents to provided text");
+            this.commandList[this.commandList.length] = sc;
             this.putPrompt();
         }
         putPrompt() {
@@ -432,6 +434,10 @@ var TSOS;
             else {
                 _StdOut.putText("[ERROR] Could not create file.");
             }
+        }
+        shellWriteFile(args) {
+            _DiskDriver.writeFile(args[0], "TESTING ABC 123!" + "WOOF".repeat(40));
+            _StdOut.putText("Done.");
         }
         shellDebugChangePcb(args) {
             TSOS.Pcb.instances[0].priority = 1;

@@ -36,6 +36,10 @@ module TSOS {
             return "0".repeat(this.disk.blockSize);
         }
 
+        private  emptyDataRegion() {
+            return "0".repeat(this.MAX_DATA_LENGTH);
+        }
+
         private createFile(name:string) {
             /*
             HEADER STRUCTURE
@@ -49,7 +53,7 @@ module TSOS {
             }
 
             let key = this.nextFreeBlock();
-            if (key !== false) {
+            if (key !== "EEE") {
                 //Move set used until we know we can allocate space for internals?
                 this.setUsed(key, true);
                 let next = this.nextFreeBlock(1,0,0);
@@ -74,7 +78,7 @@ module TSOS {
                 for (let j = s; j < this.disk.sectors; j++) {
                     for (let k = b; k < this.disk.blocks; k++) {
                         let block = sessionStorage.getItem(deviceDriverDisk.buildLoc(i,j,k));
-                        if (block && this.isEmpty(block)) {
+                        if (block != "" && this.isEmpty(block)) {
                             return deviceDriverDisk.buildLoc(i,j,k);
                         }
                     }
@@ -82,9 +86,13 @@ module TSOS {
             }
             //Couldn't find anything. Failure!
             console.log("Failed to find free block!");
-            return false;
+            return "EEE"; // ERROR ERROR ERROR
         }
 
+        /*
+        * Returns <tsb> if found
+        *         false if not
+         */
         find(name:string) {
             // Quickest to match against hex values
             // Parsing each file would be more work.
@@ -98,9 +106,12 @@ module TSOS {
             for (let i = 0; i < 1; i++) {
                 for (let j = 0; j < this.disk.sectors; j++) {
                     for (let k = 0; k < this.disk.blocks; k++) {
-                        let data = sessionStorage.getItem(deviceDriverDisk.buildLoc(i,j,k)).substr(4);
-                        if (data.includes(hexName)) {
-                            return deviceDriverDisk.buildLoc(i,j,k);
+                        let data = sessionStorage.getItem(deviceDriverDisk.buildLoc(i,j,k));
+                        if (data) {
+                            data = data.substr(4);
+                            if (data.includes(hexName)) {
+                                return deviceDriverDisk.buildLoc(i,j,k);
+                            }
                         }
                     }
                 }
@@ -131,24 +142,33 @@ module TSOS {
             }
         }
 
+        setStringUsed(value: string, isUsed: boolean) {
+            if (isUsed) {
+               return Utils.replaceAt(value, 0, "1");
+            } else {
+               return Utils.replaceAt(value, 0, "0");
+            }
+        }
+
         /*
         * REQUIRES VALUE IN TSB FORMAT!
          */
-        setNext(key, tsm) {
-            if (tsm.length != 3) {
+        setNext(key, tsb) {
+            if (tsb.length != 3) {
                 throw "Invalid length of next parameter";
             }
             let value = sessionStorage.getItem(key);
             if (value !== null) {
-                sessionStorage.setItem(key, Utils.replaceAt(value, 1, tsm));
+                sessionStorage.setItem(key, Utils.replaceAt(value, 1, tsb));
             }
         }
 
         getNext(key) {
             let value = sessionStorage.getItem(key);
             if (value !== null) {
-                value.substring(1,4);
+                return value.substring(1,4);
             }
+            else return "000"; // The "no next" value
         }
 
 
@@ -162,8 +182,85 @@ module TSOS {
                     hexName+= name.charCodeAt(i).toString(16).toUpperCase().padStart(2, "0");
                 }
                 hexName += "00"; //Terminator
+                // Note, doesn't account for renaming, currently assumes empty
                 value = Utils.replaceAt(value, 4, hexName);
                 sessionStorage.setItem(key, value);
+            }
+        }
+
+        setData(key, data) {
+            // TODO CHECK IF NAME TOO LONG
+            let value = sessionStorage.getItem(key);
+            if (value !== null) {
+                let hexData = Utils.toHex(data);
+                hexData += "00"; //Terminator
+                console.log("Hex = " + hexData);
+                this.writeBlocks(key, hexData);
+                // Note, doesn't account for renaming, currently assumes empty
+
+                /*
+                value = this.clearStringData(value);
+                if (hexData.length > this.MAX_DATA_LENGTH) {
+                    let nextValue = data.substring(this.MAX_DATA_LENGTH);
+                    value = value.substring(0, this.MAX_DATA_LENGTH);
+
+                    //TODO Store and allocate secondary blocks!
+                }
+                value = Utils.replaceAt(value, 4, hexData);
+                */
+
+            }
+        }
+
+        private writeBlocks(key, hexData) {
+            let nextData = hexData.substring(this.MAX_DATA_LENGTH); // Get all text after max
+            if (hexData.length > this.MAX_DATA_LENGTH) {
+                hexData = hexData.substring(0, this.MAX_DATA_LENGTH);
+                //TODO Store and allocate secondary blocks!
+            }
+            let value = sessionStorage.getItem(key);
+            value = this.clearStringData(value);
+
+            value = this.setStringUsed(value, true);
+            value = Utils.replaceAt(value, 4, hexData); // Add data
+
+            sessionStorage.setItem(key, value); // Edit disk
+            console.log("Writing " + key + " with " + value);
+
+            //Check if we need another block
+            if (nextData != "") {
+                //This means we have more to write
+                let nextKey = this.getNext(key);
+                console.log("Current val in next " + nextKey);
+                if (nextKey == "000") {
+                    // No block already allocated!
+                    nextKey = this.nextFreeBlock(1, 0, 0);
+                    console.log("next key set to " + nextKey);
+                    if (nextKey === "EEE") {
+                        // Failure
+                        throw "Could not allocate block for file data.";
+
+                        // Should we instead allow a partially written file?
+                    }
+                    this.setNext(key, nextKey);
+                }
+                this.writeBlocks(nextKey, nextData);
+                // TODO REMINDER! DO CLEAN UP IF SHORTER
+            }
+
+            // Proposal: Check how many blocks needed first, then check if possible?
+        }
+
+
+        writeFile(name, data) {
+            let keyHeader = this.find(name);
+            if (keyHeader !== false) {
+                let keyDataStart = this.getNext(keyHeader);
+                if (keyDataStart != "000") { // 000 is reserved, so if it points there, no good
+                    this.setData(keyDataStart, data);
+                }
+            } else {
+                _StdOut.putText("Could not find " + name);
             }
         }
 
@@ -183,7 +280,7 @@ module TSOS {
         }
 
 
-        isEmptyAt(key) {
+        isUsedAt(key) {
             let result = sessionStorage.getItem(key);
             if (result !== null) {
                 return (result.charAt(0) == "0")
@@ -191,6 +288,23 @@ module TSOS {
                 throw "Attempted to check invalid key for storage!";
                 //return false;
             }
+        }
+
+        /*
+        * Meant to quickly clear out a block's data for overwriting
+         */
+        clearBlockData(key) {
+            let value = sessionStorage.getItem(key);
+            value = Utils.replaceAt(value,4,this.emptyDataRegion());
+            sessionStorage.setItem(key, value);
+        }
+
+        /*
+        * When you're editing a block locally, just use this to clear the
+        * data without read/writes
+         */
+        clearStringData(value) {
+            return Utils.replaceAt(value,4, (this.emptyDataRegion());
         }
     }
 }

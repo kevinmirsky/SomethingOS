@@ -158,6 +158,11 @@ module TSOS {
                 "<name> - Creates a file with designated name");
             this.commandList[this.commandList.length] = sc;
 
+            sc = new ShellCommand(this.shellWriteFile,
+                "write",
+                "<name> \"<data>\" - Changes a file's contents to provided text");
+            this.commandList[this.commandList.length] = sc;
+
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
@@ -620,6 +625,12 @@ module TSOS {
             } else {
                 _StdOut.putText("[ERROR] Could not create file.");
             }
+        }
+
+        public shellWriteFile(args) {
+            // TODO REMOVE HARDCODED TESTS
+            _DiskDriver.writeFile(args[0], "TESTING ABC 123!" + "WOOF".repeat(40));
+            _StdOut.putText("Done.");
         }
 
         public shellDebugChangePcb(args) {

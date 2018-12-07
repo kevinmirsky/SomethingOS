@@ -28,12 +28,15 @@ var TSOS;
         emptyBlock() {
             return "0".repeat(this.disk.blockSize);
         }
+        emptyDataRegion() {
+            return "0".repeat(this.MAX_DATA_LENGTH);
+        }
         createFile(name) {
             if (this.find(name) !== false) {
                 return false;
             }
             let key = this.nextFreeBlock();
-            if (key !== false) {
+            if (key !== "EEE") {
                 this.setUsed(key, true);
                 let next = this.nextFreeBlock(1, 0, 0);
                 if (next) {
@@ -52,14 +55,14 @@ var TSOS;
                 for (let j = s; j < this.disk.sectors; j++) {
                     for (let k = b; k < this.disk.blocks; k++) {
                         let block = sessionStorage.getItem(deviceDriverDisk.buildLoc(i, j, k));
-                        if (block && this.isEmpty(block)) {
+                        if (block != "" && this.isEmpty(block)) {
                             return deviceDriverDisk.buildLoc(i, j, k);
                         }
                     }
                 }
             }
             console.log("Failed to find free block!");
-            return false;
+            return "EEE";
         }
         find(name) {
             let hexName = "";
@@ -70,9 +73,12 @@ var TSOS;
             for (let i = 0; i < 1; i++) {
                 for (let j = 0; j < this.disk.sectors; j++) {
                     for (let k = 0; k < this.disk.blocks; k++) {
-                        let data = sessionStorage.getItem(deviceDriverDisk.buildLoc(i, j, k)).substr(4);
-                        if (data.includes(hexName)) {
-                            return deviceDriverDisk.buildLoc(i, j, k);
+                        let data = sessionStorage.getItem(deviceDriverDisk.buildLoc(i, j, k));
+                        if (data) {
+                            data = data.substr(4);
+                            if (data.includes(hexName)) {
+                                return deviceDriverDisk.buildLoc(i, j, k);
+                            }
                         }
                     }
                 }
@@ -90,20 +96,30 @@ var TSOS;
                 }
             }
         }
-        setNext(key, tsm) {
-            if (tsm.length != 3) {
+        setStringUsed(value, isUsed) {
+            if (isUsed) {
+                return TSOS.Utils.replaceAt(value, 0, "1");
+            }
+            else {
+                return TSOS.Utils.replaceAt(value, 0, "0");
+            }
+        }
+        setNext(key, tsb) {
+            if (tsb.length != 3) {
                 throw "Invalid length of next parameter";
             }
             let value = sessionStorage.getItem(key);
             if (value !== null) {
-                sessionStorage.setItem(key, TSOS.Utils.replaceAt(value, 1, tsm));
+                sessionStorage.setItem(key, TSOS.Utils.replaceAt(value, 1, tsb));
             }
         }
         getNext(key) {
             let value = sessionStorage.getItem(key);
             if (value !== null) {
-                value.substring(1, 4);
+                return value.substring(1, 4);
             }
+            else
+                return "000";
         }
         setName(key, name) {
             let value = sessionStorage.getItem(key);
@@ -117,13 +133,59 @@ var TSOS;
                 sessionStorage.setItem(key, value);
             }
         }
+        setData(key, data) {
+            let value = sessionStorage.getItem(key);
+            if (value !== null) {
+                let hexData = TSOS.Utils.toHex(data);
+                hexData += "00";
+                console.log("Hex = " + hexData);
+                this.writeBlocks(key, hexData);
+            }
+        }
+        writeBlocks(key, hexData) {
+            let nextData = hexData.substring(this.MAX_DATA_LENGTH);
+            if (hexData.length > this.MAX_DATA_LENGTH) {
+                hexData = hexData.substring(0, this.MAX_DATA_LENGTH);
+            }
+            let value = sessionStorage.getItem(key);
+            value = this.clearStringData(value);
+            value = this.setStringUsed(value, true);
+            value = TSOS.Utils.replaceAt(value, 4, hexData);
+            sessionStorage.setItem(key, value);
+            console.log("Writing " + key + " with " + value);
+            if (nextData != "") {
+                let nextKey = this.getNext(key);
+                console.log("Current val in next " + nextKey);
+                if (nextKey == "000") {
+                    nextKey = this.nextFreeBlock(1, 0, 0);
+                    console.log("next key set to " + nextKey);
+                    if (nextKey === "EEE") {
+                        throw "Could not allocate block for file data.";
+                    }
+                    this.setNext(key, nextKey);
+                }
+                this.writeBlocks(nextKey, nextData);
+            }
+        }
+        writeFile(name, data) {
+            let keyHeader = this.find(name);
+            if (keyHeader !== false) {
+                let keyDataStart = this.getNext(keyHeader);
+                if (keyDataStart != "000") {
+                    this.setData(keyDataStart, data);
+                }
+            }
+            else {
+                _StdOut.putText("Could not find " + name);
+            }
+        }
         isEmpty(value) {
             return (value.charAt(0) == "0");
         }
         static buildLoc(track, sector, block) {
             return `${track}` + `${sector}` + `${block}`;
         }
-        isEmptyAt(key) {
+        isUsedAt(key) {
             let result = sessionStorage.getItem(key);
             if (result !== null) {
                 return (result.charAt(0) == "0");
@@ -131,6 +193,14 @@ var TSOS;
             else {
                 throw "Attempted to check invalid key for storage!";
             }
+        }
+        clearBlockData(key) {
+            let value = sessionStorage.getItem(key);
+            value = TSOS.Utils.replaceAt(value, 4, this.emptyDataRegion());
+            sessionStorage.setItem(key, value);
+        }
+        clearStringData(value) {
+            return TSOS.Utils.replaceAt(value, 4, (this.emptyDataRegion()));
         }
     }
     TSOS.deviceDriverDisk = deviceDriverDisk;
