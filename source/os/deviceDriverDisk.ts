@@ -259,8 +259,11 @@ module TSOS {
                 if (keyDataStart != "000") { // 000 is reserved, so if it points there, no good
                     this.setData(keyDataStart, data);
                 }
+                return true;
             } else {
-                _StdOut.putText("Could not find " + name);
+                _StdOut.putText("[ERROR] Could not find " + name);
+                _StdOut.advanceLine();
+                return false;
             }
         }
 
@@ -304,7 +307,7 @@ module TSOS {
         * data without read/writes
          */
         clearStringData(value) {
-            return Utils.replaceAt(value,4, (this.emptyDataRegion());
+            return Utils.replaceAt(value,4, this.emptyDataRegion());
         }
     }
 }

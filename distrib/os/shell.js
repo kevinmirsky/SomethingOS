@@ -424,7 +424,7 @@ var TSOS;
                 _StdOut.putText("Format successful.");
             }
             else {
-                _StdOut.put("[ERROR]: " + result);
+                _StdOut.putText("[ERROR]: " + result);
             }
         }
         shellCreateFile(args) {
@@ -436,8 +436,21 @@ var TSOS;
             }
         }
         shellWriteFile(args) {
-            _DiskDriver.writeFile(args[0], "TESTING ABC 123!" + "WOOF".repeat(40));
-            _StdOut.putText("Done.");
+            let filename = args[0];
+            args.splice(0, 1);
+            let fileData = args.join(' ');
+            if (fileData.charAt(0) == '"' && fileData.charAt(fileData.length - 1) == '"') {
+                fileData = fileData.substring(fileData.indexOf('"') + 1, fileData.lastIndexOf('"'));
+                if (_DiskDriver.writeFile(filename, fileData)) {
+                    _StdOut.putText("Write to \"" + filename + "\" successful.");
+                }
+                else {
+                    _StdOut.putText("[ERROR] Could not write file.");
+                }
+            }
+            else {
+                _StdOut.putText("[ERROR] File data must be entirely surrounded by double-quotes < \" >.");
+            }
         }
         shellDebugChangePcb(args) {
             TSOS.Pcb.instances[0].priority = 1;

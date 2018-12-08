@@ -174,9 +174,12 @@ var TSOS;
                 if (keyDataStart != "000") {
                     this.setData(keyDataStart, data);
                 }
+                return true;
             }
             else {
-                _StdOut.putText("Could not find " + name);
+                _StdOut.putText("[ERROR] Could not find " + name);
+                _StdOut.advanceLine();
+                return false;
             }
         }
         isEmpty(value) {
@@ -200,7 +203,7 @@ var TSOS;
             sessionStorage.setItem(key, value);
         }
         clearStringData(value) {
-            return TSOS.Utils.replaceAt(value, 4, (this.emptyDataRegion()));
+            return TSOS.Utils.replaceAt(value, 4, this.emptyDataRegion());
         }
     }
     TSOS.deviceDriverDisk = deviceDriverDisk;
