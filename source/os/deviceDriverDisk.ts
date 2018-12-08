@@ -73,6 +73,27 @@ module TSOS {
             return true;
         }
 
+        readFile(name:string) {
+            let header = this.find(name);
+            if (header !== false) {
+                // We found it
+                let dataStart = this.getNext(header);
+                return this.readBlocks(dataStart);
+            } else {
+                return "[ERROR] Could not find file " + name;
+            }
+        }
+
+        readBlocks(tsb:string) {
+            let next = this.getNext(tsb);
+            let data = this.getData(tsb);
+
+            if (next != "000") {
+                data += this.readBlocks(next);
+            }
+            return data;
+        }
+
         nextFreeBlock(t:number = 0, s:number = 0, b:number = 0) {
             for (let i = t; i < this.disk.tracks; i++) {
                 for (let j = s; j < this.disk.sectors; j++) {
@@ -182,6 +203,7 @@ module TSOS {
                     hexName+= name.charCodeAt(i).toString(16).toUpperCase().padStart(2, "0");
                 }
                 hexName += "00"; //Terminator
+                // Is this really necessary? We know EOF is reached because no next pointers...
                 // Note, doesn't account for renaming, currently assumes empty
                 value = Utils.replaceAt(value, 4, hexName);
                 sessionStorage.setItem(key, value);
@@ -193,7 +215,9 @@ module TSOS {
             let value = sessionStorage.getItem(key);
             if (value !== null) {
                 let hexData = Utils.toHex(data);
-                hexData += "00"; //Terminator
+                //hexData += "00"; //Terminator
+                // Is this really necessary? We know EOF is reached because no next pointers...
+
                 console.log("Hex = " + hexData);
                 this.writeBlocks(key, hexData);
                 // Note, doesn't account for renaming, currently assumes empty
@@ -209,6 +233,25 @@ module TSOS {
                 value = Utils.replaceAt(value, 4, hexData);
                 */
 
+            }
+        }
+
+        getData(key) {
+            let value = sessionStorage.getItem(key);
+            if (value !== null) {
+                value = value.substring(4);
+                return Utils.fromHex(value);
+            } else {
+                return "";
+            }
+        }
+
+        getRawData(key) {
+            let value = sessionStorage.getItem(key);
+            if (value !== null) {
+                return value.substring(4);
+            } else {
+                return "";
             }
         }
 

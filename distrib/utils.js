@@ -40,6 +40,16 @@ var TSOS;
             }
             return hexName;
         }
+        static fromHex(text) {
+            let output = "";
+            let hexValues = text.match(/.{1,2}/g);
+            for (let i = 0; i < hexValues.length; i++) {
+                if (hexValues[i] != "00") {
+                    output += String.fromCharCode(parseInt(hexValues[i], 16));
+                }
+            }
+            return output;
+        }
     }
     TSOS.Utils = Utils;
 })(TSOS || (TSOS = {}));

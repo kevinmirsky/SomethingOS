@@ -50,6 +50,24 @@ var TSOS;
             }
             return true;
         }
+        readFile(name) {
+            let header = this.find(name);
+            if (header !== false) {
+                let dataStart = this.getNext(header);
+                return this.readBlocks(dataStart);
+            }
+            else {
+                return "[ERROR] Could not find file " + name;
+            }
+        }
+        readBlocks(tsb) {
+            let next = this.getNext(tsb);
+            let data = this.getData(tsb);
+            if (next != "000") {
+                data += this.readBlocks(next);
+            }
+            return data;
+        }
         nextFreeBlock(t = 0, s = 0, b = 0) {
             for (let i = t; i < this.disk.tracks; i++) {
                 for (let j = s; j < this.disk.sectors; j++) {
@@ -137,9 +155,27 @@ var TSOS;
             let value = sessionStorage.getItem(key);
             if (value !== null) {
                 let hexData = TSOS.Utils.toHex(data);
-                hexData += "00";
                 console.log("Hex = " + hexData);
                 this.writeBlocks(key, hexData);
+            }
+        }
+        getData(key) {
+            let value = sessionStorage.getItem(key);
+            if (value !== null) {
+                value = value.substring(4);
+                return TSOS.Utils.fromHex(value);
+            }
+            else {
+                return "";
+            }
+        }
+        getRawData(key) {
+            let value = sessionStorage.getItem(key);
+            if (value !== null) {
+                return value.substring(4);
+            }
+            else {
+                return "";
             }
         }
         writeBlocks(key, hexData) {

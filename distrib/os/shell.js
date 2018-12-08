@@ -48,13 +48,15 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
             sc = new TSOS.ShellCommand(this.shellKill, "kill", "<pid> - Forcefully end a program");
             this.commandList[this.commandList.length] = sc;
-            sc = new TSOS.ShellCommand(this.shellClearMem, "clearmem", " - Clears the memory, killing any program in its way.");
+            sc = new TSOS.ShellCommand(this.shellClearMem, "clearmem", " - Clears the memory, killing any program in its way");
             this.commandList[this.commandList.length] = sc;
             sc = new TSOS.ShellCommand(this.shellFormat, "format", " - Formats the disk.");
             this.commandList[this.commandList.length] = sc;
             sc = new TSOS.ShellCommand(this.shellCreateFile, "create", "<name> - Creates a file with designated name");
             this.commandList[this.commandList.length] = sc;
             sc = new TSOS.ShellCommand(this.shellWriteFile, "write", "<name> \"<data>\" - Changes a file's contents to provided text");
+            this.commandList[this.commandList.length] = sc;
+            sc = new TSOS.ShellCommand(this.shellReadFile, "read", "<name> - Prints the contents of a file to the screen");
             this.commandList[this.commandList.length] = sc;
             this.putPrompt();
         }
@@ -451,6 +453,10 @@ var TSOS;
             else {
                 _StdOut.putText("[ERROR] File data must be entirely surrounded by double-quotes < \" >.");
             }
+        }
+        shellReadFile(args) {
+            let filename = args[0];
+            _StdOut.putText(_DiskDriver.readFile(filename));
         }
         shellDebugChangePcb(args) {
             TSOS.Pcb.instances[0].priority = 1;

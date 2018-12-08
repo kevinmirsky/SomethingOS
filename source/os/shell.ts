@@ -145,7 +145,7 @@ module TSOS {
 
             sc = new ShellCommand(this.shellClearMem,
                 "clearmem",
-                " - Clears the memory, killing any program in its way.");
+                " - Clears the memory, killing any program in its way");
             this.commandList[this.commandList.length] = sc;
 
             sc = new ShellCommand(this.shellFormat,
@@ -162,6 +162,12 @@ module TSOS {
                 "write",
                 "<name> \"<data>\" - Changes a file's contents to provided text");
             this.commandList[this.commandList.length] = sc;
+
+            sc = new ShellCommand(this.shellReadFile,
+                "read",
+                "<name> - Prints the contents of a file to the screen");
+            this.commandList[this.commandList.length] = sc;
+
 
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -647,6 +653,11 @@ module TSOS {
             }
 
             //Get text from between quotes
+        }
+
+        public shellReadFile(args) {
+            let filename = args[0];
+            _StdOut.putText(_DiskDriver.readFile(filename));
         }
 
         public shellDebugChangePcb(args) {
