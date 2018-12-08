@@ -160,6 +160,22 @@ module TSOS {
             return false;
         }
 
+        ls() {
+            let files = [];
+            for (let i = 0; i < 1; i++) {
+                for (let j = 0; j < this.disk.sectors; j++) {
+                    for (let k = 0; k < this.disk.blocks; k++) {
+                        let loc = deviceDriverDisk.buildLoc(i,j,k);
+                        if (this.isUsedAt(loc)) {
+                            files.push(this.getData(loc));
+                        }
+                    }
+                }
+            }
+            console.log(files.toString());
+            return files;
+        }
+
 
         /*
         * File metadata Util functions
@@ -349,7 +365,7 @@ module TSOS {
         isUsedAt(key) {
             let result = sessionStorage.getItem(key);
             if (result !== null) {
-                return (result.charAt(0) == "0")
+                return (result.charAt(0) == "1");
             } else {
                 throw "Attempted to check invalid key for storage!";
                 //return false;

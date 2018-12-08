@@ -173,6 +173,11 @@ module TSOS {
                 "<name> - Deletes a file and its record.");
             this.commandList[this.commandList.length] = sc;
 
+            sc = new ShellCommand(this.shellLs,
+                "ls",
+                "Lists files on disk.");
+            this.commandList[this.commandList.length] = sc;
+
 
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -668,6 +673,10 @@ module TSOS {
         public shellDeleteFile(args) {
             let filename = args[0];
             _StdOut.putText(_DiskDriver.deleteFile(filename));
+        }
+
+        public shellLs(args) {
+            _StdOut.putText(_DiskDriver.ls().join(" "));
         }
 
         public shellDebugChangePcb(args) {

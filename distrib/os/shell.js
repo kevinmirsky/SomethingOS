@@ -60,6 +60,8 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
             sc = new TSOS.ShellCommand(this.shellDeleteFile, "delete", "<name> - Deletes a file and its record.");
             this.commandList[this.commandList.length] = sc;
+            sc = new TSOS.ShellCommand(this.shellLs, "ls", "Lists files on disk.");
+            this.commandList[this.commandList.length] = sc;
             this.putPrompt();
         }
         putPrompt() {
@@ -463,6 +465,9 @@ var TSOS;
         shellDeleteFile(args) {
             let filename = args[0];
             _StdOut.putText(_DiskDriver.deleteFile(filename));
+        }
+        shellLs(args) {
+            _StdOut.putText(_DiskDriver.ls().join(" "));
         }
         shellDebugChangePcb(args) {
             TSOS.Pcb.instances[0].priority = 1;
