@@ -225,6 +225,7 @@ var TSOS;
             if (keyHeader !== false) {
                 let keyDataStart = this.getNext(keyHeader);
                 if (keyDataStart != "000") {
+                    this.deleteBlocks(keyDataStart);
                     this.setData(keyDataStart, data);
                 }
                 return true;

@@ -319,6 +319,7 @@ module TSOS {
             if (keyHeader !== false) {
                 let keyDataStart = this.getNext(keyHeader);
                 if (keyDataStart != "000") { // 000 is reserved, so if it points there, no good
+                    this.deleteBlocks(keyDataStart); // Clear previous contents
                     this.setData(keyDataStart, data);
                 }
                 return true;
