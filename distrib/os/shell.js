@@ -58,6 +58,8 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
             sc = new TSOS.ShellCommand(this.shellReadFile, "read", "<name> - Prints the contents of a file to the screen");
             this.commandList[this.commandList.length] = sc;
+            sc = new TSOS.ShellCommand(this.shellDeleteFile, "delete", "<name> - Deletes a file and its record.");
+            this.commandList[this.commandList.length] = sc;
             this.putPrompt();
         }
         putPrompt() {
@@ -457,6 +459,10 @@ var TSOS;
         shellReadFile(args) {
             let filename = args[0];
             _StdOut.putText(_DiskDriver.readFile(filename));
+        }
+        shellDeleteFile(args) {
+            let filename = args[0];
+            _StdOut.putText(_DiskDriver.deleteFile(filename));
         }
         shellDebugChangePcb(args) {
             TSOS.Pcb.instances[0].priority = 1;

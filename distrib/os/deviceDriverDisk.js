@@ -68,6 +68,23 @@ var TSOS;
             }
             return data;
         }
+        deleteFile(name) {
+            let header = this.find(name);
+            if (header !== false) {
+                this.deleteBlocks(header);
+                return "File deleted.";
+            }
+            else {
+                return "[ERROR] Could not find file " + name;
+            }
+        }
+        deleteBlocks(tsb) {
+            let next = this.getNext(tsb);
+            if (next != "000") {
+                this.deleteBlocks(next);
+            }
+            sessionStorage.setItem(tsb, this.emptyBlock());
+        }
         nextFreeBlock(t = 0, s = 0, b = 0) {
             for (let i = t; i < this.disk.tracks; i++) {
                 for (let j = s; j < this.disk.sectors; j++) {

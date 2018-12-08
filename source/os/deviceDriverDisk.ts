@@ -94,6 +94,25 @@ module TSOS {
             return data;
         }
 
+        deleteFile(name:string) {
+            let header = this.find(name);
+            if (header !== false) {
+                // We found it
+                this.deleteBlocks(header);
+                return "File deleted.";
+            } else {
+                return "[ERROR] Could not find file " + name;
+            }
+        }
+
+        deleteBlocks(tsb:string) {
+            let next = this.getNext(tsb);
+            if (next != "000") {
+                this.deleteBlocks(next);
+            }
+            sessionStorage.setItem(tsb, this.emptyBlock());
+        }
+
         nextFreeBlock(t:number = 0, s:number = 0, b:number = 0) {
             for (let i = t; i < this.disk.tracks; i++) {
                 for (let j = s; j < this.disk.sectors; j++) {

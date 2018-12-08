@@ -168,6 +168,11 @@ module TSOS {
                 "<name> - Prints the contents of a file to the screen");
             this.commandList[this.commandList.length] = sc;
 
+            sc = new ShellCommand(this.shellDeleteFile,
+                "delete",
+                "<name> - Deletes a file and its record.");
+            this.commandList[this.commandList.length] = sc;
+
 
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -658,6 +663,11 @@ module TSOS {
         public shellReadFile(args) {
             let filename = args[0];
             _StdOut.putText(_DiskDriver.readFile(filename));
+        }
+
+        public shellDeleteFile(args) {
+            let filename = args[0];
+            _StdOut.putText(_DiskDriver.deleteFile(filename));
         }
 
         public shellDebugChangePcb(args) {
