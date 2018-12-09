@@ -9,6 +9,16 @@ module TSOS {
         private runProcess(pcb: Pcb) {
             this.runningPcb = pcb;
             if (pcb) {
+                if (pcb.memoryOffset == -1) {
+                    //Not in memory! On disk!
+                    let segment = _MemManager.getFreeSegment(pcb.memoryRange);
+                    if (segment) {
+                        // just load into memory
+                    } else {
+                        // Need to swap one out
+                    }
+                }
+
                 pcb.state = "RUNNING";
                 _CPU.init(); //Reset any lingering values
                 _CPU.PC = pcb.PC;
@@ -23,7 +33,7 @@ module TSOS {
             }
         }
 
-        public swap(incomingPcb: Pcb) {
+        public setRunning(incomingPcb: Pcb) {
             //Unload
             this.runningPcb.state = "WAITING";
             this.runningPcb.PC = _CPU.PC;
@@ -56,7 +66,7 @@ module TSOS {
                 if (this.QbitState >= this.QBIT_LENGTH) {
                     //It's time to switch!
                     if (!this.readyQueue.isEmpty()) {
-                        this.swap(this.readyQueue.dequeue());
+                        this.setRunning(this.readyQueue.dequeue());
                     }
                 }
             } else {

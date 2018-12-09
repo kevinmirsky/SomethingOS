@@ -77,7 +77,7 @@ var TSOS;
                         case "SWAP":
                             let oldPid = _Scheduler.runningPcb.pid;
                             let newPcb = _Scheduler.readyQueue.dequeue();
-                            _Scheduler.swap(newPcb);
+                            _Scheduler.setRunning(newPcb);
                             this.krnTrace("Swapping out PID " + oldPid + ". Loading PID " + newPcb.pid);
                             break;
                         case "LOAD":

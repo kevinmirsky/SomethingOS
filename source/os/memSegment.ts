@@ -9,7 +9,7 @@ module TSOS {
         }
 
         public getSize(): number {
-            return this.lastByte - this.firstByte;
+            return (this.lastByte - this.firstByte) + 1;
         }
     }
 }

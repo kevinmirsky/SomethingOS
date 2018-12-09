@@ -9,6 +9,7 @@ var TSOS;
             this.Xreg = 0;
             this.Yreg = 0;
             this.Zflag = 0;
+            this.hddTsb = "000";
             this.inInstances = false;
             this.memoryOffset = memStart;
             this.memoryRange = memRange;
@@ -25,7 +26,12 @@ var TSOS;
             output.push(["cellXreg" + this.pid, this.Xreg.toString(16)]);
             output.push(["cellYreg" + this.pid, this.Yreg.toString(16)]);
             output.push(["cellZflag" + this.pid, this.Zflag.toString(16)]);
-            output.push(["cellmemoryOffset" + this.pid, this.memoryOffset.toString(16)]);
+            if (this.memoryOffset == -1) {
+                output.push(["cellmemoryOffset" + this.pid, "Disk"]);
+            }
+            else {
+                output.push(["cellmemoryOffset" + this.pid, this.memoryOffset.toString(16)]);
+            }
             output.push(["cellmemoryRange" + this.pid, this.memoryRange.toString(16)]);
             return output;
         }

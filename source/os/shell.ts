@@ -473,14 +473,19 @@ module TSOS {
                     //All good, proceed as usual
                     _MemManager.writeMemory(segment.firstByte, inputArray);
                     segment.isOccupied = true;
-                    let process = new Pcb(segment.firstByte, 256);
-                    process.PC = 0;
+                    let process = new Pcb(segment.firstByte, segment.getSize());
                     _StdOut.advanceLine();
                     _StdOut.putText(" Done. PID: " + process.pid.toString());
                 } else {
-                    //No segment available. Cannot load
+                    //No segment available. Must load to disk!
+
+                    //TODO Ensure short loads get ALL memory anyway
+                    let tsb = _DiskDriver.swapToDisk(inputArray.join(''));
+                    let process = new Pcb(-1, 256); // -1 indicates on disk
+                    process.hddTsb = tsb;
                     _StdOut.advanceLine();
-                    _StdOut.putText("[ERROR] No available memory segments. Unable to load.")
+                    _StdOut.putText("No available memory segments. Loaded to disk. PID: "
+                        + process.pid.toString());
                 }
 
             } else {

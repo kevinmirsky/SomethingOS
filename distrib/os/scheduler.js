@@ -9,6 +9,13 @@ var TSOS;
         runProcess(pcb) {
             this.runningPcb = pcb;
             if (pcb) {
+                if (pcb.memoryOffset == -1) {
+                    let segment = _MemManager.getFreeSegment(pcb.memoryRange);
+                    if (segment) {
+                    }
+                    else {
+                    }
+                }
                 pcb.state = "RUNNING";
                 _CPU.init();
                 _CPU.PC = pcb.PC;
@@ -23,7 +30,7 @@ var TSOS;
                 _StdOut.putText("[ERROR] Could not find PID");
             }
         }
-        swap(incomingPcb) {
+        setRunning(incomingPcb) {
             this.runningPcb.state = "WAITING";
             this.runningPcb.PC = _CPU.PC;
             this.runningPcb.Acc = _CPU.Acc;
@@ -39,7 +46,7 @@ var TSOS;
                 this.QbitState++;
                 if (this.QbitState >= this.QBIT_LENGTH) {
                     if (!this.readyQueue.isEmpty()) {
-                        this.swap(this.readyQueue.dequeue());
+                        this.setRunning(this.readyQueue.dequeue());
                     }
                 }
             }

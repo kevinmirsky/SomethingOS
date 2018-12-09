@@ -1,5 +1,5 @@
 const APP_NAME = "CYBERCORE";
-const APP_VERSION = "0.3.Hell_if_I_know";
+const APP_VERSION = "0.4.08";
 const CPU_CLOCK_INTERVAL = 100;
 const TIMER_IRQ = 0;
 const KEYBOARD_IRQ = 1;
