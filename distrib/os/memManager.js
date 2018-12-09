@@ -18,6 +18,13 @@ var TSOS;
             }
             console.log(this.segments);
         }
+        getSegment(firstByte) {
+            for (let i = 0; i < this.segments.length; i++) {
+                if (this.segments[i].firstByte == firstByte) {
+                    return this.segments[i];
+                }
+            }
+        }
         getFreeSegment(size) {
             for (let i = 0; i < this.segments.length; i++) {
                 if (!this.segments[i].isOccupied) {
@@ -46,6 +53,11 @@ var TSOS;
         readMemory(startIndex, endIndex) {
             return super.accessAddress(startIndex, endIndex);
         }
+        clearRegion(startIndex, length) {
+            for (let i = startIndex; i < startIndex + length; i++) {
+                this.writeMemory(i, 0x00);
+            }
+        }
         writeMemory(index, input) {
             if (input instanceof Array) {
                 console.log("Writing from array");
@@ -68,6 +80,8 @@ var TSOS;
                     throw "Memory storage exception: Attempted to store out of bounds";
                 }
             }
+        }
+        loadProgram(segment) {
         }
         refreshMemoryViewer() {
             var inputElement = document.getElementById("taMemory");

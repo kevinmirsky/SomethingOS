@@ -13,7 +13,7 @@ module TSOS {
                     //Not in memory! On disk!
                     let segment = _MemManager.getFreeSegment(pcb.memoryRange);
                     if (segment) {
-                        // just load into memory
+                        this.loadFromDisk(pcb, segment);
                     } else {
                         // Need to swap one out
                     }
@@ -31,6 +31,14 @@ module TSOS {
             } else {
                 _StdOut.putText("[ERROR] Could not find PID");
             }
+        }
+
+        private loadFromDisk(pcb, seg) {
+            let data = _DiskDriver.readProgram(pcb.hddTsb);
+            let hexValues = data.match(/.{1,2}/g);
+            hexValues = hexValues.slice(0, 256); // Cut to size of memory segment
+            _MemManager.writeMemory(seg.firstByte, hexValues);
+            seg.isOccupied = true;
         }
 
         public setRunning(incomingPcb: Pcb) {

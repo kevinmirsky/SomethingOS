@@ -12,6 +12,7 @@ var TSOS;
                 if (pcb.memoryOffset == -1) {
                     let segment = _MemManager.getFreeSegment(pcb.memoryRange);
                     if (segment) {
+                        this.loadFromDisk(pcb, segment);
                     }
                     else {
                     }
@@ -29,6 +30,13 @@ var TSOS;
             else {
                 _StdOut.putText("[ERROR] Could not find PID");
             }
+        }
+        loadFromDisk(pcb, seg) {
+            let data = _DiskDriver.readProgram(pcb.hddTsb);
+            let hexValues = data.match(/.{1,2}/g);
+            hexValues = hexValues.slice(0, 256);
+            _MemManager.writeMemory(seg.firstByte, hexValues);
+            seg.isOccupied = true;
         }
         setRunning(incomingPcb) {
             this.runningPcb.state = "WAITING";

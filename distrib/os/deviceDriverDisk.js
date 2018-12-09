@@ -65,11 +65,22 @@ var TSOS;
                 return "[ERROR] Could not find file " + name;
             }
         }
+        readProgram(tsb) {
+            return this.readBlocksRaw(tsb);
+        }
         readBlocks(tsb) {
             let next = this.getNext(tsb);
             let data = this.getData(tsb);
             if (next != "000") {
                 data += this.readBlocks(next);
+            }
+            return data;
+        }
+        readBlocksRaw(tsb) {
+            let next = this.getNext(tsb);
+            let data = this.getRawData(tsb);
+            if (next != "000") {
+                data += this.readBlocksRaw(next);
             }
             return data;
         }

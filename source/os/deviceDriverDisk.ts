@@ -91,12 +91,26 @@ module TSOS {
             }
         }
 
+        readProgram(tsb:string) {
+            return this.readBlocksRaw(tsb);
+        }
+
         readBlocks(tsb:string) {
             let next = this.getNext(tsb);
             let data = this.getData(tsb);
 
             if (next != "000") {
                 data += this.readBlocks(next);
+            }
+            return data;
+        }
+
+        readBlocksRaw(tsb:string) {
+            let next = this.getNext(tsb);
+            let data = this.getRawData(tsb);
+
+            if (next != "000") {
+                data += this.readBlocksRaw(next);
             }
             return data;
         }

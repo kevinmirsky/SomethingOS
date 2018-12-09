@@ -125,6 +125,11 @@ var TSOS;
             if (this.isExecuting == false) {
                 this.currentPCB.state = "COMPLETE";
                 this.updatePcb();
+                let segment = _MemManager.getSegment(this.currentPCB.memoryOffset);
+                if (segment !== null) {
+                    _MemManager.clearRegion(segment.firstByte, segment.getSize());
+                    segment.isOccupied = false;
+                }
                 _Scheduler.runningPcb = null;
             }
         }
