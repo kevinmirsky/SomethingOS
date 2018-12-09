@@ -107,6 +107,51 @@ module TSOS {
             }
         }
 
+        public static buildDiskDisplay(): void {
+            let row;
+            let table = <HTMLTableElement>document.getElementById("tableDisk");
+            for (let i = 0; i < _DiskDriver.disk.tracks; i++) {
+                for (let j = 0; j < _DiskDriver.disk.sectors; j++) {
+                    for (let k = 0; k < _DiskDriver.disk.blocks; k++) {
+                        let block:string = deviceDriverDisk.buildLoc(i,j,k);
+                        row = table.insertRow(-1);
+
+                        let cell = row.insertCell(-1);
+                        cell.id="tsb" + block;
+                        cell.innerHTML = block.split('').join(':');
+
+                        cell = row.insertCell(-1);
+                        cell.id = "isUsed" + block;
+
+                        cell = row.insertCell(-1);
+                        cell.id = "next" + block;
+
+                        cell = row.insertCell(-1);
+                        cell.id = "data" + block;
+                    }
+                }
+            }
+        }
+
+        public static updateDiskDisplay(): void {
+            for (let i = 0; i < _DiskDriver.disk.tracks; i++) {
+                for (let j = 0; j < _DiskDriver.disk.sectors; j++) {
+                    for (let k = 0; k < _DiskDriver.disk.blocks; k++) {
+                        let block:string = deviceDriverDisk.buildLoc(i,j,k);
+                        let cell = document.getElementById("isUsed" + block);
+                        let data = sessionStorage.getItem(block);
+                        cell.innerHTML = _DiskDriver.getUsedFromString(data);
+
+                        cell = document.getElementById("next" + block);
+                        cell.innerHTML = _DiskDriver.getNextFromString(data).split('').join(':');
+
+                        cell = document.getElementById("data" + block);
+                        cell.innerHTML = _DiskDriver.getRawDataFromString(data);
+                    }
+                }
+            }
+        }
+
         public static scrollTo(cell) {
             let memLoc = document.getElementById("cellMem" + cell);
             memLoc.scrollIntoView();

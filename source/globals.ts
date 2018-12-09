@@ -45,6 +45,7 @@ var _Memory: TSOS.Memory;
 var _MemManager: TSOS.MemManager;
 var _Scheduler: TSOS.Scheduler;
 
+
 // CPU Debug/Single Step
 let singleStep = false;
 let canStep = true;
@@ -75,11 +76,16 @@ var _StdOut;
 var _Console: TSOS.Console;
 var _OsShell: TSOS.Shell;
 
+//Disk
+var _Disk;
+var _DiskDriver;
+
 // At least this OS is not trying to kill you. (Yet.)
 var _SarcasticMode: boolean = false;
 
 // Memory
 var MAX_MEMORY = 768;
+
 
 // Global Device Driver Objects - page 12
 var _krnKeyboardDriver; //  = null;

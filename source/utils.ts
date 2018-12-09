@@ -59,5 +59,28 @@ module TSOS {
             bigNum = bigNum * 0x100;
             return (smallNum + bigNum);
         }
+
+        public static replaceAt(string, index, replace) {
+            return string.substring(0, index) + replace + string.substring(index + replace.length);
+        }
+
+        public static toHex(text: string) {
+            let hexName = "";
+            for (let i = 0; i < text.length; i++) {
+                hexName+= text.charCodeAt(i).toString(16).toUpperCase().padStart(2, "0");
+            }
+            return hexName;
+        }
+
+        public static fromHex(text: string) {
+            let output: string = "";
+            let hexValues = text.match(/.{1,2}/g);
+            for (let i = 0; i < hexValues.length; i++) {
+                if (hexValues[i] != "00") {
+                    output += String.fromCharCode(parseInt(hexValues[i], 16));
+                }
+            }
+            return output;
+        }
     }
 }

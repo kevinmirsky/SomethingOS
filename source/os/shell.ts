@@ -145,8 +145,39 @@ module TSOS {
 
             sc = new ShellCommand(this.shellClearMem,
                 "clearmem",
-                " - Clears the memory, killing any program in its way.");
+                " - Clears the memory, killing any program in its way");
             this.commandList[this.commandList.length] = sc;
+
+            sc = new ShellCommand(this.shellFormat,
+                "format",
+                " - Formats the disk.");
+            this.commandList[this.commandList.length] = sc;
+
+            sc = new ShellCommand(this.shellCreateFile,
+                "create",
+                "<name> - Creates a file with designated name");
+            this.commandList[this.commandList.length] = sc;
+
+            sc = new ShellCommand(this.shellWriteFile,
+                "write",
+                "<name> \"<data>\" - Changes a file's contents to provided text");
+            this.commandList[this.commandList.length] = sc;
+
+            sc = new ShellCommand(this.shellReadFile,
+                "read",
+                "<name> - Prints the contents of a file to the screen");
+            this.commandList[this.commandList.length] = sc;
+
+            sc = new ShellCommand(this.shellDeleteFile,
+                "delete",
+                "<name> - Deletes a file and its record.");
+            this.commandList[this.commandList.length] = sc;
+
+            sc = new ShellCommand(this.shellLs,
+                "ls",
+                "Lists files on disk.");
+            this.commandList[this.commandList.length] = sc;
+
 
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -593,6 +624,59 @@ module TSOS {
                 //Think of this like turning memory on and off to empty it out.
                 _MemManager.init();
             }
+        }
+
+        public shellFormat(args) {
+            let result = _DiskDriver.format();
+            if(result === true) {
+                _StdOut.putText("Format successful.")
+            } else {
+                _StdOut.putText("[ERROR]: " + result);
+            }
+        }
+
+        public shellCreateFile(args) {
+            if(_DiskDriver.createFile(args[0])) {
+                _StdOut.putText("File \"" + args[0] + "\" created.");
+            } else {
+                _StdOut.putText("[ERROR] Could not create file.");
+            }
+        }
+
+        public shellWriteFile(args) {
+            // TODO REMOVE HARDCODED TESTS
+            let filename = args[0];
+            args.splice(0,1);
+            let fileData = args.join(' ');
+
+            if (fileData.charAt(0) == '"' && fileData.charAt(fileData.length - 1) == '"') {
+                //Get text from quotes
+                fileData = fileData.substring(fileData.indexOf('"') + 1, fileData.lastIndexOf('"'));
+
+                if (_DiskDriver.writeFile(filename, fileData)) {
+                    _StdOut.putText("Write to \"" + filename + "\" successful.");
+                } else {
+                    _StdOut.putText("[ERROR] Could not write file.")
+                }
+            } else {
+                _StdOut.putText("[ERROR] File data must be entirely surrounded by double-quotes < \" >.");
+            }
+
+            //Get text from between quotes
+        }
+
+        public shellReadFile(args) {
+            let filename = args[0];
+            _StdOut.putText(_DiskDriver.readFile(filename));
+        }
+
+        public shellDeleteFile(args) {
+            let filename = args[0];
+            _StdOut.putText(_DiskDriver.deleteFile(filename));
+        }
+
+        public shellLs(args) {
+            _StdOut.putText(_DiskDriver.ls().join(" "));
         }
 
         public shellDebugChangePcb(args) {

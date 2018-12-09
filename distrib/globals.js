@@ -26,6 +26,8 @@ var _StdIn;
 var _StdOut;
 var _Console;
 var _OsShell;
+var _Disk;
+var _DiskDriver;
 var _SarcasticMode = false;
 var MAX_MEMORY = 768;
 var _krnKeyboardDriver;

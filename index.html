@@ -1,103 +1,105 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-   <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-   <meta name="author"             content="Alan G. Labouseur" />
-   <link rel="stylesheet" href="tsos.css" type="text/css" media="screen" />
-   <title>
-      TSOS - a browser-based virtual Operating System in TypeScript
-   </title>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+    <meta name="author" content="Alan G. Labouseur"/>
+    <link rel="stylesheet" href="tsos.css" type="text/css" media="screen"/>
+    <title>
+        TSOS - a browser-based virtual Operating System in TypeScript
+    </title>
 
-   <!-- Globals CONSTANTS and _Variables. Must included be first. -->
-   <script type="text/javascript" src="distrib/globals.js"></script>
+    <!-- Globals CONSTANTS and _Variables. Must included be first. -->
+    <script type="text/javascript" src="distrib/globals.js"></script>
 
-   <!-- Host (Virtual Machine / Hardware Simulation) Routines -->
-   <script type="text/javascript" src="distrib/host/control.js"></script>
-   <script type="text/javascript" src="distrib/host/devices.js"></script>
-   <script type="text/javascript" src="distrib/host/cpu.js"></script>
-   <script type="text/javascript" src="distrib/host/memory.js"></script>
+    <!-- Host (Virtual Machine / Hardware Simulation) Routines -->
+    <script type="text/javascript" src="distrib/host/control.js"></script>
+    <script type="text/javascript" src="distrib/host/devices.js"></script>
+    <script type="text/javascript" src="distrib/host/cpu.js"></script>
+    <script type="text/javascript" src="distrib/host/memory.js"></script>
+    <script type="text/javascript" src="distrib/host/disk.js"></script>
 
 
-   <!-- Virtual OS Routines: Make sure Kernel code is last, since it needs those above it. -->
-   <script type="text/javascript" src="distrib/os/interrupt.js"></script>
-   <script type="text/javascript" src="distrib/os/canvastext.js"></script>
-   <script type="text/javascript" src="distrib/os/console.js"></script>
-   <script type="text/javascript" src="distrib/os/deviceDriver.js"></script>
+    <!-- Virtual OS Routines: Make sure Kernel code is last, since it needs those above it. -->
+    <script type="text/javascript" src="distrib/os/interrupt.js"></script>
+    <script type="text/javascript" src="distrib/os/canvastext.js"></script>
+    <script type="text/javascript" src="distrib/os/console.js"></script>
+    <script type="text/javascript" src="distrib/os/deviceDriver.js"></script>
     <script type="text/javascript" src="distrib/os/deviceDisplayDriver.js"></script>
-   <script type="text/javascript" src="distrib/os/memManager.js"></script>
+    <script type="text/javascript" src="distrib/os/memManager.js"></script>
     <script type="text/javascript" src="distrib/os/memSegment.js"></script>
-   <script type="text/javascript" src="distrib/os/pcb.js"></script>
-   <script type="text/javascript" src="distrib/os/deviceDriverKeyboard.js"></script>
-   <script type="text/javascript" src="distrib/os/queue.js"></script>
-   <script type="text/javascript" src="distrib/os/shell.js"></script>
+    <script type="text/javascript" src="distrib/os/pcb.js"></script>
+    <script type="text/javascript" src="distrib/os/deviceDriverKeyboard.js"></script>
+    <script type="text/javascript" src="distrib/os/deviceDriverDisk.js"></script>
+    <script type="text/javascript" src="distrib/os/queue.js"></script>
+    <script type="text/javascript" src="distrib/os/shell.js"></script>
     <script type="text/javascript" src="distrib/os/scheduler.js"></script>
-   <script type="text/javascript" src="distrib/os/shellCommand.js"></script>
-   <script type="text/javascript" src="distrib/os/userCommand.js"></script>
-   <script type="text/javascript" src="distrib/os/kernel.js"></script>
+    <script type="text/javascript" src="distrib/os/shellCommand.js"></script>
+    <script type="text/javascript" src="distrib/os/userCommand.js"></script>
+    <script type="text/javascript" src="distrib/os/kernel.js"></script>
 
-   <!-- Other Routines -->
-   <script type="text/javascript" src="distrib/utils.js"></script>
-   <!-- Uncomment the line below to enable GLaDOS testing. -->
-   <!--<script type="text/javascript" src="http://alanclasses.github.io/TSOS/test/glados-ip3.js"></script> -->
-   
+    <!-- Other Routines -->
+    <script type="text/javascript" src="distrib/utils.js"></script>
+    <!-- Uncomment the line below to enable GLaDOS testing. -->
+    <!--<script type="text/javascript" src="http://alanclasses.github.io/TSOS/test/glados-ip3.js"></script> -->
+
 </head>
 
 <body onload="onDocumentLoad()">
 
 <div id="divMain" style="width:100%;">
 
-   <ul>
-      <li id="bannerBranding"></li>
-      <li id="bannerTime"></li>
-      <li id="bannerStatus"></li>
-   </ul>
+    <ul>
+        <li id="bannerBranding"></li>
+        <li id="bannerTime"></li>
+        <li id="bannerStatus"></li>
+    </ul>
 
-   <div id="divButtonBar" style="margin:4px;">
-      <input type="button"
-             id = "btnStartOS"
-             name="brnStartOS"
-             class="normal_button"
-             value=" START "
-             tabindex="0"
-             onclick="TSOS.Control.hostBtnStartOS_click(this);">
+    <div id="divButtonBar" style="margin:4px;">
+        <input type="button"
+               id="btnStartOS"
+               name="brnStartOS"
+               class="normal_button"
+               value=" START "
+               tabindex="0"
+               onclick="TSOS.Control.hostBtnStartOS_click(this);">
 
-      <input type="button"
-             id = "btnHaltOS"
-             name="brnHaltOS"
-             class="normal_button"
-             disabled="disabled"
-             value=" HALT "
-             tabindex="1"
-             onclick="TSOS.Control.hostBtnHaltOS_click(this);">
+        <input type="button"
+               id="btnHaltOS"
+               name="brnHaltOS"
+               class="normal_button"
+               disabled="disabled"
+               value=" HALT "
+               tabindex="1"
+               onclick="TSOS.Control.hostBtnHaltOS_click(this);">
 
-      <input type="button"
-             id = "btnReset"
-             name="brnReset"
-             class="normal_button"
-             disabled="disabled"
-             value=" RESET "
-             tabindex="2"
-             onclick="TSOS.Control.hostBtnReset_click(this);">
+        <input type="button"
+               id="btnReset"
+               name="brnReset"
+               class="normal_button"
+               disabled="disabled"
+               value=" RESET "
+               tabindex="2"
+               onclick="TSOS.Control.hostBtnReset_click(this);">
 
-       <input type="button"
-              id = "btnSingleStep"
-              name="brnSingleStep"
-              class="normal_button"
-              disabled="disabled"
-              value=" SINGLE STEP "
-              tabindex="3"
-              onclick="TSOS.Control.hostBtnSingleStep_click(this);">
+        <input type="button"
+               id="btnSingleStep"
+               name="brnSingleStep"
+               class="normal_button"
+               disabled="disabled"
+               value=" SINGLE STEP "
+               tabindex="3"
+               onclick="TSOS.Control.hostBtnSingleStep_click(this);">
 
-       <input type="button"
-              id = "btnTakeStep"
-              name="brnTakeStep"
-              class="normal_button"
-              disabled="disabled"
-              value=">"
-              tabindex="4"
-              onclick="TSOS.Control.hostBtnTakeStep_click(this);">
+        <input type="button"
+               id="btnTakeStep"
+               name="brnTakeStep"
+               class="normal_button"
+               disabled="disabled"
+               value=">"
+               tabindex="4"
+               onclick="TSOS.Control.hostBtnTakeStep_click(this);">
 
-   </div>
+    </div>
     <div id="divLeftbar" class="col-left">
         <div id="divConsole" style="margin:4px; width:500px; height:500px;">
             <canvas id="display"
@@ -132,73 +134,89 @@
     </div>
 
     <div class="col-center">
-   <div id="divLog">
-      <label>
-         HOST LOG
-         <br>
-         <textarea name="taHostLog"
-                   id  ="taHostLog"
-                   rows="26"
-                   cols="48"
-                   style="width: 100%"></textarea>
-      </label>
-   </div>
+        <div id="divLog">
+            <label>
+                HOST LOG
+                <br>
+                <textarea name="taHostLog"
+                          id="taHostLog"
+                          rows="26"
+                          cols="48"
+                          style="width: 100%"></textarea>
+            </label>
+        </div>
 
-   <div id="divUserProgramInput">
-      <label>
-         USER PROGRAM INPUT
-         <br>
-         <textarea name="taProgramInput"
-                   id  ="taProgramInput"
-                   rows="8"
-                   cols="48"
-         style="width: 100%"></textarea>
-      </label>
-   </div>
+        <div id="divUserProgramInput">
+            <label>
+                USER PROGRAM INPUT
+                <br>
+                <textarea name="taProgramInput"
+                          id="taProgramInput"
+                          rows="8"
+                          cols="48"
+                          style="width: 100%"></textarea>
+            </label>
+        </div>
 
-   <div id="divMemory">
-       <div>
-      <label>
-         MEMORY
-      </label>
-       </div>
-       <div style="width: fit-content; height: 250px; overflow-y: scroll; float: left">
-       <table id="tableMemory">
-       </table>
-       </div>
-       <div id="divMemButtons" style="display: block;">
-       </div>
-   </div>
+        <div id="divMemory">
+            <div>
+                <label>
+                    MEMORY
+                </label>
+            </div>
+            <div style="width: fit-content; height: 250px; overflow-y: scroll; float: left">
+                <table id="tableMemory">
+                </table>
+            </div>
+            <div id="divMemButtons" style="display: block;">
+            </div>
+        </div>
     </div>
     <div class="col-right">
-   <div id="divPcb">
-       <label>
-           PROCESS CONTROL BLOCK DISPLAY
-       </label>
-           <table id="tablePcb">
-               <tr>
-                   <th>PID</th>
-                   <th>Priority</th>
-                   <th>State</th>
-                   <th>PC</th>
-                   <th>Acc</th>
-                   <th>Xreg</th>
-                   <th>Yreg</th>
-                   <th>Zreg</th>
-                   <th>Memory offset</th>
-                   <th>Memory Range</th>
-               </tr>
-           </table>
-   </div>
+        <div id="divDisk">
+            <label>
+                HARD DISK DRIVE
+            </label>
+            <div style="height: 250px; overflow-y: scroll">
+                <table id="tableDisk">
+                    <tr>
+                        <th>T:S:B</th>
+                        <th>Used</th>
+                        <th>Next</th>
+                        <th>Data</th>
+                    </tr>
+                </table>
+            </div>
+
+        </div>
+        <div id="divPcb">
+            <label>
+                PROCESS CONTROL BLOCK DISPLAY
+            </label>
+            <table id="tablePcb">
+                <tr>
+                    <th>PID</th>
+                    <th>Priority</th>
+                    <th>State</th>
+                    <th>PC</th>
+                    <th>Acc</th>
+                    <th>Xreg</th>
+                    <th>Yreg</th>
+                    <th>Zreg</th>
+                    <th>Memory offset</th>
+                    <th>Memory Range</th>
+                </tr>
+            </table>
+        </div>
     </div>
 </div>
 
 <p class="footerText" style="clear:both;">
-   <br>
-   Copyright &copy; 2008 - 2016 No Rights Reserved.
-   <br>
-   Reproduction is inhibited without the express written consent of
-   Ted Codd, Stevie Ray Vaughan, and Ian Fleming.
+    <br>
+    Copyright &copy; 2008 - 2016 No Rights Reserved.
+    <br>
+    Reproduction is inhibited without the express written consent of
+    Ted Codd, Stevie Ray Vaughan, and Ian Fleming.
 </p>
 
 </body>

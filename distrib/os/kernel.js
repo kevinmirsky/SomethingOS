@@ -23,6 +23,7 @@ var TSOS;
             TSOS.deviceDisplayDriver.buildMemoryDisplay();
             TSOS.deviceDisplayDriver.displayPcb();
             TSOS.deviceDisplayDriver.displayCpu();
+            TSOS.deviceDisplayDriver.buildDiskDisplay();
             if (_GLaDOS) {
                 _GLaDOS.afterStartup();
             }
@@ -37,6 +38,7 @@ var TSOS;
             TSOS.deviceDisplayDriver.updateMemory();
             TSOS.deviceDisplayDriver.displayPcb();
             TSOS.deviceDisplayDriver.displayCpu();
+            TSOS.deviceDisplayDriver.updateDiskDisplay();
             if (_KernelInterruptQueue.getSize() > 0) {
                 var interrupt = _KernelInterruptQueue.dequeue();
                 this.krnInterruptHandler(interrupt.irq, interrupt.params);
