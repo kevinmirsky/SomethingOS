@@ -100,18 +100,13 @@ var TSOS;
             return "EEE";
         }
         find(name) {
-            let hexName = "";
-            for (let i = 0; i < name.length; i++) {
-                hexName += name.charCodeAt(i).toString(16).toUpperCase().padStart(2, "0");
-            }
-            hexName += "00";
             for (let i = 0; i < 1; i++) {
                 for (let j = 0; j < this.disk.sectors; j++) {
                     for (let k = 0; k < this.disk.blocks; k++) {
                         let data = sessionStorage.getItem(deviceDriverDisk.buildLoc(i, j, k));
                         if (data) {
-                            data = data.substr(4);
-                            if (data.includes(hexName)) {
+                            let openName = TSOS.Utils.fromHex(data.substr(4));
+                            if (openName == name) {
                                 return deviceDriverDisk.buildLoc(i, j, k);
                             }
                         }
