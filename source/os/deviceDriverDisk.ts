@@ -198,6 +198,14 @@ module TSOS {
             }
         }
 
+        getUsedFromString(value:string) {
+            if (value !== null) {
+                return value.substring(0,1);
+            } else {
+                return "E"; // Error!
+            }
+        }
+
         setStringUsed(value: string, isUsed: boolean) {
             if (isUsed) {
                return Utils.replaceAt(value, 0, "1");
@@ -225,6 +233,13 @@ module TSOS {
                 return value.substring(1,4);
             }
             else return "000"; // The "no next" value
+        }
+
+        getNextFromString(value:string) {
+            if (value !== null) {
+                return value.substring(1,4);
+            }
+            else return "ERR"; //Since this is for display output, we can pass a warning instead
         }
 
 
@@ -287,6 +302,14 @@ module TSOS {
                 return value.substring(4);
             } else {
                 return "";
+            }
+        }
+
+        getRawDataFromString(value:string) {
+            if (value !== null) {
+                return value.substring(4);
+            } else {
+                return "ERROR";
             }
         }
 

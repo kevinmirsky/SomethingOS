@@ -146,6 +146,14 @@ var TSOS;
                 }
             }
         }
+        getUsedFromString(value) {
+            if (value !== null) {
+                return value.substring(0, 1);
+            }
+            else {
+                return "E";
+            }
+        }
         setStringUsed(value, isUsed) {
             if (isUsed) {
                 return TSOS.Utils.replaceAt(value, 0, "1");
@@ -170,6 +178,13 @@ var TSOS;
             }
             else
                 return "000";
+        }
+        getNextFromString(value) {
+            if (value !== null) {
+                return value.substring(1, 4);
+            }
+            else
+                return "ERR";
         }
         setName(key, name) {
             let value = sessionStorage.getItem(key);
@@ -208,6 +223,14 @@ var TSOS;
             }
             else {
                 return "";
+            }
+        }
+        getRawDataFromString(value) {
+            if (value !== null) {
+                return value.substring(4);
+            }
+            else {
+                return "ERROR";
             }
         }
         writeBlocks(key, hexData) {

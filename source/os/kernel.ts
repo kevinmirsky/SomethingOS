@@ -62,6 +62,7 @@ module TSOS {
             //_MemManager.refreshMemoryViewer();
             deviceDisplayDriver.displayPcb();
             deviceDisplayDriver.displayCpu();
+            deviceDisplayDriver.buildDiskDisplay();
 
             // Finally, initiate student testing protocol.
             if (_GLaDOS) {
@@ -93,6 +94,7 @@ module TSOS {
             deviceDisplayDriver.updateMemory();
             deviceDisplayDriver.displayPcb();
             deviceDisplayDriver.displayCpu();
+            deviceDisplayDriver.updateDiskDisplay();
 
             // Check for an interrupt, are any. Page 560
             if (_KernelInterruptQueue.getSize() > 0) {
