@@ -485,6 +485,7 @@ module TSOS {
                     _MemManager.writeMemory(segment.firstByte, inputArray);
                     segment.isOccupied = true;
                     let process = new Pcb(segment.firstByte, segment.getSize());
+
                     // Assign priority if possible
                     if (args[0] !== null) {
                         let priority:number = parseInt(args[0], 10);
@@ -492,6 +493,7 @@ module TSOS {
                             process.priority = priority;
                         }
                     }
+
                     _StdOut.advanceLine();
                     _StdOut.putText(" Done. PID: " + process.pid.toString());
                 } else {
@@ -501,6 +503,15 @@ module TSOS {
                     let tsb = _DiskDriver.swapToDisk(inputArray.join(''));
                     let process = new Pcb(-1, 256); // -1 indicates on disk
                     process.hddTsb = tsb;
+
+                    // Assign priority if possible
+                    if (args[0] !== null) {
+                        let priority:number = parseInt(args[0], 10);
+                        if (!isNaN(priority)) {
+                            process.priority = priority;
+                        }
+                    }
+
                     _StdOut.advanceLine();
                     _StdOut.putText("No available memory segments. Loaded to disk. PID: "
                         + process.pid.toString());
