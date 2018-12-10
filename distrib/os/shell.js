@@ -483,7 +483,12 @@ var TSOS;
         }
         shellReadFile(args) {
             let filename = args[0];
-            _StdOut.putText(_DiskDriver.readFile(filename));
+            try {
+                _StdOut.putText(_DiskDriver.readFile(filename));
+            }
+            catch (e) {
+                _StdOut.putText("[ERROR] " + e);
+            }
         }
         shellDeleteFile(args) {
             let filename = args[0];
