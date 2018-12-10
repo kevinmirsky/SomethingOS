@@ -500,21 +500,36 @@ module TSOS {
                     //No segment available. Must load to disk!
 
                     //TODO Ensure short loads get ALL memory anyway
-                    let tsb = _DiskDriver.swapToDisk(inputArray.join(''));
-                    let process = new Pcb(-1, 256); // -1 indicates on disk
-                    process.hddTsb = tsb;
-
-                    // Assign priority if possible
-                    if (args[0] !== null) {
-                        let priority:number = parseInt(args[0], 10);
-                        if (!isNaN(priority)) {
-                            process.priority = priority;
-                        }
+                    for (let i = inputArray.length; i < 0x100; i++) { // Size of segments
+                        inputArray.push("00");
                     }
+                    console.log("Array length: " + inputArray.length);
+                    let tsb;
+                    try {
+                        tsb = _DiskDriver.swapToDisk(inputArray.join(''));
+                        let process = new Pcb(-1, 256); // -1 indicates on disk
+                        process.hddTsb = tsb;
 
-                    _StdOut.advanceLine();
-                    _StdOut.putText("No available memory segments. Loaded to disk. PID: "
-                        + process.pid.toString());
+                        // Assign priority if possible
+                        if (args[0] !== null) {
+                            let priority:number = parseInt(args[0], 10);
+                            if (!isNaN(priority)) {
+                                process.priority = priority;
+                            }
+                        }
+
+                        _StdOut.advanceLine();
+                        _StdOut.putText("No available memory segments. Loaded to disk. PID: "
+                            + process.pid.toString());
+                    } catch (e) {
+                        _StdOut.advanceLine();
+                        if (e.name == "TypeError") {
+                            _StdOut.putText("[ERROR] Disk access error. Possible issue: Unformatted disk.");
+                        } else {
+                            _StdOut.putText("[ERROR] " + e);
+                        }
+                        return;
+                    }
                 }
 
             } else {

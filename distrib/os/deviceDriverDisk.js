@@ -63,7 +63,12 @@ var TSOS;
             else {
                 start = tsb;
             }
-            this.writeBlocks(start, progMem, 3, 0, 0);
+            try {
+                this.writeBlocks(start, progMem, 3, 0, 0);
+            }
+            catch (e) {
+                throw "[WARN] HDD at capacity. File partially written.";
+            }
             return start;
         }
         readFile(name) {
