@@ -5,6 +5,14 @@ module TSOS {
         runningPcb: Pcb;
         QBIT_LENGTH: number = 6;
         QbitState: number = 1;
+        schedule = "RR";
+        validSchedules = ["RR", "FCFS", "PRIORITY"];
+        /*
+        * Possible schedule values
+        * - "RR"          (Round Robin)
+        * - "FCFS"        (First come, first served)
+        * - "PRIORITY"    (Non-preemptive priority)
+         */
 
         private runProcess(pcb: Pcb) {
             this.runningPcb = pcb;
@@ -125,7 +133,7 @@ module TSOS {
             if (_CPU.isExecuting) {
                 this.QbitState++;
                 //TODO ensure no Off by one error here
-                if (this.QbitState > this.QBIT_LENGTH) {
+                if (this.QbitState > this.QBIT_LENGTH && this.schedule == "RR") {
                     //It's time to switch!
                     if(!this.readyQueue.isEmpty()) {
                         _KernelInterruptQueue.enqueue(new Interrupt(2, "SWAP"));
@@ -136,6 +144,10 @@ module TSOS {
             }
         }
 
+        public roundRobin() {
+
+        }
+
         public checkIfWaiting() {
             if ((!this.readyQueue.isEmpty()) && _CPU.isExecuting == false) {
                 _KernelInterruptQueue.enqueue(new Interrupt(2, "LOAD"));
@@ -143,8 +155,23 @@ module TSOS {
         }
 
         public runNext() {
-            let runningPcb = this.readyQueue.dequeue();
+            let runningPcb;
+            if (this.schedule == "PRIORITY") {
+                let highestPriorityPcb:Pcb = this.readyQueue.q[0];
+                console.log(this.readyQueue.q);
+                for (let i = 1; i < this.readyQueue.getSize(); i++) { // 0 is omitted since it's default
+                    if (this.readyQueue.q[i].priority < highestPriorityPcb.priority) {
+                        highestPriorityPcb = this.readyQueue.q[i];
+                    }
+                }
+                runningPcb = highestPriorityPcb;
+                //Simulate a dequeue
+                this.readyQueue.q.splice(this.readyQueue.q.indexOf(runningPcb), 1);
+            } else {
+                runningPcb = this.readyQueue.dequeue();
+            }
             _Kernel.krnTrace("Running PID " + runningPcb.pid);
+            this.QbitState = 1; // In case it doesn't get flipped earlier
             this.runProcess(runningPcb);
         }
 

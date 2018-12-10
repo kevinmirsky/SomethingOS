@@ -178,6 +178,17 @@ module TSOS {
                 "Lists files on disk.");
             this.commandList[this.commandList.length] = sc;
 
+            sc = new ShellCommand(this.shellSetSchedule,
+                "setschedule",
+                "<schedule> - Sets CPU scheduling algorithm");
+            this.commandList[this.commandList.length] = sc;
+
+            sc = new ShellCommand(this.shellGetSchedule,
+                "getschedule",
+                "- gets active CPU scheduling algorithm");
+            this.commandList[this.commandList.length] = sc;
+
+
 
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -474,6 +485,13 @@ module TSOS {
                     _MemManager.writeMemory(segment.firstByte, inputArray);
                     segment.isOccupied = true;
                     let process = new Pcb(segment.firstByte, segment.getSize());
+                    // Assign priority if possible
+                    if (args[0] !== null) {
+                        let priority:number = parseInt(args[0], 10);
+                        if (!isNaN(priority)) {
+                            process.priority = priority;
+                        }
+                    }
                     _StdOut.advanceLine();
                     _StdOut.putText(" Done. PID: " + process.pid.toString());
                 } else {
@@ -682,6 +700,27 @@ module TSOS {
 
         public shellLs(args) {
             _StdOut.putText(_DiskDriver.ls().join(" "));
+        }
+
+        public shellSetSchedule(args) {
+            if (args[0]) {
+                console.log(args);
+                let input = args[0].toUpperCase();
+                if (_Scheduler.validSchedules.includes(input)) {
+                    _Scheduler.schedule = input;
+                    _StdOut.putText("Schedule set to " + input);
+                } else {
+                    _StdOut.putText("[ERROR] \"" + args[0] + "\" is not a valid schedule."
+                        + " Valid schedules are " + _Scheduler.validSchedules.join(", "));
+                }
+            } else {
+                _StdOut.putText("[ERROR] No schedule provided."
+                    + " Valid schedules are " + _Scheduler.validSchedules.join(", "));
+            }
+        }
+
+        public shellGetSchedule(args) {
+            _StdOut.putText("Current schedule: " + _Scheduler.schedule);
         }
 
         public shellDebugChangePcb(args) {
