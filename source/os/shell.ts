@@ -670,6 +670,9 @@ module TSOS {
         }
 
         public shellCreateFile(args) {
+            if (!args[0]) {
+                args[0] = "untitled";
+            }
             try {
                 _DiskDriver.createFile(args[0]);
                 _StdOut.putText("File \"" + args[0] + "\" created.");
@@ -707,7 +710,12 @@ module TSOS {
 
         public shellDeleteFile(args) {
             let filename = args[0];
-            _StdOut.putText(_DiskDriver.deleteFile(filename));
+            try {
+                _DiskDriver.deleteFile(filename);
+                _StdOut.putText("File deleted.");
+            } catch (e) {
+                _StdOut.putText("[ERROR] " + e);
+            }
         }
 
         public shellLs(args) {

@@ -41,6 +41,10 @@ module TSOS {
         }
 
         private createFile(name:string) {
+            console.log("\"" + name + "\"");
+            if (!name) {
+                name = "untitled";
+            }
             /*
             HEADER STRUCTURE
             IND
@@ -122,13 +126,16 @@ module TSOS {
         }
 
         deleteFile(name:string) {
+            if (!name) {
+                throw "No filename given to delete";
+            }
             let header = this.find(name);
             if (header !== false) {
                 // We found it
                 this.deleteBlocks(header);
-                return "File deleted.";
+                return true;
             } else {
-                return "[ERROR] Could not find file " + name;
+                throw "Could not find file " + name;
             }
         }
 

@@ -32,6 +32,10 @@ var TSOS;
             return "0".repeat(this.MAX_DATA_LENGTH);
         }
         createFile(name) {
+            console.log("\"" + name + "\"");
+            if (!name) {
+                name = "untitled";
+            }
             if (this.find(name) !== false) {
                 throw "File already exists.";
             }
@@ -92,13 +96,16 @@ var TSOS;
             return data;
         }
         deleteFile(name) {
+            if (!name) {
+                throw "No filename given to delete";
+            }
             let header = this.find(name);
             if (header !== false) {
                 this.deleteBlocks(header);
-                return "File deleted.";
+                return true;
             }
             else {
-                return "[ERROR] Could not find file " + name;
+                throw "Could not find file " + name;
             }
         }
         deleteBlocks(tsb) {
