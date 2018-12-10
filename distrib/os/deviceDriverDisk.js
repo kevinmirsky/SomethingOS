@@ -50,8 +50,16 @@ var TSOS;
             }
             return true;
         }
-        swapToDisk(progMem) {
-            let start = this.nextFreeBlock(3, 0, 0);
+        swapToDisk(progMem, tsb) {
+            let start;
+            console.log("TSB is " + tsb);
+            if (tsb == null || tsb === "000") {
+                start = this.nextFreeBlock(3, 0, 0);
+            }
+            else {
+                start = tsb;
+                start = this.nextFreeBlock(3, 0, 0);
+            }
             this.writeBlocks(start, progMem, 3, 0, 0);
             return start;
         }

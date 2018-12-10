@@ -11,11 +11,11 @@ var TSOS;
             if (pcb) {
                 if (pcb.memoryOffset == -1) {
                     let segment = _MemManager.getFreeSegment(pcb.memoryRange);
-                    if (segment) {
-                        this.loadFromDisk(pcb, segment);
+                    if (!segment) {
+                        this.randomEviction();
+                        segment = _MemManager.getFreeSegment(pcb.memoryRange);
                     }
-                    else {
-                    }
+                    this.loadFromDisk(pcb, segment);
                 }
                 pcb.state = "RUNNING";
                 _CPU.init();
@@ -30,6 +30,18 @@ var TSOS;
             else {
                 _StdOut.putText("[ERROR] Could not find PID");
             }
+        }
+        randomEviction() {
+            let randVal = Math.floor(Math.random() * _MemManager.segments.length);
+            let seg = _MemManager.segments[randVal];
+            let memStart = seg.firstByte;
+            let pcb = TSOS.Pcb.getFromMemLoc(memStart);
+            let memData = _MemManager.readMemory(memStart, seg.getSize());
+            let diskLoc = _DiskDriver.swapToDisk(memData.join(''), pcb.hddTsb);
+            pcb.memoryOffset = -1;
+            pcb.hddTsb = diskLoc;
+            _MemManager.clearRegion(seg.firstByte, seg.getSize());
+            seg.isOccupied = false;
         }
         loadFromDisk(pcb, seg) {
             let data = _DiskDriver.readProgram(pcb.hddTsb);

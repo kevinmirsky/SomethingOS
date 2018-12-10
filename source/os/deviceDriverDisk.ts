@@ -73,8 +73,16 @@ module TSOS {
             return true;
         }
 
-        swapToDisk(progMem:string) {
-            let start = this.nextFreeBlock(3,0,0);
+        swapToDisk(progMem:string, tsb?:string) {
+            let start;
+            console.log("TSB is " + tsb);
+            if (tsb == null  || tsb === "000" ) {
+                // No provided spot, we need to find one
+                start = this.nextFreeBlock(3, 0, 0);
+            } else {
+                start = tsb;
+                start = this.nextFreeBlock(3, 0, 0);
+            }
             this.writeBlocks(start, progMem, 3,0,0);
 
             return start; // We should check for failure...

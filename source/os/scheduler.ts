@@ -12,11 +12,17 @@ module TSOS {
                 if (pcb.memoryOffset == -1) {
                     //Not in memory! On disk!
                     let segment = _MemManager.getFreeSegment(pcb.memoryRange);
-                    if (segment) {
-                        this.loadFromDisk(pcb, segment);
-                    } else {
+                    if (!segment) {
                         // Need to swap one out
+                        // Select someone to evict
+
+                        //Future enhancement: Add more eviction methods (LRU?)
+                        this.randomEviction(); // Random Eviction!
+
+                        // Now that space exists, we can get some
+                        segment = _MemManager.getFreeSegment(pcb.memoryRange);
                     }
+                    this.loadFromDisk(pcb, segment);
                 }
 
                 pcb.state = "RUNNING";
@@ -32,6 +38,24 @@ module TSOS {
                 _StdOut.putText("[ERROR] Could not find PID");
             }
         }
+
+        private randomEviction() {
+            let randVal = Math.floor(Math.random() * _MemManager.segments.length);
+            let seg = _MemManager.segments[randVal];
+            let memStart = seg.firstByte;
+            let pcb = Pcb.getFromMemLoc(memStart);
+
+
+            let memData  = _MemManager.readMemory(memStart, seg.getSize());
+            let diskLoc = _DiskDriver.swapToDisk(memData.join(''), pcb.hddTsb);
+
+            pcb.memoryOffset = -1; // Mark as on disk
+            pcb.hddTsb = diskLoc;
+            //Clean up
+            _MemManager.clearRegion(seg.firstByte, seg.getSize());
+            seg.isOccupied = false;
+        }
+
 
         private loadFromDisk(pcb, seg) {
             let data = _DiskDriver.readProgram(pcb.hddTsb);

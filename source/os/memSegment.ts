@@ -2,7 +2,7 @@ module TSOS {
 
     export class MemSegment {
 
-        public isOccupied = false;
+        public isOccupied:boolean = false;
 
         constructor(public firstByte, public lastByte) {
 
