@@ -485,6 +485,7 @@ module TSOS {
                     _MemManager.writeMemory(segment.firstByte, inputArray);
                     segment.isOccupied = true;
                     let process = new Pcb(segment.firstByte, segment.getSize());
+
                     // Assign priority if possible
                     if (args[0] !== null) {
                         let priority:number = parseInt(args[0], 10);
@@ -492,6 +493,7 @@ module TSOS {
                             process.priority = priority;
                         }
                     }
+
                     _StdOut.advanceLine();
                     _StdOut.putText(" Done. PID: " + process.pid.toString());
                 } else {
@@ -501,6 +503,15 @@ module TSOS {
                     let tsb = _DiskDriver.swapToDisk(inputArray.join(''));
                     let process = new Pcb(-1, 256); // -1 indicates on disk
                     process.hddTsb = tsb;
+
+                    // Assign priority if possible
+                    if (args[0] !== null) {
+                        let priority:number = parseInt(args[0], 10);
+                        if (!isNaN(priority)) {
+                            process.priority = priority;
+                        }
+                    }
+
                     _StdOut.advanceLine();
                     _StdOut.putText("No available memory segments. Loaded to disk. PID: "
                         + process.pid.toString());
@@ -659,10 +670,14 @@ module TSOS {
         }
 
         public shellCreateFile(args) {
-            if(_DiskDriver.createFile(args[0])) {
+            if (!args[0]) {
+                args[0] = "untitled";
+            }
+            try {
+                _DiskDriver.createFile(args[0]);
                 _StdOut.putText("File \"" + args[0] + "\" created.");
-            } else {
-                _StdOut.putText("[ERROR] Could not create file.");
+            } catch(e) {
+                _StdOut.putText("[ERROR] " + e);
             }
         }
 
@@ -676,10 +691,11 @@ module TSOS {
                 //Get text from quotes
                 fileData = fileData.substring(fileData.indexOf('"') + 1, fileData.lastIndexOf('"'));
 
-                if (_DiskDriver.writeFile(filename, fileData)) {
+                try {
+                    _DiskDriver.writeFile(filename, fileData)
                     _StdOut.putText("Write to \"" + filename + "\" successful.");
-                } else {
-                    _StdOut.putText("[ERROR] Could not write file.")
+                } catch (e) {
+                    _StdOut.putText("[ERROR] " + e);
                 }
             } else {
                 _StdOut.putText("[ERROR] File data must be entirely surrounded by double-quotes < \" >.");
@@ -690,12 +706,21 @@ module TSOS {
 
         public shellReadFile(args) {
             let filename = args[0];
-            _StdOut.putText(_DiskDriver.readFile(filename));
+            try {
+                _StdOut.putText(_DiskDriver.readFile(filename));
+            } catch (e) {
+                _StdOut.putText("[ERROR] " + e);
+            }
         }
 
         public shellDeleteFile(args) {
             let filename = args[0];
-            _StdOut.putText(_DiskDriver.deleteFile(filename));
+            try {
+                _DiskDriver.deleteFile(filename);
+                _StdOut.putText("File deleted.");
+            } catch (e) {
+                _StdOut.putText("[ERROR] " + e);
+            }
         }
 
         public shellLs(args) {

@@ -32,11 +32,15 @@ var TSOS;
             return "0".repeat(this.MAX_DATA_LENGTH);
         }
         createFile(name) {
+            console.log("\"" + name + "\"");
+            if (!name) {
+                name = "untitled";
+            }
             if (this.find(name) !== false) {
-                return false;
+                throw "File already exists.";
             }
             let key = this.nextFreeBlock();
-            if (key !== "EEE") {
+            if (key !== "000") {
                 this.setUsed(key, true);
                 let next = this.nextFreeBlock(1, 0, 0);
                 if (next) {
@@ -46,7 +50,7 @@ var TSOS;
                 }
             }
             else {
-                return false;
+                throw "Not enough free blocks on disk.";
             }
             return true;
         }
@@ -92,13 +96,16 @@ var TSOS;
             return data;
         }
         deleteFile(name) {
+            if (!name) {
+                throw "No filename given to delete";
+            }
             let header = this.find(name);
             if (header !== false) {
                 this.deleteBlocks(header);
-                return "File deleted.";
+                return true;
             }
             else {
-                return "[ERROR] Could not find file " + name;
+                throw "Could not find file " + name;
             }
         }
         deleteBlocks(tsb) {
@@ -131,11 +138,14 @@ var TSOS;
                 for (let j = 0; j < this.disk.sectors; j++) {
                     for (let k = 0; k < this.disk.blocks; k++) {
                         let data = sessionStorage.getItem(deviceDriverDisk.buildLoc(i, j, k));
-                        if (data) {
+                        if (data != null) {
                             let openName = TSOS.Utils.fromHex(data.substr(4));
                             if (openName == name) {
                                 return deviceDriverDisk.buildLoc(i, j, k);
                             }
+                        }
+                        else {
+                            throw "Disk access error. Possible issue: Unformatted disk.";
                         }
                     }
                 }
@@ -291,9 +301,7 @@ var TSOS;
                 return true;
             }
             else {
-                _StdOut.putText("[ERROR] Could not find " + name);
-                _StdOut.advanceLine();
-                return false;
+                throw ("Could not find " + name);
             }
         }
         isEmpty(value) {
