@@ -200,14 +200,17 @@ module TSOS {
             return false;
         }
 
-        ls() {
+        ls(args) {
             let files = [];
             for (let i = 0; i < 1; i++) {
                 for (let j = 0; j < this.disk.sectors; j++) {
                     for (let k = 0; k < this.disk.blocks; k++) {
                         let loc = deviceDriverDisk.buildLoc(i,j,k);
                         if (this.isUsedAt(loc)) {
-                            files.push(this.getData(loc));
+                            let data = this.getData(loc);
+                            if (data.charAt(0) != '.' || args == "-l") {
+                                files.push(this.getData(loc));
+                            }
                         }
                     }
                 }

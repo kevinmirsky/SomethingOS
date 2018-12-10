@@ -502,7 +502,7 @@ var TSOS;
             }
         }
         shellLs(args) {
-            _StdOut.putText(_DiskDriver.ls().join(" "));
+            _StdOut.putText(_DiskDriver.ls(args[0]).join(" "));
         }
         shellSetSchedule(args) {
             if (args[0]) {
