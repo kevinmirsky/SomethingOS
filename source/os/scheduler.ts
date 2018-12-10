@@ -38,6 +38,7 @@ module TSOS {
             let hexValues = data.match(/.{1,2}/g);
             hexValues = hexValues.slice(0, 256); // Cut to size of memory segment
             _MemManager.writeMemory(seg.firstByte, hexValues);
+            pcb.memoryOffset = seg.firstByte;
             seg.isOccupied = true;
         }
 

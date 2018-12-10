@@ -36,6 +36,7 @@ var TSOS;
             let hexValues = data.match(/.{1,2}/g);
             hexValues = hexValues.slice(0, 256);
             _MemManager.writeMemory(seg.firstByte, hexValues);
+            pcb.memoryOffset = seg.firstByte;
             seg.isOccupied = true;
         }
         setRunning(incomingPcb) {
