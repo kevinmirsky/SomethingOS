@@ -206,11 +206,16 @@ module TSOS {
                 for (let j = 0; j < this.disk.sectors; j++) {
                     for (let k = 0; k < this.disk.blocks; k++) {
                         let loc = deviceDriverDisk.buildLoc(i,j,k);
-                        if (this.isUsedAt(loc)) {
-                            let data = this.getData(loc);
-                            if (data.charAt(0) != '.' || args == "-l") {
-                                files.push(this.getData(loc));
+                        try {
+                            if (this.isUsedAt(loc)) {
+                                let data = this.getData(loc);
+                                if (data.charAt(0) != '.' || args == "-l") {
+                                    files.push(this.getData(loc));
+                                }
                             }
+                        } catch (e) {
+                            // Change the error to something more user understandable.
+                            throw "Disk access error. Possible issue: Unformatted disk.";
                         }
                     }
                 }

@@ -724,7 +724,11 @@ module TSOS {
         }
 
         public shellLs(args) {
-            _StdOut.putText(_DiskDriver.ls(args[0]).join(" "));
+            try {
+                _StdOut.putText(_DiskDriver.ls(args[0]).join(" "));
+            } catch (e) {
+                _StdOut.putText("[ERROR] " + e);
+            }
         }
 
         public shellSetSchedule(args) {
