@@ -33,10 +33,10 @@ var TSOS;
         }
         createFile(name) {
             if (this.find(name) !== false) {
-                return false;
+                throw "File already exists.";
             }
             let key = this.nextFreeBlock();
-            if (key !== "EEE") {
+            if (key !== "000") {
                 this.setUsed(key, true);
                 let next = this.nextFreeBlock(1, 0, 0);
                 if (next) {
@@ -46,7 +46,7 @@ var TSOS;
                 }
             }
             else {
-                return false;
+                throw "Not enough free blocks on disk.";
             }
             return true;
         }
@@ -131,11 +131,14 @@ var TSOS;
                 for (let j = 0; j < this.disk.sectors; j++) {
                     for (let k = 0; k < this.disk.blocks; k++) {
                         let data = sessionStorage.getItem(deviceDriverDisk.buildLoc(i, j, k));
-                        if (data) {
+                        if (data != null) {
                             let openName = TSOS.Utils.fromHex(data.substr(4));
                             if (openName == name) {
                                 return deviceDriverDisk.buildLoc(i, j, k);
                             }
+                        }
+                        else {
+                            throw "Disk access error. Possible issue: Unformatted disk.";
                         }
                     }
                 }

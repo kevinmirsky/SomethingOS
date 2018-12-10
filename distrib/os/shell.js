@@ -453,11 +453,12 @@ var TSOS;
             }
         }
         shellCreateFile(args) {
-            if (_DiskDriver.createFile(args[0])) {
+            try {
+                _DiskDriver.createFile(args[0]);
                 _StdOut.putText("File \"" + args[0] + "\" created.");
             }
-            else {
-                _StdOut.putText("[ERROR] Could not create file.");
+            catch (e) {
+                _StdOut.putText("[ERROR] " + e);
             }
         }
         shellWriteFile(args) {

@@ -49,11 +49,11 @@ module TSOS {
              4+ | NAME - <ASCII VALUE OF NAME> Terminate in 00?
              */
             if (this.find(name) !== false) {
-                return false;
+                throw "File already exists.";
             }
 
             let key = this.nextFreeBlock();
-            if (key !== "EEE") {
+            if (key !== "000") {
                 //Move set used until we know we can allocate space for internals?
                 this.setUsed(key, true);
                 let next = this.nextFreeBlock(1,0,0);
@@ -65,8 +65,7 @@ module TSOS {
                     //TODO UPDATE NEXT FILE
                 }
             } else {
-                return false;
-                // TODO HANDLE FAILURE
+                throw "Not enough free blocks on disk."
             }
 
             // TODO CHECK IF NAME EXISTS ALREADY
@@ -174,17 +173,18 @@ module TSOS {
             }
             hexName += "00";
             */
-
             //limit to region data values stored?
             for (let i = 0; i < 1; i++) {
                 for (let j = 0; j < this.disk.sectors; j++) {
                     for (let k = 0; k < this.disk.blocks; k++) {
                         let data = sessionStorage.getItem(deviceDriverDisk.buildLoc(i,j,k));
-                        if (data) {
+                        if (data != null) {
                             let openName = Utils.fromHex(data.substr(4));
                             if (openName == name) {
                                 return deviceDriverDisk.buildLoc(i,j,k);
                             }
+                        } else {
+                            throw "Disk access error. Possible issue: Unformatted disk."
                         }
                     }
                 }
