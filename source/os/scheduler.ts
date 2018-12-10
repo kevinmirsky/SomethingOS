@@ -46,8 +46,14 @@ module TSOS {
             let pcb = Pcb.getFromMemLoc(memStart);
 
 
-            let memData  = _MemManager.readMemory(memStart, seg.getSize());
-            let diskLoc = _DiskDriver.swapToDisk(memData.join(''), pcb.hddTsb);
+            let memData  = _MemManager.readMemory(memStart, seg.lastByte);
+
+            // NEED TO CONVERT TO HEX! Built in JS functions will turn to decimal! array.toString doesn't support bases
+            let hexData = "";
+            for (let i = 0; i < memData.length; i++) {
+                hexData += memData[i].toString(16).padStart(2, "0");
+            }
+            let diskLoc = _DiskDriver.swapToDisk(hexData, pcb.hddTsb);
 
             pcb.memoryOffset = -1; // Mark as on disk
             pcb.hddTsb = diskLoc;

@@ -58,7 +58,6 @@ var TSOS;
             }
             else {
                 start = tsb;
-                start = this.nextFreeBlock(3, 0, 0);
             }
             this.writeBlocks(start, progMem, 3, 0, 0);
             return start;

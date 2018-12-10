@@ -36,8 +36,12 @@ var TSOS;
             let seg = _MemManager.segments[randVal];
             let memStart = seg.firstByte;
             let pcb = TSOS.Pcb.getFromMemLoc(memStart);
-            let memData = _MemManager.readMemory(memStart, seg.getSize());
-            let diskLoc = _DiskDriver.swapToDisk(memData.join(''), pcb.hddTsb);
+            let memData = _MemManager.readMemory(memStart, seg.lastByte);
+            let hexData = "";
+            for (let i = 0; i < memData.length; i++) {
+                hexData += memData[i].toString(16).padStart(2, "0");
+            }
+            let diskLoc = _DiskDriver.swapToDisk(hexData, pcb.hddTsb);
             pcb.memoryOffset = -1;
             pcb.hddTsb = diskLoc;
             _MemManager.clearRegion(seg.firstByte, seg.getSize());
