@@ -5,6 +5,8 @@ var TSOS;
             this.readyQueue = new TSOS.Queue();
             this.QBIT_LENGTH = 6;
             this.QbitState = 1;
+            this.schedule = "RR";
+            this.validSchedules = ["RR", "FCFS", "PRIORITY"];
         }
         runProcess(pcb) {
             this.runningPcb = pcb;
@@ -85,7 +87,7 @@ var TSOS;
         incrementQbit() {
             if (_CPU.isExecuting) {
                 this.QbitState++;
-                if (this.QbitState > this.QBIT_LENGTH) {
+                if (this.QbitState > this.QBIT_LENGTH && this.schedule == "RR") {
                     if (!this.readyQueue.isEmpty()) {
                         _KernelInterruptQueue.enqueue(new TSOS.Interrupt(2, "SWAP"));
                     }
@@ -95,14 +97,31 @@ var TSOS;
                 }
             }
         }
+        roundRobin() {
+        }
         checkIfWaiting() {
             if ((!this.readyQueue.isEmpty()) && _CPU.isExecuting == false) {
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(2, "LOAD"));
             }
         }
         runNext() {
-            let runningPcb = this.readyQueue.dequeue();
+            let runningPcb;
+            if (this.schedule == "PRIORITY") {
+                let highestPriorityPcb = this.readyQueue.q[0];
+                console.log(this.readyQueue.q);
+                for (let i = 1; i < this.readyQueue.getSize(); i++) {
+                    if (this.readyQueue.q[i].priority < highestPriorityPcb.priority) {
+                        highestPriorityPcb = this.readyQueue.q[i];
+                    }
+                }
+                runningPcb = highestPriorityPcb;
+                this.readyQueue.q.splice(this.readyQueue.q.indexOf(runningPcb), 1);
+            }
+            else {
+                runningPcb = this.readyQueue.dequeue();
+            }
             _Kernel.krnTrace("Running PID " + runningPcb.pid);
+            this.QbitState = 1;
             this.runProcess(runningPcb);
         }
         requestRun(program) {
