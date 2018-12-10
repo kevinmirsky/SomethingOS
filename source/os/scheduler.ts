@@ -9,6 +9,22 @@ module TSOS {
         private runProcess(pcb: Pcb) {
             this.runningPcb = pcb;
             if (pcb) {
+                if (pcb.memoryOffset == -1) {
+                    //Not in memory! On disk!
+                    let segment = _MemManager.getFreeSegment(pcb.memoryRange);
+                    if (!segment) {
+                        // Need to swap one out
+                        // Select someone to evict
+
+                        //Future enhancement: Add more eviction methods (LRU?)
+                        this.randomEviction(); // Random Eviction!
+
+                        // Now that space exists, we can get some
+                        segment = _MemManager.getFreeSegment(pcb.memoryRange);
+                    }
+                    this.loadFromDisk(pcb, segment);
+                }
+
                 pcb.state = "RUNNING";
                 _CPU.init(); //Reset any lingering values
                 _CPU.PC = pcb.PC;
@@ -23,7 +39,40 @@ module TSOS {
             }
         }
 
-        public swap(incomingPcb: Pcb) {
+        private randomEviction() {
+            let randVal = Math.floor(Math.random() * _MemManager.segments.length);
+            let seg = _MemManager.segments[randVal];
+            let memStart = seg.firstByte;
+            let pcb = Pcb.getFromMemLoc(memStart);
+
+
+            let memData  = _MemManager.readMemory(memStart, seg.lastByte);
+
+            // NEED TO CONVERT TO HEX! Built in JS functions will turn to decimal! array.toString doesn't support bases
+            let hexData = "";
+            for (let i = 0; i < memData.length; i++) {
+                hexData += memData[i].toString(16).padStart(2, "0");
+            }
+            let diskLoc = _DiskDriver.swapToDisk(hexData, pcb.hddTsb);
+
+            pcb.memoryOffset = -1; // Mark as on disk
+            pcb.hddTsb = diskLoc;
+            //Clean up
+            _MemManager.clearRegion(seg.firstByte, seg.getSize());
+            seg.isOccupied = false;
+        }
+
+
+        private loadFromDisk(pcb, seg) {
+            let data = _DiskDriver.readProgram(pcb.hddTsb);
+            let hexValues = data.match(/.{1,2}/g);
+            hexValues = hexValues.slice(0, 256); // Cut to size of memory segment
+            _MemManager.writeMemory(seg.firstByte, hexValues);
+            pcb.memoryOffset = seg.firstByte;
+            seg.isOccupied = true;
+        }
+
+        public setRunning(incomingPcb: Pcb) {
             //Unload
             this.runningPcb.state = "WAITING";
             this.runningPcb.PC = _CPU.PC;
@@ -56,7 +105,7 @@ module TSOS {
                 if (this.QbitState >= this.QBIT_LENGTH) {
                     //It's time to switch!
                     if (!this.readyQueue.isEmpty()) {
-                        this.swap(this.readyQueue.dequeue());
+                        this.setRunning(this.readyQueue.dequeue());
                     }
                 }
             } else {

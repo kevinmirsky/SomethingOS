@@ -119,6 +119,7 @@ module TSOS {
                         let cell = row.insertCell(-1);
                         cell.id="tsb" + block;
                         cell.innerHTML = block.split('').join(':');
+                        cell.className = "cell-diskLabel";
 
                         cell = row.insertCell(-1);
                         cell.id = "isUsed" + block;

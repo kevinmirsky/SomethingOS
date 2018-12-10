@@ -180,6 +180,13 @@ module TSOS {
                 //Let's wrap things up here. Pack it into the PCB and set it to done
                     this.currentPCB.state = "COMPLETE";
                     this.updatePcb();
+                    let segment = _MemManager.getSegment(this.currentPCB.memoryOffset);
+                    if (segment !== null) {
+                        // Clear the segment
+                        _MemManager.clearRegion(segment.firstByte, segment.getSize());
+                        segment.isOccupied = false;
+                        // TODO Do same for terminated programs
+                    }
                     _Scheduler.runningPcb = null;
                 // TODO Communicate with scheduler to let it know it needs to remove!
             }

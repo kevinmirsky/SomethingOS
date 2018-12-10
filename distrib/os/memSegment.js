@@ -7,7 +7,7 @@ var TSOS;
             this.isOccupied = false;
         }
         getSize() {
-            return this.lastByte - this.firstByte;
+            return (this.lastByte - this.firstByte) + 1;
         }
     }
     TSOS.MemSegment = MemSegment;

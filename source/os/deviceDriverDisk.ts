@@ -73,6 +73,20 @@ module TSOS {
             return true;
         }
 
+        swapToDisk(progMem:string, tsb?:string) {
+            let start;
+            console.log("TSB is " + tsb);
+            if (tsb == null  || tsb === "000" ) {
+                // No provided spot, we need to find one
+                start = this.nextFreeBlock(3, 0, 0);
+            } else {
+                start = tsb;
+            }
+            this.writeBlocks(start, progMem, 3,0,0);
+
+            return start; // We should check for failure...
+        }
+
         readFile(name:string) {
             let header = this.find(name);
             if (header !== false) {
@@ -84,12 +98,26 @@ module TSOS {
             }
         }
 
+        readProgram(tsb:string) {
+            return this.readBlocksRaw(tsb);
+        }
+
         readBlocks(tsb:string) {
             let next = this.getNext(tsb);
             let data = this.getData(tsb);
 
             if (next != "000") {
                 data += this.readBlocks(next);
+            }
+            return data;
+        }
+
+        readBlocksRaw(tsb:string) {
+            let next = this.getNext(tsb);
+            let data = this.getRawData(tsb);
+
+            if (next != "000") {
+                data += this.readBlocksRaw(next);
             }
             return data;
         }
@@ -117,7 +145,11 @@ module TSOS {
             for (let i = t; i < this.disk.tracks; i++) {
                 for (let j = s; j < this.disk.sectors; j++) {
                     for (let k = b; k < this.disk.blocks; k++) {
-                        let block = sessionStorage.getItem(deviceDriverDisk.buildLoc(i,j,k));
+                        let loc = deviceDriverDisk.buildLoc(i,j,k);
+                        if (loc == "000") {
+                            continue; // Avoid using the Master Block. It's reserved!
+                        }
+                        let block = sessionStorage.getItem(loc);
                         if (block != "" && this.isEmpty(block)) {
                             return deviceDriverDisk.buildLoc(i,j,k);
                         }
@@ -310,11 +342,11 @@ module TSOS {
             if (value !== null) {
                 return value.substring(4);
             } else {
-                return "ERROR";
+                return "[ERROR] Cannot read. Possible issue: Unformatted disk";
             }
         }
 
-        private writeBlocks(key, hexData) {
+        private writeBlocks(key, hexData, t:number = 1, s:number = 0, b:number = 0) {
             let nextData = hexData.substring(this.MAX_DATA_LENGTH); // Get all text after max
             if (hexData.length > this.MAX_DATA_LENGTH) {
                 hexData = hexData.substring(0, this.MAX_DATA_LENGTH);
@@ -336,7 +368,7 @@ module TSOS {
                 console.log("Current val in next " + nextKey);
                 if (nextKey == "000") {
                     // No block already allocated!
-                    nextKey = this.nextFreeBlock(1, 0, 0);
+                    nextKey = this.nextFreeBlock(t, s, b);
                     console.log("next key set to " + nextKey);
                     if (nextKey === "EEE") {
                         // Failure
@@ -346,7 +378,7 @@ module TSOS {
                     }
                     this.setNext(key, nextKey);
                 }
-                this.writeBlocks(nextKey, nextData);
+                this.writeBlocks(nextKey, nextData, t, s, b);
                 // TODO REMINDER! DO CLEAN UP IF SHORTER
             }
 

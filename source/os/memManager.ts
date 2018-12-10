@@ -20,6 +20,14 @@ module TSOS {
             console.log(this.segments);
         }
 
+        getSegment(firstByte) {
+            for (let i = 0; i < this.segments.length; i++) {
+                if (this.segments[i].firstByte == firstByte) {
+                    return this.segments[i];
+                }
+            }
+        }
+
         /**
          * Gets the first available segment, with the optional parameter to look for a segment
          * of a certain size.
@@ -62,6 +70,12 @@ module TSOS {
             return super.accessAddress(startIndex, endIndex);
         }
 
+        public clearRegion(startIndex, length) {
+            for (let i = startIndex; i < startIndex + length; i++) {
+                this.writeMemory(i, 0x00);
+            }
+        }
+
         //Whoo, go multiple definitions!
         public writeMemory(index: number, input: number[]): void;
         public writeMemory(index: number, input: number): void;
@@ -86,6 +100,10 @@ module TSOS {
                     throw "Memory storage exception: Attempted to store out of bounds";
                 }
             }
+        }
+
+        loadProgram(segment) {
+
         }
 
         public refreshMemoryViewer() {

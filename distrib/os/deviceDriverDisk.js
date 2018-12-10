@@ -50,6 +50,18 @@ var TSOS;
             }
             return true;
         }
+        swapToDisk(progMem, tsb) {
+            let start;
+            console.log("TSB is " + tsb);
+            if (tsb == null || tsb === "000") {
+                start = this.nextFreeBlock(3, 0, 0);
+            }
+            else {
+                start = tsb;
+            }
+            this.writeBlocks(start, progMem, 3, 0, 0);
+            return start;
+        }
         readFile(name) {
             let header = this.find(name);
             if (header !== false) {
@@ -60,11 +72,22 @@ var TSOS;
                 return "[ERROR] Could not find file " + name;
             }
         }
+        readProgram(tsb) {
+            return this.readBlocksRaw(tsb);
+        }
         readBlocks(tsb) {
             let next = this.getNext(tsb);
             let data = this.getData(tsb);
             if (next != "000") {
                 data += this.readBlocks(next);
+            }
+            return data;
+        }
+        readBlocksRaw(tsb) {
+            let next = this.getNext(tsb);
+            let data = this.getRawData(tsb);
+            if (next != "000") {
+                data += this.readBlocksRaw(next);
             }
             return data;
         }
@@ -89,7 +112,11 @@ var TSOS;
             for (let i = t; i < this.disk.tracks; i++) {
                 for (let j = s; j < this.disk.sectors; j++) {
                     for (let k = b; k < this.disk.blocks; k++) {
-                        let block = sessionStorage.getItem(deviceDriverDisk.buildLoc(i, j, k));
+                        let loc = deviceDriverDisk.buildLoc(i, j, k);
+                        if (loc == "000") {
+                            continue;
+                        }
+                        let block = sessionStorage.getItem(loc);
                         if (block != "" && this.isEmpty(block)) {
                             return deviceDriverDisk.buildLoc(i, j, k);
                         }
@@ -225,10 +252,10 @@ var TSOS;
                 return value.substring(4);
             }
             else {
-                return "ERROR";
+                return "[ERROR] Cannot read. Possible issue: Unformatted disk";
             }
         }
-        writeBlocks(key, hexData) {
+        writeBlocks(key, hexData, t = 1, s = 0, b = 0) {
             let nextData = hexData.substring(this.MAX_DATA_LENGTH);
             if (hexData.length > this.MAX_DATA_LENGTH) {
                 hexData = hexData.substring(0, this.MAX_DATA_LENGTH);
@@ -243,14 +270,14 @@ var TSOS;
                 let nextKey = this.getNext(key);
                 console.log("Current val in next " + nextKey);
                 if (nextKey == "000") {
-                    nextKey = this.nextFreeBlock(1, 0, 0);
+                    nextKey = this.nextFreeBlock(t, s, b);
                     console.log("next key set to " + nextKey);
                     if (nextKey === "EEE") {
                         throw "Could not allocate block for file data.";
                     }
                     this.setNext(key, nextKey);
                 }
-                this.writeBlocks(nextKey, nextData);
+                this.writeBlocks(nextKey, nextData, t, s, b);
             }
         }
         writeFile(name, data) {

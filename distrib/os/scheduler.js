@@ -9,6 +9,14 @@ var TSOS;
         runProcess(pcb) {
             this.runningPcb = pcb;
             if (pcb) {
+                if (pcb.memoryOffset == -1) {
+                    let segment = _MemManager.getFreeSegment(pcb.memoryRange);
+                    if (!segment) {
+                        this.randomEviction();
+                        segment = _MemManager.getFreeSegment(pcb.memoryRange);
+                    }
+                    this.loadFromDisk(pcb, segment);
+                }
                 pcb.state = "RUNNING";
                 _CPU.init();
                 _CPU.PC = pcb.PC;
@@ -23,7 +31,31 @@ var TSOS;
                 _StdOut.putText("[ERROR] Could not find PID");
             }
         }
-        swap(incomingPcb) {
+        randomEviction() {
+            let randVal = Math.floor(Math.random() * _MemManager.segments.length);
+            let seg = _MemManager.segments[randVal];
+            let memStart = seg.firstByte;
+            let pcb = TSOS.Pcb.getFromMemLoc(memStart);
+            let memData = _MemManager.readMemory(memStart, seg.lastByte);
+            let hexData = "";
+            for (let i = 0; i < memData.length; i++) {
+                hexData += memData[i].toString(16).padStart(2, "0");
+            }
+            let diskLoc = _DiskDriver.swapToDisk(hexData, pcb.hddTsb);
+            pcb.memoryOffset = -1;
+            pcb.hddTsb = diskLoc;
+            _MemManager.clearRegion(seg.firstByte, seg.getSize());
+            seg.isOccupied = false;
+        }
+        loadFromDisk(pcb, seg) {
+            let data = _DiskDriver.readProgram(pcb.hddTsb);
+            let hexValues = data.match(/.{1,2}/g);
+            hexValues = hexValues.slice(0, 256);
+            _MemManager.writeMemory(seg.firstByte, hexValues);
+            pcb.memoryOffset = seg.firstByte;
+            seg.isOccupied = true;
+        }
+        setRunning(incomingPcb) {
             this.runningPcb.state = "WAITING";
             this.runningPcb.PC = _CPU.PC;
             this.runningPcb.Acc = _CPU.Acc;
@@ -39,7 +71,7 @@ var TSOS;
                 this.QbitState++;
                 if (this.QbitState >= this.QBIT_LENGTH) {
                     if (!this.readyQueue.isEmpty()) {
-                        this.swap(this.readyQueue.dequeue());
+                        this.setRunning(this.readyQueue.dequeue());
                     }
                 }
             }
