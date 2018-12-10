@@ -470,11 +470,12 @@ var TSOS;
             let fileData = args.join(' ');
             if (fileData.charAt(0) == '"' && fileData.charAt(fileData.length - 1) == '"') {
                 fileData = fileData.substring(fileData.indexOf('"') + 1, fileData.lastIndexOf('"'));
-                if (_DiskDriver.writeFile(filename, fileData)) {
+                try {
+                    _DiskDriver.writeFile(filename, fileData);
                     _StdOut.putText("Write to \"" + filename + "\" successful.");
                 }
-                else {
-                    _StdOut.putText("[ERROR] Could not write file.");
+                catch (e) {
+                    _StdOut.putText("[ERROR] " + e);
                 }
             }
             else {

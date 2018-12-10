@@ -403,9 +403,7 @@ module TSOS {
                 }
                 return true;
             } else {
-                _StdOut.putText("[ERROR] Could not find " + name);
-                _StdOut.advanceLine();
-                return false;
+                throw ("Could not find " + name);
             }
         }
 

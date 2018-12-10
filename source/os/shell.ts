@@ -691,10 +691,11 @@ module TSOS {
                 //Get text from quotes
                 fileData = fileData.substring(fileData.indexOf('"') + 1, fileData.lastIndexOf('"'));
 
-                if (_DiskDriver.writeFile(filename, fileData)) {
+                try {
+                    _DiskDriver.writeFile(filename, fileData)
                     _StdOut.putText("Write to \"" + filename + "\" successful.");
-                } else {
-                    _StdOut.putText("[ERROR] Could not write file.")
+                } catch (e) {
+                    _StdOut.putText("[ERROR] " + e);
                 }
             } else {
                 _StdOut.putText("[ERROR] File data must be entirely surrounded by double-quotes < \" >.");
