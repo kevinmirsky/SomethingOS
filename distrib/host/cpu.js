@@ -130,6 +130,7 @@ var TSOS;
                     _MemManager.clearRegion(segment.firstByte, segment.getSize());
                     segment.isOccupied = false;
                 }
+                _DiskDriver.deleteBlocks(this.currentPCB.hddTsb);
                 _Scheduler.runningPcb = null;
             }
         }
@@ -256,6 +257,7 @@ var TSOS;
             _StdOut.putText("Terminating.");
             this.isExecuting = false;
             this.currentPCB.state = "TERMINATED";
+            _DiskDriver.deleteBlocks(this.currentPCB.hddTsb);
             this.updatePcb();
         }
         updatePcb() {

@@ -187,6 +187,7 @@ module TSOS {
                         segment.isOccupied = false;
                         // TODO Do same for terminated programs
                     }
+                    _DiskDriver.deleteBlocks(this.currentPCB.hddTsb);
                     _Scheduler.runningPcb = null;
                 // TODO Communicate with scheduler to let it know it needs to remove!
             }
@@ -389,6 +390,7 @@ module TSOS {
             _StdOut.putText("Terminating.");
             this.isExecuting = false;
             this.currentPCB.state = "TERMINATED";
+            _DiskDriver.deleteBlocks(this.currentPCB.hddTsb);
             //We're being nice and letting user see what was happening when everything went wrong
             this.updatePcb();
         }

@@ -602,6 +602,7 @@ module TSOS {
         }
 
         public shellKill(args) {
+            // TODO Delete from HDD if necessary!
             let program = <Pcb>Pcb.getFromPid(<number>args);
             if (program) {
                 if (program.state == "TERMINATED" || program.state == "COMPLETE") {

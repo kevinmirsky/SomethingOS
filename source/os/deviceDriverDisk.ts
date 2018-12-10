@@ -145,11 +145,13 @@ module TSOS {
         }
 
         deleteBlocks(tsb:string) {
-            let next = this.getNext(tsb);
-            if (next != "000") {
-                this.deleteBlocks(next);
+            if (tsb != "000") { // Avoid clearing 000 by mistake. Redundant, yes. But I'm working quickly here
+                let next = this.getNext(tsb);
+                if (next != "000") {
+                    this.deleteBlocks(next);
+                }
+                sessionStorage.setItem(tsb, this.emptyBlock());
             }
-            sessionStorage.setItem(tsb, this.emptyBlock());
         }
 
         nextFreeBlock(t:number = 0, s:number = 0, b:number = 0) {

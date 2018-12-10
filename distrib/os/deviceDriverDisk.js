@@ -114,11 +114,13 @@ var TSOS;
             }
         }
         deleteBlocks(tsb) {
-            let next = this.getNext(tsb);
-            if (next != "000") {
-                this.deleteBlocks(next);
+            if (tsb != "000") {
+                let next = this.getNext(tsb);
+                if (next != "000") {
+                    this.deleteBlocks(next);
+                }
+                sessionStorage.setItem(tsb, this.emptyBlock());
             }
-            sessionStorage.setItem(tsb, this.emptyBlock());
         }
         nextFreeBlock(t = 0, s = 0, b = 0) {
             for (let i = t; i < this.disk.tracks; i++) {
