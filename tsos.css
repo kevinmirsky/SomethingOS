@@ -15,9 +15,24 @@
     box-sizing: border-box;
 }
 
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
 /* Track */
 ::-webkit-scrollbar-track {
-    background: var(--bgr-gray);
+    background: var(--glow-pink);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: var(--main-pink);
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: var(--dull-pink);
 }
 
 
