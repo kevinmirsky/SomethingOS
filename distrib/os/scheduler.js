@@ -122,7 +122,16 @@ var TSOS;
             }
             _Kernel.krnTrace("Running PID " + runningPcb.pid);
             this.QbitState = 1;
-            this.runProcess(runningPcb);
+            try {
+                this.runProcess(runningPcb);
+            }
+            catch (e) {
+                _StdOut.putText(e);
+                _StdOut.advanceLine();
+                runningPcb.state = "TERMINATED";
+                _StdOut.putText("[WARN] Corrupted state detected. Halting execution.");
+                _CPU.isExecuting = false;
+            }
         }
         requestRun(program) {
             if (program.state == "NEW") {

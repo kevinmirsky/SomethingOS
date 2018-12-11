@@ -85,7 +85,12 @@ module TSOS {
             } else {
                 start = tsb;
             }
-            this.writeBlocks(start, progMem, 3,0,0);
+
+            try {
+                this.writeBlocks(start, progMem, 3, 0, 0);
+            } catch (e) {
+                throw "[WARN] HDD at capacity. File partially written."
+            }
 
             return start; // We should check for failure...
         }
@@ -140,11 +145,13 @@ module TSOS {
         }
 
         deleteBlocks(tsb:string) {
-            let next = this.getNext(tsb);
-            if (next != "000") {
-                this.deleteBlocks(next);
+            if (tsb != "000") { // Avoid clearing 000 by mistake. Redundant, yes. But I'm working quickly here
+                let next = this.getNext(tsb);
+                if (next != "000") {
+                    this.deleteBlocks(next);
+                }
+                sessionStorage.setItem(tsb, this.emptyBlock());
             }
-            sessionStorage.setItem(tsb, this.emptyBlock());
         }
 
         nextFreeBlock(t:number = 0, s:number = 0, b:number = 0) {
@@ -200,14 +207,22 @@ module TSOS {
             return false;
         }
 
-        ls() {
+        ls(args) {
             let files = [];
             for (let i = 0; i < 1; i++) {
                 for (let j = 0; j < this.disk.sectors; j++) {
                     for (let k = 0; k < this.disk.blocks; k++) {
                         let loc = deviceDriverDisk.buildLoc(i,j,k);
-                        if (this.isUsedAt(loc)) {
-                            files.push(this.getData(loc));
+                        try {
+                            if (this.isUsedAt(loc)) {
+                                let data = this.getData(loc);
+                                if (data.charAt(0) != '.' || args == "-l") {
+                                    files.push(this.getData(loc));
+                                }
+                            }
+                        } catch (e) {
+                            // Change the error to something more user understandable.
+                            throw "Disk access error. Possible issue: Unformatted disk.";
                         }
                     }
                 }
